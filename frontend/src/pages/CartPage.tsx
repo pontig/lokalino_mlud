@@ -1,6 +1,8 @@
 // CartPage.tsx
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { Link, HashRouter as Router } from "react-router-dom";
+
+import "../styles/Cart.css"
 
 interface Book {
   id: string;
@@ -18,6 +20,16 @@ interface CartPageProps {
 
 const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
   const total = cart.reduce((sum, book) => sum + book.price, 0);
+
+  useEffect(() => {
+    if (cart.length === 0) {
+      window.location.href = "/";
+    }
+  }, [cart.length]);
+
+  const checkout = () => {
+    alert("Checkout not implemented");
+  };
 
   return (
     <div className="bookstore-container">
@@ -40,11 +52,12 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
           <div className="cart-items">
             {cart.map((book) => (
               <div key={book.id} className="cart-item">
-                <img src={book.coverImage} alt={book.title} className="cart-item-image" />
                 <div className="cart-item-details">
                   <h3 className="cart-item-title">{book.title}</h3>
                   <p className="cart-item-author">by {book.author}</p>
-                  <p className="cart-item-price">${book.price.toFixed(2)}</p>
+                  <p className="cart-item-price">
+                    ${Number(book.price).toFixed(2)}
+                  </p>
                   <button
                     className="cart-button cart-button-remove"
                     onClick={() => removeFromCart(book.id)}
@@ -52,16 +65,19 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
                     Remove
                   </button>
                 </div>
-              </div>
+              </div> 
             ))}
           </div>
           <div className="cart-summary">
             <h2>Order Summary</h2>
             <div className="cart-total">
               <span>Total:</span>
-              <span>${total.toFixed(2)}</span>
+              <span>${total}</span>
             </div>
-            <button className="cart-button cart-button-add checkout-button">
+            <button
+              className="cart-button cart-button-add checkout-button"
+              onClick={checkout}
+            >
               Proceed to Checkout
             </button>
           </div>
