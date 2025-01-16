@@ -1,25 +1,57 @@
 // CartPage.tsx
 import React, { useEffect } from "react";
 import { Link, HashRouter as Router } from "react-router-dom";
+import Book from "../types/Book";
 
-import "../styles/Cart.css"
-
-interface Book {
-  id: string;
-  title: string;
-  author: string;
-  price: number;
-  description: string;
-  coverImage?: string;
-}
+import "../styles/Cart.css";
 
 interface CartPageProps {
   cart: Book[];
   removeFromCart: (id: string) => void;
 }
 
+const api = {
+  baseUrl: "https://www.pontiggiaelia.altervista.org/be",
+
+  // Checkout
+  async checkout(cart: Book[]): Promise<void> {
+    try {
+      const requestBody = cart.map((book) => book.id);
+
+      const response = await fetch(`${this.baseUrl}/checkout.php`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (response.status === 200) {
+        alert("Checkout successful");
+      } else {
+        alert("Checkout failed");
+      }
+    } catch (error) {
+      alert("Checkout failed, error:" + error);
+    }
+  },
+};
+
 const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
   const total = cart.reduce((sum, book) => sum + book.price, 0);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      return "Are you sure you want to leave? Your cart will be lost.";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   useEffect(() => {
     if (cart.length === 0) {
@@ -28,7 +60,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
   }, [cart.length]);
 
   const checkout = () => {
-    alert("Checkout not implemented");
+    api.checkout(cart);
   };
 
   return (
@@ -65,7 +97,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
                     Remove
                   </button>
                 </div>
-              </div> 
+              </div>
             ))}
           </div>
           <div className="cart-summary">

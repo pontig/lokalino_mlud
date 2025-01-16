@@ -9,18 +9,6 @@ interface BookListProps {
   removeFromCart: (bookId: string) => void;
 }
 
-// Utility functions for cart storage
-const saveCartToStorage = (cart: Book[]) => {
-  localStorage.setItem('bookstore-cart', JSON.stringify(cart));
-};
-
-const loadCartFromStorage = (): Book[] => {
-  const savedCart = localStorage.getItem('bookstore-cart');
-  if (savedCart)
-    console.log(savedCart)
-  return savedCart ? JSON.parse(savedCart) as Book[] : [];
-};
-
 // API service for books
 const api = {
   // baseUrl: window.location.origin + '/be',
@@ -54,6 +42,18 @@ const api = {
       throw error;
     }
   }
+};
+
+// Utility functions for cart storage
+const saveCartToStorage = (cart: Book[]) => {
+  localStorage.setItem('bookstore-cart', JSON.stringify(cart));
+};
+
+const loadCartFromStorage = (): Book[] => {
+  const savedCart = localStorage.getItem('bookstore-cart');
+  if (savedCart)
+    console.log(savedCart)
+  return savedCart ? JSON.parse(savedCart) as Book[] : [];
 };
 
 const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
