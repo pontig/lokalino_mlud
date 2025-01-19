@@ -103,6 +103,16 @@
     color: #4a5568;
     margin-bottom: 1.5rem;
   }
+
+  .confirm-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .confirm-button {
+    border: none;
+  }
   
   @media (max-width: 768px) {
     .cart-content {

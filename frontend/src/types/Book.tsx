@@ -1,9 +1,8 @@
 interface Book {
-  id: string;
+  ISBN: string;
   title: string;
   author: string;
+  editor: string;
   price: number;
-  description: string;
-  coverImage?: string;
 }
 export default Book;

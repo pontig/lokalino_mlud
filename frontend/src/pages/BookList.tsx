@@ -67,7 +67,7 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
   // useEffect(() => {
   //   const savedCart = loadCartFromStorage();
   //   savedCart.forEach(book => {
-  //     if (!cart.some(item => item.id === book.id)) {
+  //     if (!cart.some(item => item.id === book.ISBN)) {
   //       addToCart(book);
   //     }
   //   });
@@ -99,6 +99,11 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
     }
   };
 
+  const addToCartAndClearSearch = (book: Book) => {
+    addToCart(book);
+    setSearchTerm("");
+  }
+
   // Filter books based on search term
   useEffect(() => {
     const filtered = books.filter(
@@ -110,7 +115,7 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
   }, [searchTerm, books]);
 
   const isInCart = (bookId: string) => {
-    return cart.some((book) => book.id === bookId);
+    return cart.some((book) => book.ISBN === bookId);
   };
 
   if (isLoading) {
@@ -171,31 +176,24 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
 
       <div className="books-grid">
         {filteredBooks.map((book) => (
-          <div key={book.id} className="book-card">
+          <div key={book.ISBN} className="book-card">
             <div className="book-content">
-              {book.coverImage && (
-                <img
-                  src={book.coverImage}
-                  alt={book.title}
-                  className="book-image"
-                />
-              )}
               <h3 className="book-title">{book.title}</h3>
               <p className="book-author">by {book.author}</p>
-              <p className="book-description">{book.description}</p>
+              <p className="book-description">QUI CI ANDRà LO STATO, PROBABILMENTE (o venduto da)</p>
               <div className="book-footer">
-                <span className="book-price">${Number(book.price).toFixed(2)}</span>
+                <span className="book-price">€{Number(book.price).toFixed(2)}</span>
                 <button
                   className={`cart-button ${
-                    isInCart(book.id) ? "cart-button-remove" : "cart-button-add"
+                    isInCart(book.ISBN) ? "cart-button-remove" : "cart-button-add"
                   }`}
                   onClick={() =>
-                    isInCart(book.id)
-                      ? removeFromCart(book.id)
-                      : addToCart(book)
+                    isInCart(book.ISBN)
+                      ? removeFromCart(book.ISBN)
+                      : addToCartAndClearSearch(book)
                   }
                 >
-                  {isInCart(book.id) ? "Remove from Cart" : "Add to Cart"}
+                  {isInCart(book.ISBN) ? "Remove from Cart" : "Add to Cart"}
                 </button>
               </div>
             </div>

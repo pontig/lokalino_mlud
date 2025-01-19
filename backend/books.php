@@ -2,101 +2,147 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
+
 echo '[
   {
-    "id": "1",
+    "ISBN": "978-0743273565",
     "title": "The Great Gatsby",
     "author": "F. Scott Fitzgerald",
-    "price": 9.99,
-    "description":
-      "A story of decadence and excess, Gatsby explores the darker aspects of the American Dream."
+    "editor": "Scribner",
+    "price": 9.99
   },
   {
-    "id": "2",
+    "ISBN": "978-0451524935",
     "title": "1984",
     "author": "George Orwell",
-    "price": 12.99,
-    "description":
-      "A dystopian social science fiction novel and cautionary tale about totalitarianism."
+    "editor": "Signet Classic",
+    "price": 12.99
   },
   {
-    "id": "3",
+    "ISBN": "978-1503290563",
     "title": "Pride and Prejudice",
     "author": "Jane Austen",
-    "price": 7.99,
-    "description":
-      "A romantic novel of manners. The story follows the main character Elizabeth Bennet."
+    "editor": "CreateSpace Independent Publishing Platform",
+    "price": 7.99
   },
   {
-    "id": "4",
+    "ISBN": "978-0060935467",
     "title": "To Kill a Mockingbird",
     "author": "Harper Lee",
-    "price": 11.99,
-    "description":
-      "A story that explores human behavior and the collective conscience of The Deep South."
+    "editor": "Harper Perennial Modern Classics",
+    "price": 11.99
   },
   {
-    "id": "5",
+    "ISBN": "978-0547928227",
     "title": "The Hobbit",
     "author": "J.R.R. Tolkien",
-    "price": 14.99,
-    "description":
-      "A fantasy novel about the adventures of hobbit Bilbo Baggins."
+    "editor": "Mariner Books",
+    "price": 14.99
   },
   {
-    "id": "6",
+    "ISBN": "978-0441172719",
     "title": "Dune",
     "author": "Frank Herbert",
-    "price": 13.99,
-    "description":
-      "A science fiction novel about the desert planet Arrakis and its native spice melange."
+    "editor": "Ace",
+    "price": 13.99
   },
   {
-    "id": "7",
+    "ISBN": "978-1503280786",
     "title": "Moby-Dick",
     "author": "Herman Melville",
-    "price": 10.99,
-    "description":
-      "A thrilling tale of obsession and revenge between Captain Ahab and the white whale."
+    "editor": "CreateSpace Independent Publishing Platform",
+    "price": 10.99
   },
   {
-    "id": "8",
+    "ISBN": "978-0060850524",
     "title": "Brave New World",
     "author": "Aldous Huxley",
-    "price": 9.49,
-    "description":
-      "A dystopian novel that explores a technologically advanced society with deep moral implications."
+    "editor": "Harper Perennial Modern Classics",
+    "price": 9.49
   },
   {
-    "id": "9",
+    "ISBN": "978-0316769488",
     "title": "The Catcher in the Rye",
     "author": "J.D. Salinger",
-    "price": 8.99,
-    "description":
-      "A story about teenage angst and rebellion, told through the eyes of Holden Caulfield."
+    "editor": "Little, Brown and Company",
+    "price": 8.99
   },
   {
-    "id": "10",
+    "ISBN": "978-0141441146",
     "title": "Jane Eyre",
     "author": "Charlotte Brontë",
-    "price": 11.49,
-    "description":
-      "A Gothic novel about the life and struggles of the orphaned protagonist, Jane Eyre."
+    "editor": "Penguin Classics",
+    "price": 11.49
   },
   {
-    "id": "11",
+    "ISBN": "978-0062315007",
     "title": "The Alchemist",
     "author": "Paulo Coelho",
-    "price": 9.99,
-    "description":
-      "An inspiring story about a shepherd\'s journey to pursue his personal legend."
+    "editor": "HarperOne",
+    "price": 9.99
   },
   {
-    "id": "12",
+    "ISBN": "978-1400079988",
     "title": "War and Peace",
     "author": "Leo Tolstoy",
-    "price": 19.99,
-    "description":
-      "An epic novel that intertwines the lives of multiple families during the Napoleonic Wars."
+    "editor": "Vintage",
+    "price": 19.99
+  },
+  {
+    "ISBN": "978-0439554930",
+    "title": "Harry Potter and the Sorcerer\'s Stone",
+    "author": "J.K. Rowling",
+    "editor": "Scholastic",
+    "price": 10.99
+  },
+  {
+    "ISBN": "978-0143131847",
+    "title": "Frankenstein",
+    "author": "Mary Shelley",
+    "editor": "Penguin Classics",
+    "price": 8.99
+  },
+  {
+    "ISBN": "978-0140449266",
+    "title": "Crime and Punishment",
+    "author": "Fyodor Dostoevsky",
+    "editor": "Penguin Classics",
+    "price": 11.99
+  },
+  {
+    "ISBN": "978-0140447934",
+    "title": "The Brothers Karamazov",
+    "author": "Fyodor Dostoevsky",
+    "editor": "Penguin Classics",
+    "price": 14.99
+  },
+  {
+    "ISBN": "978-0553213119",
+    "title": "Dracula",
+    "author": "Bram Stoker",
+    "editor": "Bantam Classics",
+    "price": 7.99
+  },
+  {
+    "ISBN": "978-0451532084",
+    "title": "Les Misérables",
+    "author": "Victor Hugo",
+    "editor": "Signet",
+    "price": 13.99
+  },
+  {
+    "ISBN": "978-0142437230",
+    "title": "Wuthering Heights",
+    "author": "Emily Brontë",
+    "editor": "Penguin Classics",
+    "price": 10.49
+  },
+  {
+    "ISBN": "978-0062565976",
+    "title": "Sapiens: A Brief History of Humankind",
+    "author": "Yuval Noah Harari",
+    "editor": "Harper Perennial",
+    "price": 14.99
   }
-]';
+]
+';
