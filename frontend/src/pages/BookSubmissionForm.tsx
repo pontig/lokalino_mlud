@@ -3,15 +3,8 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import { Link } from "react-router-dom";
 
 import "../styles/SubmissionForm.css";
-
-interface BookEntry {
-  isbn: string;
-  title: string;
-  author: string;
-  editor: string;
-  price: string;
-  condition: "good" | "average" | "bad";
-}
+import BookEntry from "../types/BookEntry";
+import Book from "../types/Book";
 
 interface PersonalInfo {
   name: string;
@@ -21,19 +14,11 @@ interface PersonalInfo {
   phone: string;
 }
 
-interface ISBNLookupResult {
-  ISBN: string;
-  title: string;
-  author: string;
-  editor: string;
-  price: string;
-}
-
 interface ISBNLookupFieldProps {
   value: string;
   onChange: (value: string) => void;
-  results: ISBNLookupResult[];
-  onSelect: (result: ISBNLookupResult) => void;
+  results: Book[];
+  onSelect: (result: Book) => void;
   isSearching: boolean;
 }
 
@@ -44,15 +29,20 @@ const ISBNLookupField: React.FC<ISBNLookupFieldProps> = ({
   onSelect,
   isSearching,
 }) => {
-  console.log(results.length)
   return (
     <div className="relative w-full">
       <input
         type="text"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          const newValue = e.target.value;
+          if (/^\d*$/.test(newValue)) {
+            onChange(newValue);
+          }
+        }}
         className="w-full p-2 border rounded"
-        placeholder="Enter ISBN..."
+        placeholder="no spaces or dashes"
+        required
       />
 
       {isSearching && (
@@ -62,18 +52,17 @@ const ISBNLookupField: React.FC<ISBNLookupFieldProps> = ({
       )}
 
       {results.length > 0 && (
-        // {console.log(results.length)}
-        <div className="absolute z-10 w-full mt-1 bg-white border rounded shadow-lg">
-          <div className="max-h-48 overflow-y-auto">
+        <div>
+          <div className="isbn-results">
             {results.map((result) => (
               <button
                 key={result.ISBN}
                 onClick={() => onSelect(result)}
-                className="w-full p-2 text-left hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                className="isbn-result-item"
               >
-                <div className="font-medium">{result.title}</div>
+                <div className="font-medium">{result.Title}</div>
                 <div className="text-sm text-gray-600">
-                  by {result.author} • {result.editor}
+                  by {result.Author} • {result.Editor}
                 </div>
               </button>
             ))}
@@ -92,21 +81,82 @@ const BookSubmissionForm: React.FC = () => {
     email: "",
     phone: "",
   });
-
   const [books, setBooks] = useState<BookEntry[]>([
     {
-      isbn: "",
-      title: "",
-      author: "",
-      editor: "",
-      price: "",
-      condition: "good",
+      ISBN: "",
+      Title: "",
+      Author: "",
+      Editor: "",
+      Price_new: 0.0,
+      Dec_conditions: "good",
     },
   ]);
-
-  const [isbnResults, setIsbnResults] = useState<ISBNLookupResult[]>([]);
+  const [isbnResults, setIsbnResults] = useState<Book[]>([]);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [activeISBNIndex, setActiveISBNIndex] = useState<number | null>(null);
+
+  const api = {
+    baseUrl: "https://pontiggiaelia.altervista.org/be",
+
+    // Search for a book by ISBN
+    async searchISBN(isbn: string, index: number): Promise<void> {
+      if (isbn.length < 2) {
+        setIsbnResults([]);
+        return;
+      }
+
+      setActiveISBNIndex(index);
+      setIsSearching(true);
+
+      try {
+        const response = await fetch(`${this.baseUrl}/getExistingBooks.php?ISBN=${isbn}`);
+        const data: Book[] = await response.json();
+        setIsbnResults(data);
+      } catch (error) {
+        console.error("Error searching ISBN:", error);
+        setIsbnResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    },
+
+    async submitForm(
+      personalInfo: PersonalInfo,
+      books: BookEntry[]
+    ): Promise<void> {
+      try {
+        const requestBody = {
+          personalInfo,
+          books,
+        };
+
+        const response = await fetch(`${this.baseUrl}/submitBooks.php`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        if (response.status === 200) {
+          // Clear form
+          setPersonalInfo({
+            name: "",
+            surname: "",
+            school: "",
+            email: "",
+            phone: "",
+          });
+          setBooks([]);
+          
+        }
+        const pm = new URLSearchParams({name : personalInfo.name + " " + personalInfo.surname});
+        window.location.href = "/#/thank-you?" + pm.toString();
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    },
+  };
 
   const handlePersonalInfoChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setPersonalInfo({
@@ -115,39 +165,15 @@ const BookSubmissionForm: React.FC = () => {
     });
   };
 
-  const searchISBN = async (isbn: string, index: number): Promise<void> => {
-    if (isbn.length < 2) {
-      setIsbnResults([]);
-      return;
-    }
-
-    setActiveISBNIndex(index);
-    setIsSearching(true);
-
-    try {
-      const response = await fetch(
-        `https://pontiggiaelia.altervista.org/be/books.php`
-      );
-      const data: ISBNLookupResult[] = await response.json();
-      setIsbnResults(data);
-    } catch (error) {
-      console.error("Error searching ISBN:", error);
-      setIsbnResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  };
-
-  const handleBookSelect = (result: ISBNLookupResult, index: number): void => {
+  const handleBookSelect = (result: Book, index: number): void => {
     const newBooks = [...books];
     newBooks[index] = {
       ...newBooks[index],
-      isbn: result.ISBN,
-      title: result.title,
-      author: result.author,
-      editor: result.editor,
-      price: result.price,
-      
+      ISBN: result.ISBN,
+      Title: result.Title,
+      Author: result.Author,
+      Editor: result.Editor,
+      Price_new: result.Price_new,
     };
     setBooks(newBooks);
     setIsbnResults([]);
@@ -158,12 +184,12 @@ const BookSubmissionForm: React.FC = () => {
     setBooks([
       ...books,
       {
-        isbn: "",
-        title: "",
-        author: "",
-        editor: "",
-        price: "",
-        condition: "good",
+        ISBN: "",
+        Title: "",
+        Author: "",
+        Editor: "",
+        Price_new: 0.0,
+        Dec_conditions: "good",
       },
     ]);
   };
@@ -177,6 +203,7 @@ const BookSubmissionForm: React.FC = () => {
   const handleSubmit = (e: FormEvent): void => {
     e.preventDefault();
     console.log({ personalInfo, books });
+    api.submitForm(personalInfo, books);
   };
 
   return (
@@ -232,12 +259,12 @@ const BookSubmissionForm: React.FC = () => {
                 <div className="form-field">
                   <label className="form-field isbn-field">ISBN</label>
                   <ISBNLookupField
-                    value={book.isbn}
+                    value={book.ISBN}
                     onChange={(value: string) => {
                       const newBooks = [...books];
-                      newBooks[index].isbn = value;
+                      newBooks[index].ISBN = value;
                       setBooks(newBooks);
-                      searchISBN(value, index);
+                      api.searchISBN(value, index);
                     }}
                     results={activeISBNIndex === index ? isbnResults : []}
                     onSelect={(result) => handleBookSelect(result, index)}
@@ -249,10 +276,10 @@ const BookSubmissionForm: React.FC = () => {
                   <label>Title</label>
                   <input
                     type="text"
-                    value={book.title}
+                    value={book.Title}
                     onChange={(e) => {
                       const newBooks = [...books];
-                      newBooks[index].title = e.target.value;
+                      newBooks[index].Title = e.target.value;
                       setBooks(newBooks);
                     }}
                     // className="w-full p-2 border rounded"
@@ -264,10 +291,10 @@ const BookSubmissionForm: React.FC = () => {
                   <label>Author</label>
                   <input
                     type="text"
-                    value={book.author}
+                    value={book.Author}
                     onChange={(e) => {
                       const newBooks = [...books];
-                      newBooks[index].author = e.target.value;
+                      newBooks[index].Author = e.target.value;
                       setBooks(newBooks);
                     }}
                     // className="w-full p-2 border rounded"
@@ -279,10 +306,10 @@ const BookSubmissionForm: React.FC = () => {
                   <label>Editor</label>
                   <input
                     type="text"
-                    value={book.editor}
+                    value={book.Editor}
                     onChange={(e) => {
                       const newBooks = [...books];
-                      newBooks[index].editor = e.target.value;
+                      newBooks[index].Editor = e.target.value;
                       setBooks(newBooks);
                     }}
                     // className="w-full p-2 border rounded"
@@ -294,10 +321,10 @@ const BookSubmissionForm: React.FC = () => {
                   <label>Price</label>
                   <input
                     type="number"
-                    value={book.price}
+                    value={book.Price_new}
                     onChange={(e) => {
                       const newBooks = [...books];
-                      newBooks[index].price = e.target.value;
+                      newBooks[index].Price_new = Number(e.target.value);
                       setBooks(newBooks);
                     }}
                     // className="w-full p-2 border rounded"
@@ -309,11 +336,11 @@ const BookSubmissionForm: React.FC = () => {
                 <div className="form-field">
                   <label>Condition</label>
                   <select
-                    value={book.condition}
+                    value={book.Dec_conditions}
                     onChange={(e) => {
                       const newBooks = [...books];
-                      newBooks[index].condition = e.target
-                        .value as BookEntry["condition"];
+                      newBooks[index].Dec_conditions = e.target
+                        .value as BookEntry["Dec_conditions"];
                       setBooks(newBooks);
                     }}
                     // className="w-full p-2 border rounded"
@@ -333,7 +360,7 @@ const BookSubmissionForm: React.FC = () => {
           </button>
         </div>
 
-        <button type="submit" className="submit-button">
+        <button type="submit" className="submit-button" onClick={handleSubmit}>
           Submit Form
         </button>
       </form>

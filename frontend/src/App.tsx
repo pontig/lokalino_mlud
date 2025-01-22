@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { HashRouter as Router, Link, Route, Routes } from "react-router-dom";
+import React, { useState } from "react";
+import { HashRouter as Router, Route, Routes } from "react-router-dom";
 
 import "./styles/BookStore.css";
 import CartPage from "./pages/CartPage";
 import BookList from "./pages/BookList";
-import Book from "./types/Book";
 import BookSubmissionForm from "./pages/BookSubmissionForm";
+import AvailableBook from "./types/AvailableBook";
+import ThankYouPage from "./pages/ThankYou";
 
 const App = () => {
-  const [cart, setCart] = useState<Book[]>([]);
+  const [cart, setCart] = useState<AvailableBook[]>([]);
 
-  const removeFromCart = (bookId: string) => {
-    setCart((prev) => prev.filter((book) => book.ISBN !== bookId));
+  const removeFromCart = (bookId: number) => {
+    setCart((prev) => prev.filter((book) => book.PB_Id !== bookId));
   };
 
-  const addToCart = (book: Book) => {
+  const addToCart = (book: AvailableBook) => {
     setCart((prev) => [...prev, book]);
   };
 
@@ -23,16 +24,20 @@ const App = () => {
       <Routes>
         <Route
           path="/sell"
-          element={<BookList cart={cart} removeFromCart={removeFromCart} addToCart={addToCart} />}
+          element={
+            <BookList
+              cart={cart}
+              removeFromCart={removeFromCart}
+              addToCart={addToCart}
+            />
+          }
         />
-        <Route
-          path="/"
-          element={<BookSubmissionForm />}
-        />
+        <Route path="/" element={<BookSubmissionForm />} />
         <Route
           path="/cart"
           element={<CartPage cart={cart} removeFromCart={removeFromCart} />}
         />
+        <Route path="/thank-you" element={<ThankYouPage />} />
       </Routes>
     </Router>
   );

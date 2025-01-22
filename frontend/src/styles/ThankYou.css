@@ -1,0 +1,10 @@
+html {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+p, h1 {
+    text-align: center;
+}
