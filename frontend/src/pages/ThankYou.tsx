@@ -9,9 +9,9 @@ const ThankYouPage: React.FC = () => {
   const name = searchParams.get("name");
 
   return (
-    <div>
-      <h1>Thank You, {name}!</h1>
-      <p>Your books have been successfully submitted.</p>
+    <div className="thank-you">
+      <h1 className="ty-h1">Thank You, {name}!</h1>
+      <p className="ty-p">Your books have been successfully submitted.</p>
     </div>
   );
 };

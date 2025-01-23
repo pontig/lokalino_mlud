@@ -1,0 +1,89 @@
+\documentclass[a4paper, 11pt, oneside, openright, english]{book}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{blindtext}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{titlesec}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{longtable}
+\usepackage{seqsplit}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage[T1]{fontenc}  % Use T1 font encoding
+\usepackage{beramono}
+
+% Define JavaScript language style
+\lstdefinelanguage{JavaScript}{
+    keywords={const, let, var, if, else, for, while, function},
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{ForestGreen},
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]",
+    morestring=[b]'
+}
+
+% Define SQL language style
+\lstdefinelanguage{SQL}{
+    keywords={SELECT, FROM, WHERE, INSERT, INTO, VALUES, UPDATE, SET, DELETE, CREATE, TABLE, PRIMARY, KEY, REFERENCES, FOREIGN, ON, CASCADE, CONSTRAINT, CHECK, UNIQUE, NOT, NULL, AUTO_INCREMENT, ALTER, ADD, DROP, INDEX, DESC, ASC, LIMIT, OFFSET, JOIN, INNER, LEFT, RIGHT, OUTER, UNION, ALL, GROUP, BY, HAVING, ORDER, BY, AVG, SUM, COUNT, MAX, MIN, AS, OR, AND, IN, LIKE, BETWEEN, IS, NULL, TRUE, FALSE},
+    keywordstyle=\color{orange},
+    commentstyle=\color{BlueViolet},
+    stringstyle=\color{ForestGreen},
+    morecomment=[l]{--},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]",
+    morestring=[b]'
+}
+
+% Set general listings style
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    showstringspaces=false,
+    tabsize=2,
+    breaklines=true
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[LE,RO]{\slshape \rightmark}
+\fancyhead[LO,RE]{\slshape \leftmark}
+\fancyfoot[C]{\thepage}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}
+
+\setlength{\headheight}{13.59999pt}
+\addtolength{\topmargin}{-1.59999pt}
+
+\titleformat{\chapter}[block]{\normalfont\huge\bfseries}{\thechapter.}{1em}{\Huge}
+
+\begin{document}
+\input title
+\input revision_history
+\tableofcontents
+
+\include{chapters/01_introduction}
+\include{chapters/02_requirements}
+\include{chapters/03_design}
+\include{chapters/04_implementation}
+
+\newpage
+\appendix
+\chapter{Appendix}
+\section{Database Creation Script}
+\lstset{language=SQL, breaklines=true, basicstyle=\ttfamily\small, frame=single, caption={Database Creation Script}}
+\lstinputlisting{assets/database.sql}
+
+
+\end{document}

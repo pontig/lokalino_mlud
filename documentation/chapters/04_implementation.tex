@@ -1,0 +1,49 @@
+\chapter{Implementation}
+
+All the code is open source under the \href{https://www.apache.org/licenses/LICENSE-2.0}{Apache 2.0 license} and can be found on GitHub at
+
+\begin{center}    
+    \url{https://github.com/pontig/lokalino_mlud}.
+\end{center}
+
+\section{Adopted development framework}
+
+\subsection*{Backend}
+
+The backend is implemented in \textbf{php}, since it is the language that the author is most familiar with and it is the only backend supported by Altervista (the free hosting service used for the project).
+
+\subsection*{Frontend}
+
+The frontend is implemented in \textbf{React}. React is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies. React can be used as a base in the development of single-page or mobile applications, since it is capable of handling the view layer for web and mobile apps. React was chosen because it is a modern and widely used library that allows for the creation of a dynamic and responsive user interface.
+
+\section{Structure of the souece code}
+The source code is structured in a way that separates the frontend from the backend, both organized in an intuitive way and easy to scale and maintain.
+
+The full structure of the source code is as follows:
+\begin{itemize}[label={}]
+    \item \texttt{backend/} - contains the backend code
+          \begin{itemize}[label={}]
+              \item \texttt{dao/} - contains the data access objects, one for the books and one for the PR. it also contains the database connection
+              \item \texttt{utils/} - contains the utility functions, such as the session management and the secret passwords of the OPs
+              \item \texttt{*.php} - the servlets that handle the requests from the frontend
+          \end{itemize}
+    \item \texttt{frontend/} - contains the React application
+          \begin{itemize}[label={}]
+              \item \texttt{build/} - contains the compiled code (not included in the repository)
+              \item \texttt{public/} - contains the static files, such as the index.html and the icons
+              \item \texttt{src/} - contains the source code
+                    \begin{itemize}[label={}]
+                        \item \texttt{pages/} - contains the pages of the application
+                        \item \texttt{styles/} - contains the stylesheets
+                        \item \texttt{types/} - contains the typescript interfaces
+                        \item \texttt{App.js} - the main component of the application
+                        \item \texttt{index.js} - the entry point of the application
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
+
+\section{Test plan}
+
+The testing of the application will be done once the development is complete. The testing will be done manually, by the OPs, simulating a real user experience.
+
+All this process will be supervised by the author of the project.
