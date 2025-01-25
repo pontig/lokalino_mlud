@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Book from "../types/Book";
 import axios from "axios"; // Make sure to install axios: npm install axios
 import AvailableBook from "../types/AvailableBook";
@@ -66,6 +66,7 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   // // Load cart from localStorage on initial render
   // useEffect(() => {
@@ -155,6 +156,9 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
   return (
     <div className="bookstore-container">
       <div className="search-container">
+      <Link to="/" className="back-button">
+          ← Back to Main
+        </Link>
         <input
           type="text"
           placeholder="Search books..."

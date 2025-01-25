@@ -209,9 +209,6 @@ const BookSubmissionForm: React.FC = () => {
   return (
     <div className="form-container">
       <div className="form-header">
-        <Link to="/" className="back-button">
-          ← Back to Books
-        </Link>
         <h1 className="form-title">Submit Books</h1>
       </div>
       <form onSubmit={handleSubmit} className="submission-form">

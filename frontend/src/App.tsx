@@ -7,6 +7,8 @@ import BookList from "./pages/BookList";
 import BookSubmissionForm from "./pages/BookSubmissionForm";
 import AvailableBook from "./types/AvailableBook";
 import ThankYouPage from "./pages/ThankYou";
+import BackOffice from "./pages/BackOffice";
+import InsertBooks from "./pages/InsertBooks";
 
 const App = () => {
   const [cart, setCart] = useState<AvailableBook[]>([]);
@@ -22,6 +24,7 @@ const App = () => {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<BackOffice />} />
         <Route
           path="/sell"
           element={
@@ -32,7 +35,8 @@ const App = () => {
             />
           }
         />
-        <Route path="/" element={<BookSubmissionForm />} />
+        <Route path="/insertBooks" element={<InsertBooks />} />
+        <Route path="/bookSubmission" element={<BookSubmissionForm />} />
         <Route
           path="/cart"
           element={<CartPage cart={cart} removeFromCart={removeFromCart} />}
