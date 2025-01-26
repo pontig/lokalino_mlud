@@ -61,7 +61,7 @@ A PR submits its books to the system, and gives its personal information.\\
         },
         ...
     ],
-    "Mail_list": Boolean // TODO: actually add it into the database and the form
+    "Mail_list": Boolean
 }
 \end{lstlisting}
 \textbf{Response} : \texttt{200} if the submission is successful, \texttt{400} if the request is malformed.
@@ -141,27 +141,20 @@ The system returns the list of PRs, to handle the delivery of the books and the 
 \begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
 [
     {
-        "ISBN": String,
-        "Title": String,
-        "Author": String,
-        "Editor": String,
-        "Price_new": Number,
+        "Provider_Id": Number,
         "Name": String,
         "Surname": String,
-        "PB_Id": Number,
-        "Provider_Id": Number,
-        "Dec_conditions": String,
-        "Comments"? : String,
-        "Consign_date"?: String,
-        "Sold_date"?: String,
-        "Liquidation_date"?: String,
-        "Phone_no": String,
-        "Email": String,
-        "School": String
+        "State": String
     },
     ...
 ]
 \end{lstlisting}
+The possible states are:
+\begin{itemize}
+    \item \texttt{0} - waiting for delivery
+    \item \texttt{1} - waiting for liquidation
+    \item \texttt{2} - liquidated
+\end{itemize}
 
 \subsection{Deliver Books}
 A PR delivers the books to the OP.\\
@@ -225,7 +218,7 @@ All the webapp will be entirely deployed on the free hosting service \href{www.a
 
 \section{UX design}
 
-The webapp will be designed with a simple and intuitive interface, with a clean and modern look. 
+The webapp will be designed with a simple and intuitive interface, with a clean and modern look.
 
 The UX is explained at an high level in the flow diagrams in Figures \ref{fig:flow_book_submission} and \ref{fig:flow_op}.
 

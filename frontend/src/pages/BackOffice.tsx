@@ -20,9 +20,11 @@ const getFontColor = (rgb: string) => {
 
 const options = [
     { choice: "Insert book in the system", url: "/insertBooks" },
-    { choice: "Pick up books", url: "/pickUp" },
     { choice: "Sell books", url: "/sell" },
-    { choice: "Liquidate a seller", url: "/liquidate" }
+    { choice: "Pick up books (WIP)", url: "/pickUp" },
+    { choice: "Liquidate a seller (WIP)", url: "/liquidate" },
+    { choice: "Provider: insert books", url: "/bookSubmission" },
+    { choice: "admin: insert books as cool kids (WIP)", url: "/admin" },
 ];
 
 const BackOffice: React.FC = () => {

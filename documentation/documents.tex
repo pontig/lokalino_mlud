@@ -78,12 +78,27 @@
 \include{chapters/03_design}
 \include{chapters/04_implementation}
 
-\newpage
 \appendix
-\chapter{Appendix}
-\section{Database Creation Script}
+\newpage
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}
+    \Huge\textbf{Appendix}
+\end{center}
+\vspace*{\fill}
+\newpage
+
+\chapter{Database Creation Script}
 \lstset{language=SQL, breaklines=true, basicstyle=\ttfamily\small, frame=single, caption={Database Creation Script}}
 \lstinputlisting{assets/database.sql}
+
+\chapter{Changelog}
+\section{Version 1.0 to 1.1}
+\begin{itemize}
+    \item Added changelog
+    \item Typo fixes
+    \item Correction of the API endpoint \textit{Get PRs}
+\end{itemize}
 
 
 \end{document}

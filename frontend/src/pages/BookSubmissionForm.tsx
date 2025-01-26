@@ -12,6 +12,7 @@ interface PersonalInfo {
   school: string;
   email: string;
   phone: string;
+  mailingList: boolean;
 }
 
 interface ISBNLookupFieldProps {
@@ -80,6 +81,7 @@ const BookSubmissionForm: React.FC = () => {
     school: "",
     email: "",
     phone: "",
+    mailingList: false,
   });
   const [books, setBooks] = useState<BookEntry[]>([
     {
@@ -146,6 +148,7 @@ const BookSubmissionForm: React.FC = () => {
             school: "",
             email: "",
             phone: "",
+            mailingList: false,
           });
           setBooks([]);
           
@@ -202,6 +205,15 @@ const BookSubmissionForm: React.FC = () => {
 
   const handleSubmit = (e: FormEvent): void => {
     e.preventDefault();
+    const allFieldsFilled = Object.values(personalInfo).every((value) => value !== "") &&
+    books.every((book) =>
+      Object.values(book).every((value) => value !== "" && value !== 0)
+    );
+
+  if (!allFieldsFilled) {
+    alert("Please fill in all required fields.");
+    return;
+  }
     console.log({ personalInfo, books });
     api.submitForm(personalInfo, books);
   };
@@ -217,19 +229,21 @@ const BookSubmissionForm: React.FC = () => {
           <h2>Personal Information</h2>
           <div className="form-grid">
             {Object.entries(personalInfo).map(([key, value]) => (
-              <div key={key} className="form-field">
-                <label className="block text-sm font-medium mb-1">
-                  {key.charAt(0).toUpperCase() + key.slice(1)}
-                </label>
-                <input
-                  type={key === "email" ? "email" : "text"}
-                  name={key}
-                  value={value}
-                  onChange={handlePersonalInfoChange}
-                  // className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
+              key !== "mailingList" && (
+                <div key={key} className="form-field">
+                  <label className="block text-sm font-medium mb-1">
+                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                  </label>
+                  <input
+                    type={key === "email" ? "email" : "text"}
+                    name={key}
+                    value={value}
+                    onChange={handlePersonalInfoChange}
+                    // className="w-full p-2 border rounded"
+                    required
+                  />
+                </div>
+              )
             ))}
           </div>
         </div>
@@ -357,6 +371,20 @@ const BookSubmissionForm: React.FC = () => {
           </button>
         </div>
 
+        {/* Accept Terms + subscribe to newsletter (two flags) */}
+        <div className="form-field">
+          <label>
+            <input type="checkbox" required />
+            I accept the terms and conditions
+          </label>
+        </div>
+        <div className="form-field">
+          <label>
+            <input type="checkbox" onChange={(e) => setPersonalInfo({ ...personalInfo, mailingList: e.target.checked })} />
+            Subscribe to newsletter
+          </label>
+        </div>
+      
         <button type="submit" className="submit-button" onClick={handleSubmit}>
           Submit Form
         </button>
