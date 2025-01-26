@@ -82,7 +82,9 @@ const ISBNLookupField: React.FC<ISBNLookupFieldProps> = ({
 
 const PickUp: React.FC = () => {
   const [providers, setProviders] = useState<Provider[]>([]);
-  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(
+    null
+  );
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     name: "",
     surname: "",
@@ -108,8 +110,10 @@ const PickUp: React.FC = () => {
 
     async getProviders(): Promise<Provider[]> {
       const response = await fetch(`${this.baseUrl}/getProviders.php`);
-      if (!response.ok) throw new Error('Failed to fetch providers');
-      return response.json();
+      if (!response.ok) throw new Error("Failed to fetch providers");
+      const data = await response.json();
+      const res = data.filter((provider: any) => provider.State === "0");
+      return res;
     },
 
     // Search for a book by ISBN
@@ -141,8 +145,9 @@ const PickUp: React.FC = () => {
       books: BookEntry_commented[]
     ): Promise<void> {
       // TODO
-    },
 
+      setSelectedProvider(null);
+    },
 
     async getBooksByProvider(providerId: number): Promise<{
       personalInfo: PersonalInfo;
@@ -151,23 +156,24 @@ const PickUp: React.FC = () => {
       const response = await fetch(
         `${this.baseUrl}/getBooksByProvider.php?Provider_Id=${providerId}`
       );
-      if (!response.ok) throw new Error('Failed to fetch provider books');
+      if (!response.ok) throw new Error("Failed to fetch provider books");
       const data = await response.json();
-      
+
       return {
         personalInfo: {
-          name: data.provider.Name || "",
-          surname: data.provider.Surname || "",
+          name: data.provider[0].Name || "",
+          surname: data.provider[0].Surname || "",
         },
-        books: data.books.map((book: BookEntry_commented) => ({
-          ISBN: book.ISBN || "",
-          Title: book.Title || "",
-          Author: book.Author || "",
-          Editor: book.Editor || "",
-          Price_new: book.Price_new || 0.0,
-          Dec_conditions: book.Dec_conditions || "good",
-          Comment: book.Comment || "",
-        })) || [],
+        books:
+          data.books.map((book: BookEntry_commented) => ({
+            ISBN: book.ISBN || "",
+            Title: book.Title || "",
+            Author: book.Author || "",
+            Editor: book.Editor || "",
+            Price_new: book.Price_new || 0.0,
+            Dec_conditions: book.Dec_conditions || "good",
+            Comment: book.Comment || "",
+          })) || [],
       };
     },
 
@@ -236,14 +242,14 @@ const PickUp: React.FC = () => {
 
   if (!selectedProvider) {
     return (
-      <div className="providers-list">
+      <div className="bokstore-container">
         <h1 className="text-2xl font-bold mb-4">Select a Provider</h1>
         <div className="grid gap-4">
           {providers.map((provider) => (
             <button
               key={provider.Provider_Id}
               onClick={() => handleProviderSelect(provider)}
-              className="p-4 border rounded hover:bg-gray-100 text-left"
+              className="choice"
             >
               {provider.Name} {provider.Surname}
             </button>
@@ -252,36 +258,6 @@ const PickUp: React.FC = () => {
       </div>
     );
   }
-
-  // Fetch initial data on component mount
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setIsLoading(true);
-  //     try {
-  //       const { personalInfo: initialPersonalInfo, books: initialBooks } =
-  //         await api.fetchInitialFormData();
-
-  //       // Only update if data is not empty
-  //       if (initialBooks.length > 0) {
-  //         setPersonalInfo(initialPersonalInfo);
-  //         setBooks(initialBooks);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error in initial data fetch:", error);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-
-  const handlePersonalInfoChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setPersonalInfo({
-      ...personalInfo,
-      [e.target.name]: e.target.value,
-    });
-  };
 
   const handleBookSelect = (result: Book, index: number): void => {
     const newBooks = [...books];
@@ -321,17 +297,39 @@ const PickUp: React.FC = () => {
 
   const handleSubmit = (e: FormEvent): void => {
     e.preventDefault();
-    const allFieldsFilled =
-      Object.values(personalInfo).every((value) => value !== "") &&
-      books.every((book) =>
-        Object.values(book).every((value) => value !== "" && value !== 0)
-      );
+    const missingFields: string[] = [];
 
-    if (!allFieldsFilled) {
-      alert("Please fill in all required fields.");
+    if (personalInfo.name === "") {
+      missingFields.push("Personal Info: name");
+    }
+    if (personalInfo.surname === "") {
+      missingFields.push("Personal Info: surname");
+    }
+
+    books.forEach((book, index) => {
+      if (book.ISBN === "") {
+        missingFields.push(`Book ${index + 1}: ISBN`);
+      }
+      if (book.Title === "") {
+        missingFields.push(`Book ${index + 1}: Title`);
+      }
+      if (book.Author === "") {
+        missingFields.push(`Book ${index + 1}: Author`);
+      }
+      if (book.Editor === "") {
+        missingFields.push(`Book ${index + 1}: Editor`);
+      }
+      if (book.Price_new === 0) {
+        missingFields.push(`Book ${index + 1}: Price`);
+      }
+    });
+
+    console.log({ personalInfo, books });
+    if (missingFields.length > 0) {
+      alert(`Please fill in all required fields:\n${missingFields.join("\n")}`);
       return;
     }
-    console.log({ personalInfo, books });
+
     api.submitForm(personalInfo, books);
   };
 
@@ -342,8 +340,12 @@ const PickUp: React.FC = () => {
   return (
     <div className="form-container">
       <div className="form-header">
-        <h1 className="form-title">Check all is good</h1>
+        <span className="back-link" onClick={() => setSelectedProvider(null)}>
+          ← Back to Books
+        </span>
+        <h1 className="form-title">Check all is good for {selectedProvider.Name} {selectedProvider.Surname}</h1>
       </div>
+
       <form onSubmit={handleSubmit} className="submission-form">
         {/* Books Section */}
         <div className="books-section">
@@ -463,14 +465,14 @@ const PickUp: React.FC = () => {
                 <div className="form-field" style={{ gridColumn: "span 2" }}>
                   <label>Add a comment if needed</label>
                   <input
-                  type="text"
-                  value={book.Comment}
-                  onChange={(e) => {
-                    const newBooks = [...books];
-                    newBooks[index].Comment = e.target.value;
-                    setBooks(newBooks);
-                  }}
-                  // className="w-full p-2 border rounded"
+                    type="text"
+                    value={book.Comment}
+                    onChange={(e) => {
+                      const newBooks = [...books];
+                      newBooks[index].Comment = e.target.value;
+                      setBooks(newBooks);
+                    }}
+                    // className="w-full p-2 border rounded"
                   />
                 </div>
               </div>

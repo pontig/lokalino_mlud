@@ -166,18 +166,27 @@ The system returns the books submitted by a PR.\\
 \end{itemize}
 \textbf{Response} :
 \begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
-[
-    {
-        "PB_Id": Number,
-        "ISBN": String,
-        "Title": String,
-        "Author": String,
-        "Editor": String,
-        "Price_new": Number,
-        "Dec_conditions": String
-    },
-    ...
-]
+{
+    "books": [
+        {
+            "PB_Id": Number,
+            "ISBN": String,
+            "Title": String,
+            "Author": String,
+            "Editor": String,
+            "Price_new": Number,
+            "Dec_conditions": String
+        },
+        ...
+    ],
+    "provider": [
+        {
+            "Name": String,
+            "Surname": String
+        }
+    ]
+}
+\end{lstlisting}
 
 \subsection{Deliver Books}
 A PR delivers the books to the OP.\\
