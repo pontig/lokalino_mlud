@@ -156,6 +156,29 @@ The possible states are:
     \item \texttt{2} - liquidated
 \end{itemize}
 
+\subsection{Get Books submitted by a PR}
+The system returns the books submitted by a PR.\\
+\textbf{Method} : GET \\
+\textbf{EndPoint} : /getBooksByProvider.php \\
+\textbf{URL parameters} :
+\begin{itemize}
+    \item \texttt{Provider\_Id}: Number
+\end{itemize}
+\textbf{Response} :
+\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+[
+    {
+        "PB_Id": Number,
+        "ISBN": String,
+        "Title": String,
+        "Author": String,
+        "Editor": String,
+        "Price_new": Number,
+        "Dec_conditions": String
+    },
+    ...
+]
+
 \subsection{Deliver Books}
 A PR delivers the books to the OP.\\
 \textbf{Method} : POST \\
@@ -165,6 +188,11 @@ A PR delivers the books to the OP.\\
 [
     {
         "PB_Id": Number,
+        "ISBN": String,
+        "Author": String,
+        "Editor": String,
+        "Price_new": Number,
+        "Dec_conditions": String,
         "Comments"?: String
     },
     ...
