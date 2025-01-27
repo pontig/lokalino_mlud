@@ -111,7 +111,9 @@ const BookSubmissionForm: React.FC = () => {
       setIsSearching(true);
 
       try {
-        const response = await fetch(`${this.baseUrl}/getExistingBooks.php?ISBN=${isbn}`);
+        const response = await fetch(
+          `${this.baseUrl}/getExistingBooks.php?ISBN=${isbn}`
+        );
         const data: Book[] = await response.json();
         setIsbnResults(data);
       } catch (error) {
@@ -151,9 +153,10 @@ const BookSubmissionForm: React.FC = () => {
             mailingList: false,
           });
           setBooks([]);
-          
         }
-        const pm = new URLSearchParams({name : personalInfo.name + " " + personalInfo.surname});
+        const pm = new URLSearchParams({
+          name: personalInfo.name + " " + personalInfo.surname,
+        });
         window.location.href = "/#/thank-you?" + pm.toString();
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -205,15 +208,16 @@ const BookSubmissionForm: React.FC = () => {
 
   const handleSubmit = (e: FormEvent): void => {
     e.preventDefault();
-    const allFieldsFilled = Object.values(personalInfo).every((value) => value !== "") &&
-    books.every((book) =>
-      Object.values(book).every((value) => value !== "" && value !== 0)
-    );
+    const allFieldsFilled =
+      Object.values(personalInfo).every((value) => value !== "") &&
+      books.every((book) =>
+        Object.values(book).every((value) => value !== "" && value !== 0)
+      );
 
-  if (!allFieldsFilled) {
-    alert("Please fill in all required fields.");
-    return;
-  }
+    if (!allFieldsFilled) {
+      alert("Please fill in all required fields.");
+      return;
+    }
     console.log({ personalInfo, books });
     api.submitForm(personalInfo, books);
   };
@@ -221,30 +225,33 @@ const BookSubmissionForm: React.FC = () => {
   return (
     <div className="form-container">
       <div className="form-header">
-        <h1 className="form-title">Submit Books</h1>
+        <h1 className="form-title" style={{ textAlign: "center" }}>
+          Submit Books
+        </h1>
       </div>
       <form onSubmit={handleSubmit} className="submission-form">
         {/* Personal Info Section */}
         <div className="personal-info-section">
           <h2>Personal Information</h2>
           <div className="form-grid">
-            {Object.entries(personalInfo).map(([key, value]) => (
-              key !== "mailingList" && (
-                <div key={key} className="form-field">
-                  <label className="block text-sm font-medium mb-1">
-                    {key.charAt(0).toUpperCase() + key.slice(1)}
-                  </label>
-                  <input
-                    type={key === "email" ? "email" : "text"}
-                    name={key}
-                    value={value}
-                    onChange={handlePersonalInfoChange}
-                    // className="w-full p-2 border rounded"
-                    required
-                  />
-                </div>
-              )
-            ))}
+            {Object.entries(personalInfo).map(
+              ([key, value]) =>
+                key !== "mailingList" && (
+                  <div key={key} className="form-field">
+                    <label className="block text-sm font-medium mb-1">
+                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                    </label>
+                    <input
+                      type={key === "email" ? "email" : "text"}
+                      name={key}
+                      value={value}
+                      onChange={handlePersonalInfoChange}
+                      // className="w-full p-2 border rounded"
+                      required
+                    />
+                  </div>
+                )
+            )}
           </div>
         </div>
 
@@ -373,18 +380,28 @@ const BookSubmissionForm: React.FC = () => {
 
         {/* Accept Terms + subscribe to newsletter (two flags) */}
         <div className="form-field">
-          <label>
+          <label className="custom-checkbox">
             <input type="checkbox" required />
-            I accept the terms and conditions
+            <span className="checkbox-style"></span>I accept the terms and
+            conditions
           </label>
         </div>
         <div className="form-field">
-          <label>
-            <input type="checkbox" onChange={(e) => setPersonalInfo({ ...personalInfo, mailingList: e.target.checked })} />
+          <label className="custom-checkbox">
+            <input
+              type="checkbox"
+              onChange={(e) =>
+                setPersonalInfo({
+                  ...personalInfo,
+                  mailingList: e.target.checked,
+                })
+              }
+            />
+            <span className="checkbox-style"></span>
             Subscribe to newsletter
           </label>
         </div>
-      
+
         <button type="submit" className="submit-button" onClick={handleSubmit}>
           Submit Form
         </button>

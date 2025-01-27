@@ -1,5 +1,8 @@
 import React from "react";
 import { HashRouter as Router, Route, Routes, useNavigate } from "react-router-dom";
+import { FaBook, FaDollarSign, FaTruck, FaMoneyCheckAlt, FaBookOpen, FaUserShield } from "react-icons/fa";
+import { CgInsertAfterO } from "react-icons/cg";
+import { GiReceiveMoney } from "react-icons/gi";
 
 import "../styles/BackOffice.css";
 
@@ -18,34 +21,40 @@ const getFontColor = (rgb: string) => {
     return brightness > 125 ? "black" : "white";
 };
 
+
 const options = [
-    { choice: "Insert book in the system", url: "/insertBooks" },
-    { choice: "Sell books", url: "/sell" },
-    { choice: "Pick up books (WIP)", url: "/pickUp" },
-    { choice: "Liquidate a seller (WIP)", url: "/liquidate" },
-    { choice: "Provider: insert books", url: "/bookSubmission" },
-    { choice: "admin: insert books as cool kids (WIP)", url: "/admin" },
+    { choice: "Insert book in the system", url: "/insertBooks", icon: <CgInsertAfterO  /> },
+    { choice: "Sell books", url: "/sell", icon: <FaDollarSign /> },
+    { choice: "Pick up books", url: "/pickUp", icon: <GiReceiveMoney  /> },
+    { choice: "Liquidate a seller (WIP)", url: "/liquidate", icon: <FaMoneyCheckAlt /> },
+    { choice: "Provider: insert books", url: "/bookSubmission", icon: <FaBookOpen /> },
+    { choice: "admin: insert books as cool kids (WIP)", url: "/admin", icon: <FaUserShield /> },
 ];
 
 const BackOffice: React.FC = () => {
     const navigate = useNavigate();
     return (
-        <div className="backOffice">
-            <h1>Back Office</h1>
+        <div className="bookstore-container">
+            <h1 style={{textAlign: "center"}}>Back Office</h1>
+            <div className="content">
+
             {options.map((option, index) => {
                 const backgroundColor = getGradientColor(index, options.length);
                 const color = getFontColor(backgroundColor);
                 return (
                     <div
-                        key={index}
-                        style={{ backgroundColor, color }}
-                        className="choice"
-                        onClick={() => navigate(option.url)}
+                    key={index}
+                    style={{ backgroundColor, color }}
+                    className="choice"
+                    onClick={() => navigate(option.url)}
                     >
+                    <div style={{ fontSize: "2em" }}>{option.icon}</div>
+                    {/* <br /> */}
                         {option.choice}
                     </div>
                 );
             })}
+            </div>
         </div>
     );
 };

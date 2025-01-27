@@ -60,6 +60,10 @@ yarn start
 The structure is very intuitive:
 
 ```
+backend/
+├── dao/
+├── utils/
+├── --php files--
 frontend/
 ├── public/
 ├── src/
@@ -68,8 +72,4 @@ frontend/
 │   ├── types/
 │   ├── App.js
 │   └── index.js
-backend/
-├── dao/
-├── utils/
-├── --php files--
 ```

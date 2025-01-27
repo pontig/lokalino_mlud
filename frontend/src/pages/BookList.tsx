@@ -156,6 +156,7 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
 
   return (
     <div className="bookstore-container">
+      <h1 style={{textAlign: "center"}}>Select books</h1>
       <div className="search-container">
       <Link to="/" className="back-button">
           ← Back to Main
@@ -167,7 +168,7 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        {cart.length && (
+        {(cart.length > 0) && (
           <Link to="/cart" className="cart-icon">
             <div className="cart-badge">
               <span className="abso</div>lute -top-2 -right-2 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
@@ -191,7 +192,7 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
         )}
       </div>
 
-      <div className="books-grid">
+      <div className="content">
         {filteredBooks.map((book) => (
           <div key={book.PB_Id} className="book-card">
             <div className="book-content">
@@ -224,13 +225,13 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
             </div>
           </div>
         ))}
-      </div>
 
       {filteredBooks.length === 0 && (
         <div className="empty-message">
           No books found matching your search.
         </div>
       )}
+      </div>
     </div>
   );
 };

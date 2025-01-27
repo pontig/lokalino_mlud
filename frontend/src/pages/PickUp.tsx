@@ -28,6 +28,7 @@ interface ISBNLookupFieldProps {
   onSelect: (result: Book) => void;
   isSearching: boolean;
 }
+// TODO: non va troppo bene, dovrei passare PB_id quando faccio submit
 
 const ISBNLookupField: React.FC<ISBNLookupFieldProps> = ({
   value,
@@ -242,9 +243,14 @@ const PickUp: React.FC = () => {
 
   if (!selectedProvider) {
     return (
-      <div className="bokstore-container">
-        <h1 className="text-2xl font-bold mb-4">Select a Provider</h1>
-        <div className="grid gap-4">
+      <div className="bokstore-container form-container">
+         <div className="form-header">
+        <Link to="/" className="back-button">
+          ← Back to Provider list
+        </Link>
+        <h1 className="form-title">Select a provider</h1>
+      </div>
+        <div className="content">
           {providers.map((provider) => (
             <button
               key={provider.Provider_Id}
@@ -340,8 +346,8 @@ const PickUp: React.FC = () => {
   return (
     <div className="form-container">
       <div className="form-header">
-        <span className="back-link" onClick={() => setSelectedProvider(null)}>
-          ← Back to Books
+        <span className="back-link" style={{cursor: "pointer"}} onClick={() => setSelectedProvider(null)}>
+          ← Back to Provider list
         </span>
         <h1 className="form-title">Check all is good for {selectedProvider.Name} {selectedProvider.Surname}</h1>
       </div>

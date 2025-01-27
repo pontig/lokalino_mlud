@@ -118,8 +118,9 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
           <div className="cart-summary">
             <h2>Order Summary</h2>
             <div className="cart-total">
-              <span>Total:</span>
-              <span>€{total}</span>
+                <span style={{ color: "#888" }}>Total (new books): €{total}</span>
+                <span>Total (actual due):</span>
+              <span style={{fontSize: "2rem"}}>€{(total/2).toFixed(2)}</span>
             </div>
             <button
               className="cart-button cart-button-add checkout-button"
