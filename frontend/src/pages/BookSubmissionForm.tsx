@@ -1,6 +1,6 @@
 // BookSubmissionForm.tsx
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import "../styles/SubmissionForm.css";
 import BookEntry from "../types/BookEntry";
@@ -98,6 +98,7 @@ const BookSubmissionForm: React.FC = () => {
   const [activeISBNIndex, setActiveISBNIndex] = useState<number | null>(null);
   const [showTerms, setShowTerms] = useState<boolean>(false);
   const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const api = {
     baseUrl: "https://pontiggiaelia.altervista.org/be",
@@ -159,7 +160,7 @@ const BookSubmissionForm: React.FC = () => {
         const pm = new URLSearchParams({
           name: personalInfo.Name + " " + personalInfo.Surname,
         });
-        window.location.href = "/#/thank-you?" + pm.toString();
+        navigate("/thank-you?" + pm.toString());
       } catch (error) {
         console.error("Error submitting form:", error);
       }

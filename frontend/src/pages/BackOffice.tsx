@@ -21,13 +21,13 @@ const getFontColor = (rgb: string) => {
 
 
 const options = [
-    { choice: "Insert book in the system", url: "/insertBooks", icon: <CgInsertAfterO  /> },
-    { choice: "Sell books", url: "/sell", icon: <FaDollarSign /> },
-    { choice: "Pick up books", url: "/pickUp", icon: <GiReceiveMoney  /> },
-    { choice: "Liquidate a seller (WIP)", url: "/liquidate", icon: <FaMoneyCheckAlt /> },
-    { choice: "Provider: insert books", url: "/bookSubmission", icon: <FaBookOpen /> },
-    { choice: "admin: insert books as cool kids (WIP)", url: "/admin", icon: <FaUserShield /> },
-    { choice: "Show mailing list subscribers", url: "/mailingList", icon: <IoMailOutline /> },
+    { choice: "Insert book in the system", url: "/insertBooks", icon: <CgInsertAfterO  />, status: "OK" },
+    { choice: "Sell books", url: "/sell", icon: <FaDollarSign />, status: "OK" },
+    { choice: "Pick up books", url: "/pickUp", icon: <GiReceiveMoney  /> , status: "OK" },
+    { choice: "Liquidate a seller ", url: "/liquidate", icon: <FaMoneyCheckAlt /> , status: "work in progress"},
+    { choice: "Provider: insert books", url: "/bookSubmission", icon: <FaBookOpen /> , status: "OK"},
+    { choice: "admin: insert books as cool kids ", url: "/admin", icon: <FaUserShield />, status: "not yet started" },
+    { choice: "Show mailing list subscribers ", url: "/mailingList", icon: <IoMailOutline /> , status: "not yet started"},
 ];
 
 const BackOffice: React.FC = () => {
@@ -48,9 +48,10 @@ const BackOffice: React.FC = () => {
                     onClick={() => navigate(option.url)}
                     >
                     <div style={{ fontSize: "2em" }}>{option.icon}</div>
-                    {/* <br /> */}
                         {option.choice}
+                        <i style={{fontSize: "small"}}>{option.status}</i>
                     </div>
+                    
                 );
             })}
             </div>

@@ -338,7 +338,7 @@ ty-p, ty-h1 {
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
-  margin-top: 2.5rem;
+  /* margin-top: 2.5rem; */
 }
 
 .submit-button:hover {

@@ -5,14 +5,13 @@ header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Access-Control-Max-Age: 86400'); // 24 hours cache for preflight
 
+require_once 'dao/bookDao.php';
+
 // Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
-
-// Set JSON content type header
-header('Content-Type: application/json');
 
 // Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -24,10 +23,18 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Get the raw POST data
 $rawData = file_get_contents('php://input');
-
-// Try to decode JSON if that's what was sent
 $jsonData = json_decode($rawData, true);
+// check it's an array of integers
+if (!is_array($jsonData) || !array_filter($jsonData, 'is_int')) {
+    http_response_code(400);
+    echo json_encode([
+            'error' => 'Invalid data',
+            'message' => 'The request data must be an array of integers, got: ' . gettype($rawData)
+        ]);
+    exit;
+}
 
-print_r($jsonData);
+doCheckout($jsonData);
+
+

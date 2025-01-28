@@ -9,6 +9,7 @@ import ThankYouPage from "./pages/ThankYou";
 import BackOffice from "./pages/BackOffice";
 import InsertBooks from "./pages/InsertBooks";
 import PickUp from "./pages/PickUp";
+import Liquidate from "./pages/Liquidate";
 
 const App = () => {
   const [cart, setCart] = useState<AvailableBook[]>([]);
@@ -43,6 +44,7 @@ const App = () => {
         />
         <Route path="/thank-you" element={<ThankYouPage />} />
         <Route path="/pickUp" element={<PickUp />} />
+        <Route path="/liquidate" element={<Liquidate />} />
       </Routes>
     </Router>
   );

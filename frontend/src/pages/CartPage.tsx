@@ -1,6 +1,6 @@
 // CartPage.tsx
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 import AvailableBook from "../types/AvailableBook";
@@ -11,6 +11,7 @@ interface CartPageProps {
 }
 
 const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
+  const navigate = useNavigate();
   const total = cart.reduce((sum, book) => sum + Number(book.Price_new), 0);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -34,8 +35,8 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
     // Checkout
     async checkout(cart: AvailableBook[]): Promise<void> {
       try {
-        const requestBody = cart.map((book) => book.PB_Id);
-
+        const requestBody = cart.map((book) => Number(book.PB_Id));
+        console.log(requestBody);
         const response = await fetch(`${this.baseUrl}/checkout.php`, {
           method: "POST",
           headers: {
@@ -45,20 +46,21 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
         });
 
         if (response.status === 200) {
+          cart.forEach((book) => removeFromCart(book.PB_Id));
           alert("Checkout successful");
-          window.location.href = "/";
+          navigate("/");
         } else {
-          alert("Checkout failed");
+          console.log("Checkout failed");
         }
       } catch (error) {
-        alert("Checkout failed, error:" + error);
+        console.log("Checkout failed, error:" + error);
       }
     },
   };
 
   useEffect(() => {
     if (cart.length === 0) {
-      window.location.href = "/#/sell";
+      navigate("/sell");
     }
   }, [cart.length]);
 

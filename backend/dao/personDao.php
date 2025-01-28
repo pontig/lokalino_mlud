@@ -91,3 +91,14 @@ function insertNewProvider($name, $surname, $school, $email, $phone, $mail_list)
 
     return $provider_id;
 }
+
+function liquidateProvider($provider_id)
+{
+    $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
+
+    $sql = "UPDATE Provider_Book SET Liquidation_date = CURRENT_DATE WHERE Provider_Id = $provider_id AND Liquidation_date IS NULL;";
+
+    $conn->query($sql) or die($conn->error);
+
+    $conn->close();
+}

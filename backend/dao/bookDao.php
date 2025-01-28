@@ -2,6 +2,8 @@
 
 require_once("db_connection.php");
 
+$debug = false;
+
 function getBooksByISBN($isbn)
 {
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
@@ -109,7 +111,7 @@ function getBooksByProvider($providerId)
     $stmt = null;
 
     try {
-        $sql = "SELECT PB_Id, Book.ISBN, Title, Author, Editor, Price_new, Dec_conditions
+        $sql = "SELECT PB_Id, Book.ISBN, Title, Author, Editor, Price_new, Dec_conditions, Sold_date
                 FROM Book
                 JOIN Provider_Book ON Book.ISBN = Provider_Book.ISBN
                 WHERE Provider_Id = ?";
@@ -155,13 +157,23 @@ function getBooksByProvider($providerId)
     }
 }
 
-function insertNewBooksInDatabase($books)
+function insertNewBooksInDatabase($books, $debug = false)
 {
+    if ($debug) {
+        echo "Debug Mode: ON\n";
+        echo "Books received:\n";
+        var_dump($books);
+    }
 
     $conn = getConnection();
     if (!$conn) {
         die("Connection failed: " . mysqli_connect_error());
     }
+
+    if ($debug) {
+        echo "Database connection established.\n";
+    }
+
     $conn->begin_transaction();
     try {
         $stmtCheck = $conn->prepare("SELECT COUNT(*) FROM Book WHERE ISBN = ?");
@@ -175,6 +187,10 @@ function insertNewBooksInDatabase($books)
         }
 
         foreach ($books as $book) {
+            if ($debug) {
+                echo "Processing book: ";
+                var_dump($book);
+            }
 
             $stmtCheck->bind_param("s", $book["ISBN"]);
             $stmtCheck->execute();
@@ -182,23 +198,42 @@ function insertNewBooksInDatabase($books)
             $stmtCheck->bind_result($count);
             $stmtCheck->fetch();
 
+            if ($debug) {
+                echo "Existing book count for ISBN {$book["ISBN"]}: $count\n";
+            }
+
             if ($count == 0) {
                 $stmtInsert->bind_param("ssssd", $book["ISBN"], $book["Title"], $book["Author"], $book["Editor"], $book["Price_new"]);
+                $stmtInsert->execute();
+
+                if ($debug) {
+                    echo "Inserted book: " . json_encode($book) . "\n";
+                }
             }
             $stmtCheck->free_result();
         }
 
         $conn->commit();
+        if ($debug) {
+            echo "Transaction committed successfully.\n";
+        }
         return json_encode(array("status" => "success"));
     } catch (Exception $e) {
         $conn->rollback();
+        if ($debug) {
+            echo "Transaction rolled back due to error: " . $e->getMessage() . "\n";
+        }
         return json_encode(array("status" => "error", "message" => $e->getMessage()));
     } finally {
         $stmtCheck->close();
         $stmtInsert->close();
         $conn->close();
+        if ($debug) {
+            echo "Database connection closed.\n";
+        }
     }
 }
+
 
 
 function recordDelivery($bookstoedit)
@@ -297,6 +332,35 @@ function addBooksToDelivery($providerId, $books, $doneByOperator)
 
                 $stmt->bind_param("isss", $providerId, $book["ISBN"], $book["Dec_conditions"], date("Y-m-d H:i:s"));
                 $stmt->execute();
+            }
+        }
+
+        $conn->commit();
+        $stmt->close();
+
+        return json_encode(array("status" => "success"));
+    } catch (Exception $e) {
+        $conn->rollback();
+        return json_encode(array("status" => "error", "message" => $e->getMessage()));
+    } finally {
+        $conn->close();
+    }
+}
+
+function doCheckout($pb_ids) {
+    $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
+    $conn->begin_transaction();
+
+    try {
+        $stmt = $conn->prepare("UPDATE Provider_Book SET Sold_date = ? WHERE PB_Id = ?");
+        if (!$stmt) {
+            throw new Exception("Failed to prepare statement: " . $conn->error);
+        }
+
+        foreach ($pb_ids as $pb_id) {
+            $stmt->bind_param("si", date("Y-m-d H:i:s"), $pb_id);
+            if (!$stmt->execute()) {
+                throw new Exception("Failed to execute query: " . $stmt->error);
             }
         }
 

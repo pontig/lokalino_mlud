@@ -76,7 +76,7 @@ const InsertBooks: React.FC = () => {
   const [activeISBNIndex, setActiveISBNIndex] = useState<number | null>(null);
 
   const api = {
-    baseUrl: "https://pontiggiaelia.altervista.org/be",
+    baseUrl: "/be",
 
     // Search for a book by ISBN
     async searchISBN(isbn: string): Promise<void> {
