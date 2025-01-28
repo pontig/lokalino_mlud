@@ -1,6 +1,6 @@
 // BookSubmissionForm.tsx
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import "../styles/SubmissionForm.css";
 import Book from "../types/Book";
@@ -93,6 +93,7 @@ const ISBNLookupField: React.FC<ISBNLookupFieldProps> = ({
 };
 
 const PickUp: React.FC = () => {
+  const navigate = useNavigate();
   const [providers, setProviders] = useState<Provider[]>([]);
   const [selectedProvider, setSelectedProvider] = useState<Provider | null>(
     null
@@ -123,7 +124,9 @@ const PickUp: React.FC = () => {
   const [manuallyAddedBooks, setManuallyAddedBooks] = useState<
     BookEntry_commented[]
   >([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [submitObj, setSubmitObj] = useState<SubmissionType | null>(null);
+  const [showConfirm, setShowConfirm] = useState<number>(-1);
 
   const api = {
     baseUrl: "https://pontiggiaelia.altervista.org/be",
@@ -160,31 +163,22 @@ const PickUp: React.FC = () => {
       }
     },
 
-    async submitForm(
-      form: SubmissionType | null
-    ): Promise<void> {
+    async submitForm(form: SubmissionType | null): Promise<void> {
       console.log("Submitting form:", form);
 
       try {
-        const response = await fetch(
-          `${this.baseUrl}/storeBooks.php`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(form),
-          }
-        );
+        const response = await fetch(`${this.baseUrl}/storeBooks.php`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        });
         if (!response.ok) {
           throw new Error("Failed to submit form");
         }
-        alert("Form submitted successfully");
-        setSelectedProvider(null);
-        setPersonalInfo({ name: "", surname: "" });
-        setBooksInseredByPr([]);
-        setIsbnResults([]);
-        setActiveISBNIndex(null);
+
+        navigate("/");
       } catch (error) {
         console.error("Error submitting form:", error);
         alert("Failed to submit form");
@@ -194,7 +188,6 @@ const PickUp: React.FC = () => {
         alert("Form data is missing");
         return;
       }
-
     },
 
     async getBooksByProvider(providerId: number): Promise<{
@@ -275,7 +268,7 @@ const PickUp: React.FC = () => {
     loadProviders();
   }, []);
 
-   useEffect(() => {
+  useEffect(() => {
     setSubmitObj({
       Provider_Id: selectedProvider?.Provider_Id || 0,
       Books_to_edit: booksInseredByPr.map((book) => ({
@@ -286,7 +279,18 @@ const PickUp: React.FC = () => {
       Books_to_add: manuallyAddedBooks,
       Books_to_remove: booksToRemove.map((PB_Id) => ({ PB_Id })),
     });
-  }, [booksInseredByPr, manuallyAddedBooks, booksToRemove, selectedProvider?.Provider_Id]);
+  }, [
+    booksInseredByPr,
+    manuallyAddedBooks,
+    booksToRemove,
+    selectedProvider?.Provider_Id,
+  ]);
+
+  const filteredProviders = providers.filter((provider) =>
+    `${provider.Name} ${provider.Surname}`
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
+  );
 
   const handleProviderSelect = async (provider: Provider) => {
     setSelectedProvider(provider);
@@ -295,8 +299,8 @@ const PickUp: React.FC = () => {
       const data = await api.getBooksByProvider(provider.Provider_Id);
       setPersonalInfo(data.personalInfo);
       setBooksInseredByPr(data.books);
-      console.log(data)
-      console.log(data.books)
+      console.log(data);
+      console.log(data.books);
     } catch (error) {
       console.error("Error loading provider books:", error);
     } finally {
@@ -307,22 +311,35 @@ const PickUp: React.FC = () => {
   if (!selectedProvider) {
     return (
       <div className="bokstore-container form-container">
-        <div className="form-header">
+        <h1 style={{ textAlign: "center" }}>Select a provider</h1>
+        <div className="search-container">
           <Link to="/" className="back-button">
-            ← Back to Provider list
+            ← Back to Main
           </Link>
-          <h1 className="form-title">Select a provider</h1>
+          <input
+            type="text"
+            placeholder="Search books..."
+            className="search-input"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
         <div className="content">
-          {providers.map((provider) => (
-            <button
-              key={provider.Provider_Id}
-              onClick={() => handleProviderSelect(provider)}
-              className="choice"
-            >
-              {provider.Name} {provider.Surname}
-            </button>
-          ))}
+          {filteredProviders.length === 0 ? (
+            <div className="text-center text-gray-500">
+              No providers found matching your search
+            </div>
+          ) : (
+            filteredProviders.map((provider) => (
+              <button
+                key={provider.Provider_Id}
+                onClick={() => handleProviderSelect(provider)}
+                className="choice"
+              >
+                {provider.Name} {provider.Surname}
+              </button>
+            ))
+          )}
         </div>
       </div>
     );
@@ -368,6 +385,14 @@ const PickUp: React.FC = () => {
     setManuallyAddedBooks(manuallyAddedBooks.filter((_, i) => i !== index));
   };
 
+  const sureToRemove = (PB_Id: number) => {
+    setShowConfirm(PB_Id);
+  };
+
+  const cancelDelete = () => {
+    setShowConfirm(-1);
+  };
+
   const handleSubmit = (e: FormEvent): void => {
     e.preventDefault();
 
@@ -385,15 +410,22 @@ const PickUp: React.FC = () => {
     });
 
     manuallyAddedBooks.forEach((book, index) => {
-      if (!book.ISBN) missingFields.push(`Manually Added Book ${index + 1} ISBN`);
-      if (!book.Title) missingFields.push(`Manually Added Book ${index + 1} Title`);
-      if (!book.Author) missingFields.push(`Manually Added Book ${index + 1} Author`);
-      if (!book.Editor) missingFields.push(`Manually Added Book ${index + 1} Editor`);
-      if (!book.Price_new) missingFields.push(`Manually Added Book ${index + 1} Price`);
+      if (!book.ISBN)
+        missingFields.push(`Manually Added Book ${index + 1} ISBN`);
+      if (!book.Title)
+        missingFields.push(`Manually Added Book ${index + 1} Title`);
+      if (!book.Author)
+        missingFields.push(`Manually Added Book ${index + 1} Author`);
+      if (!book.Editor)
+        missingFields.push(`Manually Added Book ${index + 1} Editor`);
+      if (!book.Price_new)
+        missingFields.push(`Manually Added Book ${index + 1} Price`);
     });
 
     if (missingFields.length > 0) {
-      alert(`Please fill in the following fields:\n${missingFields.join("\n")}`);
+      alert(
+        `Please fill in the following fields:\n${missingFields.join("\n")}`
+      );
       return;
     }
     api.submitForm(submitObj);
@@ -423,20 +455,43 @@ const PickUp: React.FC = () => {
         {/* Books Section */}
         <div className="books-section">
           <h2>Books Information</h2>
-            {booksInseredByPr.length === 0 && (
+          {booksInseredByPr.length === 0 && (
             <div className="empty-message">No books to remove</div>
           )}
           {booksInseredByPr.map((book, index) => (
             <div key={index} className="book-entry">
               <div className="book-header">
                 <h3>Book {index + 1}</h3>
-                <button
-                  type="button"
-                  onClick={() => removePrBook(index, book.PB_Id)}
-                  className="remove-book-button"
-                >
-                  Remove
-                </button>
+                {showConfirm !== book.PB_Id && (
+                  <button
+                    type="button"
+                    onClick={() => sureToRemove(book.PB_Id)}
+                    className="remove-book-button"
+                  >
+                    Remove
+                  </button>
+                )}
+                {showConfirm === book.PB_Id && (
+                  <div className="mt-4 p-4 border rounded-lg bg-white">
+                    <p className="text-center mb-4">
+                      Sure? there's no going back
+                    </p>
+                    <div className="confirm-buttons">
+                      <button
+                        onClick={() => removePrBook(index, book.PB_Id)}
+                        className="cart-button cart-button-add confirm-button"
+                      >
+                        Yes
+                      </button>
+                      <button
+                        onClick={cancelDelete}
+                        className="cart-button cart-button-remove confirm-button"
+                      >
+                        No
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="form-grid">
@@ -447,12 +502,7 @@ const PickUp: React.FC = () => {
 
                 <div className="form-field">
                   <label>Title</label>
-                  <input
-                    type="text"
-                    value={book.Title}
-                    disabled
-                    required
-                  />
+                  <input type="text" value={book.Title} disabled required />
                 </div>
 
                 <div className="form-field">
@@ -520,8 +570,7 @@ const PickUp: React.FC = () => {
                     }}
                     // className="w-full p-2 border rounded"
                   />
-
-                                  </div>
+                </div>
               </div>
             </div>
           ))}

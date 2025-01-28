@@ -1,6 +1,6 @@
 -- Table: Provider
 CREATE TABLE Provider (
-    Provider_Id INT PRIMARY KEY NOT NULL,
+    Provider_Id SERIAL PRIMARY KEY,
     Name VARCHAR(100) NOT NULL,
     Surname VARCHAR(100) NOT NULL,
     Phone_no VARCHAR(15) NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE Book (
 
 -- Table: Provider_Book (Linking Table)
 CREATE TABLE Provider_Book (
-    PB_Id INT PRIMARY KEY NOT NULL,
+    PB_Id SERIAL PRIMARY KEY,
     ISBN CHAR(13) NOT NULL,
     Provider_Id INT NOT NULL,
     Dec_conditions VARCHAR(100) NOT NULL,

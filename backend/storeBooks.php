@@ -39,7 +39,7 @@ Structure of the body:
         {
             "PB_Id": Number,
             "Dec_conditions": String,
-            "Comments"?: String
+            "Comment"?: String
         },
         ...
     ],
@@ -51,7 +51,7 @@ Structure of the body:
             "Editor": String,
             "Price_new": Number,
             "Dec_conditions": String,
-            "Comments"?: String
+            "Comment"?: String
         },
         ...
     ],
@@ -77,7 +77,7 @@ if (!isset($body['Provider_Id']) || !is_numeric($body['Provider_Id']) ||
 foreach ($body['Books_to_edit'] as $book) {
     if (!isset($book['PB_Id']) || !is_numeric($book['PB_Id']) ||
         !isset($book['Dec_conditions']) || !is_string($book['Dec_conditions']) ||
-        (isset($book['Comments']) && !is_string($book['Comments']))) {
+        (isset($book['Comment']) && !is_string($book['Comment']))) {
         http_response_code(403);
         echo json_encode([
             'status' => 'error',
@@ -94,7 +94,7 @@ foreach ($body['Books_to_add'] as $book) {
         !isset($book['Editor']) || !is_string($book['Editor']) ||
         !isset($book['Price_new']) || !is_numeric($book['Price_new']) ||
         !isset($book['Dec_conditions']) || !is_string($book['Dec_conditions']) ||
-        (isset($book['Comments']) && !is_string($book['Comments']))) {
+        (isset($book['Comment']) && !is_string($book['Comment']))) {
         http_response_code(403);
         echo json_encode([
             'status' => 'error',
@@ -121,17 +121,24 @@ $booksToAdd = $body['Books_to_add'];
 $booksToRemove = $body['Books_to_remove'];
 
 try {
-    $result = recordDelivery($booksToEdit);
-    if ($result['status'] === 'error') {
-        throw new Exception($result['message']);
+    if (!empty($booksToEdit)) {
+        $result = recordDelivery($booksToEdit);
+        if ($result['status'] === 'error') {
+            throw new Exception($result['message']);
+        }
     }
-    $result = addBooksToDelivery($providerId, $booksToAdd);
-    if ($result['status'] === 'error') {
-        throw new Exception($result['message']);
+    if (!empty($booksToAdd)) {
+        $result = addBooksToDelivery($providerId, $booksToAdd);
+        if ($result['status'] === 'error') {
+            print_r($result['message']);
+            throw new Exception($result['message']);
+        }
     }
-    $result = removeBooksFromDelivery($booksToRemove);
-    if ($result['status'] === 'error') {
-        throw new Exception($result['message']);
+    if (!empty($booksToRemove)) {
+        $result = removeBooksFromDelivery($booksToRemove);
+        if ($result['status'] === 'error') {
+            throw new Exception($result['message']);
+        }
     }
     http_response_code(200);
 } catch (Exception $e) {
@@ -143,4 +150,4 @@ try {
     exit;
 }
 
-http_response_code(200);
+// http_response_code(200);

@@ -2,26 +2,26 @@
 
 require("db_connection.php");
 
-function getBooksByISBN($isbn) {
+function getBooksByISBN($isbn)
+{
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
     $stmt = null;
-    
+
     try {
         $sql = "SELECT * FROM Book WHERE ISBN LIKE CONCAT('%', ?, '%')";
         $stmt = $conn->prepare($sql);
         if (!$stmt) {
             throw new Exception("Failed to prepare statement: " . $conn->error);
         }
-        
+
         $stmt->bind_param("s", $isbn);
         if (!$stmt->execute()) {
             throw new Exception("Failed to execute query: " . $stmt->error);
         }
-        
+
         $result = $stmt->get_result();
         $books = $result->fetch_all(MYSQLI_ASSOC);
         return json_encode($books);
-        
     } catch (Exception $e) {
         return json_encode(array("status" => "error", "message" => $e->getMessage()));
     } finally {
@@ -34,10 +34,11 @@ function getBooksByISBN($isbn) {
     }
 }
 
-function getAvailableBooksBySearch($search) {
+function getAvailableBooksBySearch($search)
+{
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
     $stmt = null;
-    
+
     try {
         $sql = "SELECT Book.*, Provider.Name AS ProviderName, Provider.Surname AS ProviderSurname, Provider_Book.*
                 FROM Book
@@ -54,16 +55,15 @@ function getAvailableBooksBySearch($search) {
         if (!$stmt) {
             throw new Exception("Failed to prepare statement: " . $conn->error);
         }
-        
+
         $stmt->bind_param("ssss", $search, $search, $search, $search);
         if (!$stmt->execute()) {
             throw new Exception("Failed to execute query: " . $stmt->error);
         }
-        
+
         $result = $stmt->get_result();
         $books = $result->fetch_all(MYSQLI_ASSOC);
         return json_encode($books);
-        
     } catch (Exception $e) {
         return json_encode(array("status" => "error", "message" => $e->getMessage()));
     } finally {
@@ -76,9 +76,10 @@ function getAvailableBooksBySearch($search) {
     }
 }
 
-function getAllAvailableBooks() {
+function getAllAvailableBooks()
+{
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
-    
+
     try {
         $sql = "SELECT Book.*, Provider.Name AS ProviderName, Provider.Surname AS ProviderSurname, Provider_Book.*
                 FROM Book
@@ -90,10 +91,9 @@ function getAllAvailableBooks() {
         if (!$result) {
             throw new Exception("Failed to execute query: " . $conn->error);
         }
-        
+
         $books = $result->fetch_all(MYSQLI_ASSOC);
         return json_encode($books);
-        
     } catch (Exception $e) {
         return json_encode(array("status" => "error", "message" => $e->getMessage()));
     } finally {
@@ -103,10 +103,11 @@ function getAllAvailableBooks() {
     }
 }
 
-function getBooksByProvider($providerId) {
+function getBooksByProvider($providerId)
+{
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
     $stmt = null;
-    
+
     try {
         $sql = "SELECT PB_Id, Book.ISBN, Title, Author, Editor, Price_new, Dec_conditions
                 FROM Book
@@ -117,32 +118,31 @@ function getBooksByProvider($providerId) {
         if (!$stmt) {
             throw new Exception("Failed to prepare statement: " . $conn->error);
         }
-        
+
         $stmt->bind_param("i", $providerId);
         if (!$stmt->execute()) {
             throw new Exception("Failed to execute query: " . $stmt->error);
         }
-        
+
         $result = $stmt->get_result();
         $books = $result->fetch_all(MYSQLI_ASSOC);
-        
+
         // Get provider details
         $stmt->close();
         $stmt = $conn->prepare("SELECT Name, Surname FROM Provider WHERE Provider_Id = ?");
         if (!$stmt) {
             throw new Exception("Failed to prepare provider statement: " . $conn->error);
         }
-        
+
         $stmt->bind_param("i", $providerId);
         if (!$stmt->execute()) {
             throw new Exception("Failed to execute provider query: " . $stmt->error);
         }
-        
+
         $result = $stmt->get_result();
         $provider = $result->fetch_all(MYSQLI_ASSOC);
-        
+
         return json_encode(array("books" => $books, "provider" => $provider));
-        
     } catch (Exception $e) {
         return json_encode(array("status" => "error", "message" => $e->getMessage()));
     } finally {
@@ -157,39 +157,66 @@ function getBooksByProvider($providerId) {
 
 function insertNewBooksInDatabase($books)
 {
+    print("Starting insertNewBooksInDatabase function...\n");
 
-    $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
+    // Debugging: Dump books array
+    var_dump($books);
+
+    $conn = getConnection();
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    } else {
+        print("Database connection established.\n");
+    }
 
     $conn->begin_transaction();
-
     try {
         $stmtCheck = $conn->prepare("SELECT COUNT(*) FROM Book WHERE ISBN = ?");
+        if (!$stmtCheck) {
+            die("Statement preparation failed (stmtCheck): " . $conn->error . "\n");
+        }
+
         $stmtInsert = $conn->prepare("INSERT INTO Book (ISBN, Title, Author, Editor, Price_new) VALUES (?, ?, ?, ?, ?)");
+        if (!$stmtInsert) {
+            die("Statement preparation failed (stmtInsert): " . $conn->error . "\n");
+        }
 
         foreach ($books as $book) {
+
             $stmtCheck->bind_param("s", $book["ISBN"]);
             $stmtCheck->execute();
+
+            // Ensure results are stored properly
+            $stmtCheck->store_result();
             $stmtCheck->bind_result($count);
             $stmtCheck->fetch();
 
             if ($count == 0) {
                 $stmtInsert->bind_param("ssssd", $book["ISBN"], $book["Title"], $book["Author"], $book["Editor"], $book["Price_new"]);
-                $stmtInsert->execute();
             }
+
+            // Free result set to prevent out-of-sync errors
+            $stmtCheck->free_result();
         }
 
         $conn->commit();
-        $stmtCheck->close();
-        $stmtInsert->close();
+        print("Transaction committed successfully.\n");
 
         return json_encode(array("status" => "success"));
     } catch (Exception $e) {
+        print("Exception caught: " . $e->getMessage() . "\n");
         $conn->rollback();
+        print("Transaction rolled back.\n");
+
         return json_encode(array("status" => "error", "message" => $e->getMessage()));
     } finally {
+        $stmtCheck->close();
+        $stmtInsert->close();
         $conn->close();
+        print("Database connection closed.\n");
     }
 }
+
 
 function recordDelivery($bookstoedit)
 {
@@ -199,18 +226,23 @@ function recordDelivery($bookstoedit)
     $conn->begin_transaction();
 
     try {
-        $stmt = $conn->prepare("UPDATE Provider_Book SET
-         Dec_conditions = ?, 
-         Consign_date = ?, 
-         Comments = ?
-         WHERE PB_Id = ?");
 
         foreach ($bookstoedit as $book) {
-
-            if (isset($book["Comments"]))
-                $stmt->bind_param("sssi", $book["Dec_conditions"], date("Y-m-d H:i:s"), $book["Comments"], $book["PB_Id"]);
-            else
+            if (isset($book["Comment"]) && !empty($book["Comment"])) {
+                $stmt = $conn->prepare("UPDATE Provider_Book SET
+                Dec_conditions = ?, 
+                Consign_date = ?, 
+                Comment = ?
+                WHERE PB_Id = ?");
+                $stmt->bind_param("sssi", $book["Dec_conditions"], date("Y-m-d H:i:s"), $book["Comment"], $book["PB_Id"]);
+            } else {
+                $stmt = $conn->prepare("UPDATE Provider_Book SET
+                Dec_conditions = ?, 
+                Consign_date = ? 
+                WHERE PB_Id = ?");
+                if (!$stmt) echo $conn->error;
                 $stmt->bind_param("ssi", $book["Dec_conditions"], date("Y-m-d H:i:s"), $book["PB_Id"]);
+            }
 
             $stmt->execute();
         }
@@ -255,23 +287,35 @@ function removeBooksFromDelivery($bookstoremove)
     }
 }
 
-function addBooksToDelivery($providerId, $books) {
+function addBooksToDelivery($providerId, $books)
+{
+
+    insertNewBooksInDatabase($books);
 
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
-
     $conn->begin_transaction();
 
     try {
-        
-        insertNewBooksInDatabase($books);
 
-        $stmt = $conn->prepare("INSERT INTO Provider_Book (Provider_Id, ISBN, Dec_conditions, Consign_date, Comments) VALUES (?, ?, ?, ?, ?)");
 
         foreach ($books as $book) {
-            if (isset($book["Comments"]))
-                $stmt->bind_param("issss", $providerId, $book["ISBN"], $book["Dec_conditions"], date("Y-m-d H:i:s"), $book["Comments"]);
-            else
+            if (isset($book["Comment"]) && !empty($book["Comment"])) {
+
+                print("Inserting book with comment: " . $book["ISBN"] . "\n");
+
+                $stmt = $conn->prepare("INSERT INTO Provider_Book (Provider_Id, ISBN, Dec_conditions, Consign_date, Comment) VALUES (?, ?, ?, ?, ?)");
+
+                $stmt->bind_param("issss", $providerId, $book["ISBN"], $book["Dec_conditions"], date("Y-m-d H:i:s"), $book["Comment"]);
+                $stmt->execute();
+            } else {
+
+                print("Inserting book: " . $book["ISBN"] . "\n");
+
+                $stmt = $conn->prepare("INSERT INTO Provider_Book (Provider_Id, ISBN, Dec_conditions, Consign_date) VALUES (?, ?, ?, ?)");
+
                 $stmt->bind_param("isss", $providerId, $book["ISBN"], $book["Dec_conditions"], date("Y-m-d H:i:s"));
+                $stmt->execute();
+            }
         }
 
         $conn->commit();
@@ -284,5 +328,4 @@ function addBooksToDelivery($providerId, $books) {
     } finally {
         $conn->close();
     }
-
 }
