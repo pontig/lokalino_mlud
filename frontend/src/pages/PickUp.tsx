@@ -19,6 +19,7 @@ interface Provider {
 
 interface BookEntry_commented extends BookEntry {
   Comment: string;
+  PB_Id: number;
 }
 
 interface ISBNLookupFieldProps {
@@ -28,7 +29,17 @@ interface ISBNLookupFieldProps {
   onSelect: (result: Book) => void;
   isSearching: boolean;
 }
-// TODO: non va troppo bene, dovrei passare PB_id quando faccio submit
+
+interface SubmissionType {
+  Provider_Id: number;
+  Books_to_edit: {
+    PB_Id: number;
+    Dec_conditions: string;
+    Comment: string;
+  }[];
+  Books_to_add: BookEntry_commented[];
+  Books_to_remove: { PB_Id: number }[];
+}
 
 const ISBNLookupField: React.FC<ISBNLookupFieldProps> = ({
   value,
@@ -90,7 +101,9 @@ const PickUp: React.FC = () => {
     name: "",
     surname: "",
   });
-  const [books, setBooks] = useState<BookEntry_commented[]>([
+  const [booksInseredByPr, setBooksInseredByPr] = useState<
+    BookEntry_commented[]
+  >([
     {
       ISBN: "",
       Title: "",
@@ -99,12 +112,18 @@ const PickUp: React.FC = () => {
       Price_new: 0.0,
       Dec_conditions: "good",
       Comment: "",
+      PB_Id: 0,
     },
   ]);
   const [isbnResults, setIsbnResults] = useState<Book[]>([]);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [activeISBNIndex, setActiveISBNIndex] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [booksToRemove, setBooksToRemove] = useState<number[]>([]);
+  const [manuallyAddedBooks, setManuallyAddedBooks] = useState<
+    BookEntry_commented[]
+  >([]);
+  const [submitObj, setSubmitObj] = useState<SubmissionType | null>(null);
 
   const api = {
     baseUrl: "https://pontiggiaelia.altervista.org/be",
@@ -142,12 +161,40 @@ const PickUp: React.FC = () => {
     },
 
     async submitForm(
-      personalInfo: PersonalInfo,
-      books: BookEntry_commented[]
+      form: SubmissionType | null
     ): Promise<void> {
-      // TODO
+      console.log("Submitting form:", form);
 
-      setSelectedProvider(null);
+      try {
+        const response = await fetch(
+          `${this.baseUrl}/storeBooks.php`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(form),
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Failed to submit form");
+        }
+        alert("Form submitted successfully");
+        setSelectedProvider(null);
+        setPersonalInfo({ name: "", surname: "" });
+        setBooksInseredByPr([]);
+        setIsbnResults([]);
+        setActiveISBNIndex(null);
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        alert("Failed to submit form");
+      }
+
+      if (!form) {
+        alert("Form data is missing");
+        return;
+      }
+
     },
 
     async getBooksByProvider(providerId: number): Promise<{
@@ -174,45 +221,46 @@ const PickUp: React.FC = () => {
             Price_new: book.Price_new || 0.0,
             Dec_conditions: book.Dec_conditions || "good",
             Comment: book.Comment || "",
+            PB_Id: book.PB_Id || 0,
           })) || [],
       };
     },
 
-    async fetchInitialFormData(): Promise<{
-      personalInfo: PersonalInfo;
-      books: BookEntry_commented[];
-    }> {
-      try {
-        const response = await fetch(
-          `${this.baseUrl}/getBooksByProvider.php?Provider_Id=3`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch initial data");
-        }
-        const data = await response.json();
-        return {
-          personalInfo: {
-            name: data.provider.Name || "",
-            surname: data.provider.Surname || "",
-          },
-          books:
-            data.books.map((book: BookEntry_commented) => ({
-              ISBN: book.ISBN || "",
-              Title: book.Title || "",
-              Author: book.Author || "",
-              Editor: book.Editor || "",
-              Price_new: book.Price_new || 0.0,
-              Dec_conditions: book.Dec_conditions || "good",
-            })) || [],
-        };
-      } catch (error) {
-        console.error("Error fetching initial form data:", error);
-        return {
-          personalInfo: { ...personalInfo },
-          books: books,
-        };
-      }
-    },
+    //   async fetchInitialFormData(): Promise<{
+    //     personalInfo: PersonalInfo;
+    //     books: BookEntry_commented[];
+    //   }> {
+    //     try {
+    //       const response = await fetch(
+    //         `${this.baseUrl}/getBooksByProvider.php?Provider_Id=3`
+    //       );
+    //       if (!response.ok) {
+    //         throw new Error("Failed to fetch initial data");
+    //       }
+    //       const data = await response.json();
+    //       return {
+    //         personalInfo: {
+    //           name: data.provider.Name || "",
+    //           surname: data.provider.Surname || "",
+    //         },
+    //         books:
+    //           data.books.map((book: BookEntry_commented) => ({
+    //             ISBN: book.ISBN || "",
+    //             Title: book.Title || "",
+    //             Author: book.Author || "",
+    //             Editor: book.Editor || "",
+    //             Price_new: book.Price_new || 0.0,
+    //             Dec_conditions: book.Dec_conditions || "good",
+    //           })) || [],
+    //       };
+    //     } catch (error) {
+    //       console.error("Error fetching initial form data:", error);
+    //       return {
+    //         personalInfo: { ...personalInfo },
+    //         books: books,
+    //       };
+    //     }
+    //   },
   };
 
   useEffect(() => {
@@ -227,13 +275,28 @@ const PickUp: React.FC = () => {
     loadProviders();
   }, []);
 
+   useEffect(() => {
+    setSubmitObj({
+      Provider_Id: selectedProvider?.Provider_Id || 0,
+      Books_to_edit: booksInseredByPr.map((book) => ({
+        PB_Id: book.PB_Id,
+        Dec_conditions: book.Dec_conditions,
+        Comment: book.Comment,
+      })),
+      Books_to_add: manuallyAddedBooks,
+      Books_to_remove: booksToRemove.map((PB_Id) => ({ PB_Id })),
+    });
+  }, [booksInseredByPr, manuallyAddedBooks, booksToRemove, selectedProvider?.Provider_Id]);
+
   const handleProviderSelect = async (provider: Provider) => {
     setSelectedProvider(provider);
     setIsLoading(true);
     try {
       const data = await api.getBooksByProvider(provider.Provider_Id);
       setPersonalInfo(data.personalInfo);
-      setBooks(data.books);
+      setBooksInseredByPr(data.books);
+      console.log(data)
+      console.log(data.books)
     } catch (error) {
       console.error("Error loading provider books:", error);
     } finally {
@@ -244,12 +307,12 @@ const PickUp: React.FC = () => {
   if (!selectedProvider) {
     return (
       <div className="bokstore-container form-container">
-         <div className="form-header">
-        <Link to="/" className="back-button">
-          ← Back to Provider list
-        </Link>
-        <h1 className="form-title">Select a provider</h1>
-      </div>
+        <div className="form-header">
+          <Link to="/" className="back-button">
+            ← Back to Provider list
+          </Link>
+          <h1 className="form-title">Select a provider</h1>
+        </div>
         <div className="content">
           {providers.map((provider) => (
             <button
@@ -266,7 +329,7 @@ const PickUp: React.FC = () => {
   }
 
   const handleBookSelect = (result: Book, index: number): void => {
-    const newBooks = [...books];
+    const newBooks = [...manuallyAddedBooks];
     newBooks[index] = {
       ...newBooks[index],
       ISBN: result.ISBN,
@@ -275,14 +338,14 @@ const PickUp: React.FC = () => {
       Editor: result.Editor,
       Price_new: result.Price_new,
     };
-    setBooks(newBooks);
+    setManuallyAddedBooks(newBooks);
     setIsbnResults([]);
     setActiveISBNIndex(null);
   };
 
   const addBook = (): void => {
-    setBooks([
-      ...books,
+    setManuallyAddedBooks([
+      ...manuallyAddedBooks,
       {
         ISBN: "",
         Title: "",
@@ -291,52 +354,49 @@ const PickUp: React.FC = () => {
         Price_new: 0.0,
         Dec_conditions: "good",
         Comment: "",
+        PB_Id: 0,
       },
     ]);
   };
 
-  const removeBook = (index: number): void => {
-    if (books.length > 1) {
-      setBooks(books.filter((_, i) => i !== index));
-    }
+  const removePrBook = (index: number, Pb_Id: number): void => {
+    setBooksInseredByPr(booksInseredByPr.filter((_, i) => i !== index));
+    setBooksToRemove([...booksToRemove, Pb_Id]);
+  };
+
+  const removeManBook = (index: number): void => {
+    setManuallyAddedBooks(manuallyAddedBooks.filter((_, i) => i !== index));
   };
 
   const handleSubmit = (e: FormEvent): void => {
     e.preventDefault();
-    const missingFields: string[] = [];
 
-    if (personalInfo.name === "") {
-      missingFields.push("Personal Info: name");
-    }
-    if (personalInfo.surname === "") {
-      missingFields.push("Personal Info: surname");
-    }
+    const missingFields = [];
 
-    books.forEach((book, index) => {
-      if (book.ISBN === "") {
-        missingFields.push(`Book ${index + 1}: ISBN`);
-      }
-      if (book.Title === "") {
-        missingFields.push(`Book ${index + 1}: Title`);
-      }
-      if (book.Author === "") {
-        missingFields.push(`Book ${index + 1}: Author`);
-      }
-      if (book.Editor === "") {
-        missingFields.push(`Book ${index + 1}: Editor`);
-      }
-      if (book.Price_new === 0) {
-        missingFields.push(`Book ${index + 1}: Price`);
-      }
+    if (!personalInfo.name) missingFields.push("Name");
+    if (!personalInfo.surname) missingFields.push("Surname");
+
+    booksInseredByPr.forEach((book, index) => {
+      if (!book.ISBN) missingFields.push(`Book ${index + 1} ISBN`);
+      if (!book.Title) missingFields.push(`Book ${index + 1} Title`);
+      if (!book.Author) missingFields.push(`Book ${index + 1} Author`);
+      if (!book.Editor) missingFields.push(`Book ${index + 1} Editor`);
+      if (!book.Price_new) missingFields.push(`Book ${index + 1} Price`);
     });
 
-    console.log({ personalInfo, books });
+    manuallyAddedBooks.forEach((book, index) => {
+      if (!book.ISBN) missingFields.push(`Manually Added Book ${index + 1} ISBN`);
+      if (!book.Title) missingFields.push(`Manually Added Book ${index + 1} Title`);
+      if (!book.Author) missingFields.push(`Manually Added Book ${index + 1} Author`);
+      if (!book.Editor) missingFields.push(`Manually Added Book ${index + 1} Editor`);
+      if (!book.Price_new) missingFields.push(`Manually Added Book ${index + 1} Price`);
+    });
+
     if (missingFields.length > 0) {
-      alert(`Please fill in all required fields:\n${missingFields.join("\n")}`);
+      alert(`Please fill in the following fields:\n${missingFields.join("\n")}`);
       return;
     }
-
-    api.submitForm(personalInfo, books);
+    api.submitForm(submitObj);
   };
 
   if (isLoading) {
@@ -346,46 +406,43 @@ const PickUp: React.FC = () => {
   return (
     <div className="form-container">
       <div className="form-header">
-        <span className="back-link" style={{cursor: "pointer"}} onClick={() => setSelectedProvider(null)}>
+        <span
+          className="back-link"
+          style={{ cursor: "pointer" }}
+          onClick={() => setSelectedProvider(null)}
+        >
           ← Back to Provider list
         </span>
-        <h1 className="form-title">Check all is good for {selectedProvider.Name} {selectedProvider.Surname}</h1>
+        <h1 className="form-title">
+          Check all is good for {selectedProvider.Name}{" "}
+          {selectedProvider.Surname}
+        </h1>
       </div>
 
       <form onSubmit={handleSubmit} className="submission-form">
         {/* Books Section */}
         <div className="books-section">
           <h2>Books Information</h2>
-          {books.map((book, index) => (
+            {booksInseredByPr.length === 0 && (
+            <div className="empty-message">No books to remove</div>
+          )}
+          {booksInseredByPr.map((book, index) => (
             <div key={index} className="book-entry">
               <div className="book-header">
                 <h3>Book {index + 1}</h3>
-                {books.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeBook(index)}
-                    className="remove-book-button"
-                  >
-                    Remove
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => removePrBook(index, book.PB_Id)}
+                  className="remove-book-button"
+                >
+                  Remove
+                </button>
               </div>
 
               <div className="form-grid">
                 <div className="form-field">
                   <label className="form-field isbn-field">ISBN</label>
-                  <ISBNLookupField
-                    value={book.ISBN}
-                    onChange={(value: string) => {
-                      const newBooks = [...books];
-                      newBooks[index].ISBN = value;
-                      setBooks(newBooks);
-                      api.searchISBN(value, index);
-                    }}
-                    results={activeISBNIndex === index ? isbnResults : []}
-                    onSelect={(result) => handleBookSelect(result, index)}
-                    isSearching={isSearching && activeISBNIndex === index}
-                  />
+                  <input type="text" value={book.ISBN} disabled />
                 </div>
 
                 <div className="form-field">
@@ -393,12 +450,7 @@ const PickUp: React.FC = () => {
                   <input
                     type="text"
                     value={book.Title}
-                    onChange={(e) => {
-                      const newBooks = [...books];
-                      newBooks[index].Title = e.target.value;
-                      setBooks(newBooks);
-                    }}
-                    // className="w-full p-2 border rounded"
+                    disabled
                     required
                   />
                 </div>
@@ -408,11 +460,7 @@ const PickUp: React.FC = () => {
                   <input
                     type="text"
                     value={book.Author}
-                    onChange={(e) => {
-                      const newBooks = [...books];
-                      newBooks[index].Author = e.target.value;
-                      setBooks(newBooks);
-                    }}
+                    disabled
                     // className="w-full p-2 border rounded"
                     required
                   />
@@ -423,11 +471,7 @@ const PickUp: React.FC = () => {
                   <input
                     type="text"
                     value={book.Editor}
-                    onChange={(e) => {
-                      const newBooks = [...books];
-                      newBooks[index].Editor = e.target.value;
-                      setBooks(newBooks);
-                    }}
+                    disabled
                     // className="w-full p-2 border rounded"
                     required
                   />
@@ -438,11 +482,7 @@ const PickUp: React.FC = () => {
                   <input
                     type="number"
                     value={book.Price_new}
-                    onChange={(e) => {
-                      const newBooks = [...books];
-                      newBooks[index].Price_new = Number(e.target.value);
-                      setBooks(newBooks);
-                    }}
+                    disabled
                     // className="w-full p-2 border rounded"
                     required
                     step="0.01"
@@ -454,10 +494,10 @@ const PickUp: React.FC = () => {
                   <select
                     value={book.Dec_conditions}
                     onChange={(e) => {
-                      const newBooks = [...books];
+                      const newBooks = [...booksInseredByPr];
                       newBooks[index].Dec_conditions = e.target
                         .value as BookEntry_commented["Dec_conditions"];
-                      setBooks(newBooks);
+                      setBooksInseredByPr(newBooks);
                     }}
                     // className="w-full p-2 border rounded"
                     required
@@ -474,9 +514,137 @@ const PickUp: React.FC = () => {
                     type="text"
                     value={book.Comment}
                     onChange={(e) => {
-                      const newBooks = [...books];
+                      const newBooks = [...booksInseredByPr];
                       newBooks[index].Comment = e.target.value;
-                      setBooks(newBooks);
+                      setBooksInseredByPr(newBooks);
+                    }}
+                    // className="w-full p-2 border rounded"
+                  />
+
+                                  </div>
+              </div>
+            </div>
+          ))}
+
+          {manuallyAddedBooks.map((book, index) => (
+            <div key={index} className="book-entry">
+              <div className="book-header">
+                <h3>Book {index + 1}</h3>
+                <button
+                  type="button"
+                  onClick={() => removeManBook(index)}
+                  className="remove-book-button"
+                >
+                  Remove
+                </button>
+              </div>
+
+              <div className="form-grid">
+                <div className="form-field">
+                  <label className="form-field isbn-field">ISBN</label>
+                  <ISBNLookupField
+                    value={book.ISBN}
+                    onChange={(value: string) => {
+                      const newBooks = [...manuallyAddedBooks];
+                      newBooks[index].ISBN = value;
+                      setManuallyAddedBooks(newBooks);
+                      api.searchISBN(value, index);
+                    }}
+                    results={activeISBNIndex === index ? isbnResults : []}
+                    onSelect={(result) => handleBookSelect(result, index)}
+                    isSearching={isSearching && activeISBNIndex === index}
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label>Title</label>
+                  <input
+                    type="text"
+                    value={book.Title}
+                    onChange={(e) => {
+                      const newBooks = [...manuallyAddedBooks];
+                      newBooks[index].Title = e.target.value;
+                      setManuallyAddedBooks(newBooks);
+                    }}
+                    // className="w-full p-2 border rounded"
+                    required
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label>Author</label>
+                  <input
+                    type="text"
+                    value={book.Author}
+                    onChange={(e) => {
+                      const newBooks = [...manuallyAddedBooks];
+                      newBooks[index].Author = e.target.value;
+                      setManuallyAddedBooks(newBooks);
+                    }}
+                    // className="w-full p-2 border rounded"
+                    required
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label>Editor</label>
+                  <input
+                    type="text"
+                    value={book.Editor}
+                    onChange={(e) => {
+                      const newBooks = [...manuallyAddedBooks];
+                      newBooks[index].Editor = e.target.value;
+                      setManuallyAddedBooks(newBooks);
+                    }}
+                    // className="w-full p-2 border rounded"
+                    required
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label>Price</label>
+                  <input
+                    type="number"
+                    value={book.Price_new}
+                    onChange={(e) => {
+                      const newBooks = [...manuallyAddedBooks];
+                      newBooks[index].Price_new = Number(e.target.value);
+                      setManuallyAddedBooks(newBooks);
+                    }}
+                    // className="w-full p-2 border rounded"
+                    required
+                    step="0.01"
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label>Condition</label>
+                  <select
+                    value={book.Dec_conditions}
+                    onChange={(e) => {
+                      const newBooks = [...manuallyAddedBooks];
+                      newBooks[index].Dec_conditions = e.target
+                        .value as BookEntry_commented["Dec_conditions"];
+                      setManuallyAddedBooks(newBooks);
+                    }}
+                    // className="w-full p-2 border rounded"
+                    required
+                  >
+                    <option value="good">Good</option>
+                    <option value="average">Average</option>
+                    <option value="bad">Bad</option>
+                  </select>
+                </div>
+
+                <div className="form-field" style={{ gridColumn: "span 2" }}>
+                  <label>Add a comment if needed</label>
+                  <input
+                    type="text"
+                    value={book.Comment}
+                    onChange={(e) => {
+                      const newBooks = [...manuallyAddedBooks];
+                      newBooks[index].Comment = e.target.value;
+                      setManuallyAddedBooks(newBooks);
                     }}
                     // className="w-full p-2 border rounded"
                   />
