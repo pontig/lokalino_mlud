@@ -3,9 +3,7 @@ import { HashRouter as Router, Route, Routes, useNavigate } from "react-router-d
 import { FaBook, FaDollarSign, FaTruck, FaMoneyCheckAlt, FaBookOpen, FaUserShield } from "react-icons/fa";
 import { CgInsertAfterO } from "react-icons/cg";
 import { GiReceiveMoney } from "react-icons/gi";
-
-import "../styles/BackOffice.css";
-
+import { IoMailOutline } from "react-icons/io5";
 
 const getGradientColor = (index: number, total: number) => {
     const startColor = [0,100,0]; 
@@ -29,6 +27,7 @@ const options = [
     { choice: "Liquidate a seller (WIP)", url: "/liquidate", icon: <FaMoneyCheckAlt /> },
     { choice: "Provider: insert books", url: "/bookSubmission", icon: <FaBookOpen /> },
     { choice: "admin: insert books as cool kids (WIP)", url: "/admin", icon: <FaUserShield /> },
+    { choice: "Show mailing list subscribers", url: "/mailingList", icon: <IoMailOutline /> },
 ];
 
 const BackOffice: React.FC = () => {

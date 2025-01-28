@@ -29,38 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 }
 
 $body = json_decode(file_get_contents('php://input'), true);
-var_dump($body);
-
-/* 
-Structure of the body:
-{
-    "Provider_Id": Number,
-    "Books_to_edit": [
-        {
-            "PB_Id": Number,
-            "Dec_conditions": String,
-            "Comment"?: String
-        },
-        ...
-    ],
-    "Books_to_add": [
-        {
-            "ISBN": String,
-            "Title": String,
-            "Author": String,
-            "Editor": String,
-            "Price_new": Number,
-            "Dec_conditions": String,
-            "Comment"?: String
-        },
-        ...
-    ],
-    "Books_to_remove": [
-        { "PB_Id": Number },
-        ...
-    ]
-}
-*/
 
 if (!isset($body['Provider_Id']) || !is_numeric($body['Provider_Id']) ||
     !isset($body['Books_to_edit']) || !is_array($body['Books_to_edit']) ||
@@ -128,7 +96,7 @@ try {
         }
     }
     if (!empty($booksToAdd)) {
-        $result = addBooksToDelivery($providerId, $booksToAdd);
+        $result = addBooksToDelivery($providerId, $booksToAdd, true);
         if ($result['status'] === 'error') {
             print_r($result['message']);
             throw new Exception($result['message']);

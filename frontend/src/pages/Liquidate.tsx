@@ -1,8 +1,6 @@
 // BookSubmissionForm.tsx
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { Link } from "react-router-dom";
-
-import "../styles/SubmissionForm.css";
 import Book from "../types/Book";
 import BookEntry from "../types/BookEntry";
 

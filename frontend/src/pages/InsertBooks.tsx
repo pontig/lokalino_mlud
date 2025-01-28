@@ -2,8 +2,6 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { Link } from "react-router-dom";
 
-import "../styles/SubmissionForm.css";
-import BookEntry from "../types/BookEntry";
 import Book from "../types/Book";
 
 interface ISBNLookupFieldProps {

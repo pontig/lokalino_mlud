@@ -326,7 +326,7 @@ const PickUp: React.FC = () => {
         </div>
         <div className="content">
           {filteredProviders.length === 0 ? (
-            <div className="text-center text-gray-500">
+            <div className="empty-message">
               No providers found matching your search
             </div>
           ) : (

@@ -18,12 +18,15 @@ A PR submits its books to the system, and gives its personal information.\\
 \textbf{Body parameters} :
 \begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
 {
-    "Name": String,
-    "Surname": String,
-    "School": String,
-    "Email": String,
-    "Phone": String,
-    "Books": [
+    "personalInfo": {
+        "Name": String,
+        "Surname": String,
+        "School": String,
+        "Email": String,
+        "Phone_no": String,
+        "Mail_list": Boolean
+    },
+    "books": [
         {
             "ISBN": String,
             "Title": String,
@@ -33,8 +36,7 @@ A PR submits its books to the system, and gives its personal information.\\
             "Dec_conditions": String
         },
         ...
-    ],
-    "Mail_list": Boolean
+    ]
 }
 \end{lstlisting}
 \textbf{Response} : \texttt{200} if the submission is successful, \texttt{400} if the request is malformed.

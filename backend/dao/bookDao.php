@@ -1,6 +1,6 @@
 <?php
 
-require("db_connection.php");
+require_once("db_connection.php");
 
 function getBooksByISBN($isbn)
 {
@@ -157,18 +157,11 @@ function getBooksByProvider($providerId)
 
 function insertNewBooksInDatabase($books)
 {
-    print("Starting insertNewBooksInDatabase function...\n");
-
-    // Debugging: Dump books array
-    var_dump($books);
 
     $conn = getConnection();
     if (!$conn) {
         die("Connection failed: " . mysqli_connect_error());
-    } else {
-        print("Database connection established.\n");
     }
-
     $conn->begin_transaction();
     try {
         $stmtCheck = $conn->prepare("SELECT COUNT(*) FROM Book WHERE ISBN = ?");
@@ -185,8 +178,6 @@ function insertNewBooksInDatabase($books)
 
             $stmtCheck->bind_param("s", $book["ISBN"]);
             $stmtCheck->execute();
-
-            // Ensure results are stored properly
             $stmtCheck->store_result();
             $stmtCheck->bind_result($count);
             $stmtCheck->fetch();
@@ -194,35 +185,25 @@ function insertNewBooksInDatabase($books)
             if ($count == 0) {
                 $stmtInsert->bind_param("ssssd", $book["ISBN"], $book["Title"], $book["Author"], $book["Editor"], $book["Price_new"]);
             }
-
-            // Free result set to prevent out-of-sync errors
             $stmtCheck->free_result();
         }
 
         $conn->commit();
-        print("Transaction committed successfully.\n");
-
         return json_encode(array("status" => "success"));
     } catch (Exception $e) {
-        print("Exception caught: " . $e->getMessage() . "\n");
         $conn->rollback();
-        print("Transaction rolled back.\n");
-
         return json_encode(array("status" => "error", "message" => $e->getMessage()));
     } finally {
         $stmtCheck->close();
         $stmtInsert->close();
         $conn->close();
-        print("Database connection closed.\n");
     }
 }
 
 
 function recordDelivery($bookstoedit)
 {
-
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
-
     $conn->begin_transaction();
 
     try {
@@ -287,7 +268,7 @@ function removeBooksFromDelivery($bookstoremove)
     }
 }
 
-function addBooksToDelivery($providerId, $books)
+function addBooksToDelivery($providerId, $books, $doneByOperator)
 {
 
     insertNewBooksInDatabase($books);
@@ -297,19 +278,20 @@ function addBooksToDelivery($providerId, $books)
 
     try {
 
-
         foreach ($books as $book) {
-            if (isset($book["Comment"]) && !empty($book["Comment"])) {
 
-                print("Inserting book with comment: " . $book["ISBN"] . "\n");
+            if (!$doneByOperator) {
+                $stmt = $conn->prepare("INSERT INTO Provider_Book (Provider_Id, ISBN, Dec_conditions) VALUES (?, ?, ?)");
+                if (!$stmt) echo $conn->error;
+                $stmt->bind_param("iss", $providerId, $book["ISBN"], $book["Dec_conditions"]);
+                $stmt->execute();
+            } else if (isset($book["Comment"]) && !empty($book["Comment"])) {
 
                 $stmt = $conn->prepare("INSERT INTO Provider_Book (Provider_Id, ISBN, Dec_conditions, Consign_date, Comment) VALUES (?, ?, ?, ?, ?)");
 
                 $stmt->bind_param("issss", $providerId, $book["ISBN"], $book["Dec_conditions"], date("Y-m-d H:i:s"), $book["Comment"]);
                 $stmt->execute();
             } else {
-
-                print("Inserting book: " . $book["ISBN"] . "\n");
 
                 $stmt = $conn->prepare("INSERT INTO Provider_Book (Provider_Id, ISBN, Dec_conditions, Consign_date) VALUES (?, ?, ?, ?)");
 

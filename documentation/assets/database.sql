@@ -5,6 +5,7 @@ CREATE TABLE Provider (
     Surname VARCHAR(100) NOT NULL,
     Phone_no VARCHAR(15) NOT NULL,
     Email VARCHAR(100) NOT NULL,
+    School VARCHAR(100) NOT NULL,
     Mail_list BOOLEAN NOT NULL
 );
 

@@ -2,8 +2,6 @@
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 
-import "../styles/ThankYou.css";
-
 const ThankYouPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const name = searchParams.get("name");

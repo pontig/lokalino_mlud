@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { HashRouter as Router, Route, Routes } from "react-router-dom";
 
-import "./styles/BookStore.css";
 import CartPage from "./pages/CartPage";
 import BookList from "./pages/BookList";
 import BookSubmissionForm from "./pages/BookSubmissionForm";

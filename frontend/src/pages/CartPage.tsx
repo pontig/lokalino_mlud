@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import "../styles/Cart.css";
+
 import AvailableBook from "../types/AvailableBook";
 
 interface CartPageProps {
