@@ -30,7 +30,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
   // }, []);
 
   const api = {
-    baseUrl: "https://www.pontiggiaelia.altervista.org/be",
+    baseUrl: "/be",
 
     // Checkout
     async checkout(cart: AvailableBook[]): Promise<void> {

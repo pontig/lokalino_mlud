@@ -129,7 +129,7 @@ const PickUp: React.FC = () => {
   const [showConfirm, setShowConfirm] = useState<number>(-1);
 
   const api = {
-    baseUrl: "https://pontiggiaelia.altervista.org/be",
+    baseUrl: "/be",
 
     async getProviders(): Promise<Provider[]> {
       const response = await fetch(`${this.baseUrl}/getProviders.php`);

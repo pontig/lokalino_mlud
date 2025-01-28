@@ -111,7 +111,7 @@ const Liquidate: React.FC = () => {
   const navigate = useNavigate();
 
   const api = {
-    baseUrl: "https://pontiggiaelia.altervista.org/be",
+    baseUrl: "/be",
 
     async getProviders(): Promise<Provider[]> {
       const response = await fetch(`${this.baseUrl}/getProviders.php`);

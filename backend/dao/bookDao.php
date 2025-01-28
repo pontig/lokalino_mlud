@@ -2,11 +2,22 @@
 
 require_once("db_connection.php");
 
-$debug = false;
-
-function getBooksByISBN($isbn)
+function getBooksByISBN($isbn, $debug = false)
 {
-    $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
+    if ($debug) {
+        echo "Debug Mode: ON\n";
+        echo "Searching for ISBN: $isbn\n";
+    }
+
+    $conn = getConnection();
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+
+    if ($debug) {
+        echo "Database connection established.\n";
+    }
+
     $stmt = null;
 
     try {
@@ -16,25 +27,54 @@ function getBooksByISBN($isbn)
             throw new Exception("Failed to prepare statement: " . $conn->error);
         }
 
+        if ($debug) {
+            echo "SQL Query Prepared: $sql\n";
+        }
+
         $stmt->bind_param("s", $isbn);
+
+        if ($debug) {
+            echo "Parameter bound: ISBN = $isbn\n";
+        }
+
         if (!$stmt->execute()) {
             throw new Exception("Failed to execute query: " . $stmt->error);
         }
 
+        if ($debug) {
+            echo "Query executed successfully.\n";
+        }
+
         $result = $stmt->get_result();
         $books = $result->fetch_all(MYSQLI_ASSOC);
+
+        if ($debug) {
+            echo "Query results:\n";
+            var_dump($books);
+        }
+
         return json_encode($books);
     } catch (Exception $e) {
+        if ($debug) {
+            echo "Error encountered: " . $e->getMessage() . "\n";
+        }
         return json_encode(array("status" => "error", "message" => $e->getMessage()));
     } finally {
         if ($stmt) {
             $stmt->close();
+            if ($debug) {
+                echo "Statement closed.\n";
+            }
         }
         if ($conn) {
             $conn->close();
+            if ($debug) {
+                echo "Database connection closed.\n";
+            }
         }
     }
 }
+
 
 function getAvailableBooksBySearch($search)
 {
@@ -347,7 +387,8 @@ function addBooksToDelivery($providerId, $books, $doneByOperator)
     }
 }
 
-function doCheckout($pb_ids) {
+function doCheckout($pb_ids)
+{
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
     $conn->begin_transaction();
 

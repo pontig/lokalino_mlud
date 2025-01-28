@@ -13,8 +13,7 @@ interface BookListProps {
 
 // API service for books
 const api = {
-  // baseUrl: window.location.origin + '/be',
-  baseUrl: "https://www.pontiggiaelia.altervista.org/be",
+  baseUrl: '/be',
 
   // Get all books
   async getBooks(): Promise<AvailableBook[]> {

@@ -101,7 +101,7 @@ const BookSubmissionForm: React.FC = () => {
   const navigate = useNavigate();
 
   const api = {
-    baseUrl: "https://pontiggiaelia.altervista.org/be",
+    baseUrl: "/be",
 
     // Search for a book by ISBN
     async searchISBN(isbn: string, index: number): Promise<void> {
