@@ -6,6 +6,7 @@ import "../styles/SubmissionForm.css";
 import BookEntry from "../types/BookEntry";
 import Book from "../types/Book";
 import SearchField from "../components/SearchField";
+import BookEntryComponent from "../components/BookEntry";
 
 interface PersonalInfo {
   Name: string;
@@ -96,8 +97,8 @@ const BookSubmissionForm: React.FC = () => {
   ]);
   const [isbnResults, setIsbnResults] = useState<Book[]>([]);
   const [titleResults, setTitleResults] = useState<Book[]>([]);
-  const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [isTitleSearching, setIsTitleSearching] = useState<boolean>(false);
+  const [isSearchingISBN, setIsSearchingISBN] = useState<boolean>(false);
+  const [isSearchingTitle, setIsSearchingTitle] = useState<boolean>(false);
   const [activeISBNIndex, setActiveISBNIndex] = useState<number | null>(null);
   const [activeTitleIndex, setActiveTitleIndex] = useState<number | null>(null);
   const [showTerms, setShowTerms] = useState<boolean>(false);
@@ -208,25 +209,25 @@ const BookSubmissionForm: React.FC = () => {
     setActiveTitleIndex(null);
   };
 
-  const addBook = (): void => {
-    setBooks([
-      ...books,
-      {
-        ISBN: "",
-        Title: "",
-        Author: "",
-        Editor: "",
-        Price_new: 0.0,
-        Dec_conditions: "good",
-      },
-    ]);
-  };
+  // const addBook = (): void => {
+  //   setBooks([
+  //     ...books,
+  //     {
+  //       ISBN: "",
+  //       Title: "",
+  //       Author: "",
+  //       Editor: "",
+  //       Price_new: 0.0,
+  //       Dec_conditions: "good",
+  //     },
+  //   ]);
+  // };
 
-  const removeBook = (index: number): void => {
-    if (books.length > 1) {
-      setBooks(books.filter((_, i) => i !== index));
-    }
-  };
+  // const removeBook = (index: number): void => {
+  //   if (books.length > 1) {
+  //     setBooks(books.filter((_, i) => i !== index));
+  //   }
+  // };
 
   const handleSubmit = (e: FormEvent): void => {
     e.preventDefault();
@@ -249,11 +250,11 @@ const BookSubmissionForm: React.FC = () => {
     newBooks[index].ISBN = value;
     setBooks(newBooks);
     
-    setIsSearching(true);
+    setIsSearchingISBN(true);
     const [results, resultIndex] = await api.searchISBN(value, index);
     setIsbnResults(results);
     setActiveISBNIndex(resultIndex);
-    setIsSearching(false);
+    setIsSearchingISBN(false);
   };
 
   const handleTitleSearch = async (value: string, index: number) => {
@@ -261,11 +262,38 @@ const BookSubmissionForm: React.FC = () => {
     newBooks[index].Title = value;
     setBooks(newBooks);
     
-    setIsTitleSearching(true);
+    setIsSearchingTitle(true);
     const [results, resultIndex] = await api.searchTitle(value, index);
     setTitleResults(results);
     setActiveTitleIndex(resultIndex);
-    setIsTitleSearching(false);
+    setIsSearchingTitle(false);
+  };
+
+  const handleBookChange = (updatedBook: BookEntry, index: number) => {
+    const newBooks = [...books];
+    newBooks[index] = updatedBook;
+    setBooks(newBooks);
+  };
+
+  const addBook = () => {
+    setBooks([
+      ...books,
+      {
+        ISBN: "",
+        Title: "",
+        Author: "",
+        Editor: "",
+        Price_new: 0.0,
+        Dec_conditions: "good",
+        Comment: "",
+      },
+    ]);
+  };
+
+  const removeBook = (index: number) => {
+    if (books.length > 1) {
+      setBooks(books.filter((_, i) => i !== index));
+    }
   };
 
   return (
@@ -303,117 +331,23 @@ const BookSubmissionForm: React.FC = () => {
 
         {/* Books Section */}
         <div className="books-section">
-          <h2>Books Information</h2>
           {books.map((book, index) => (
-            <div key={index} className="book-entry">
-              <div className="book-header">
-                <h3>Book {index + 1}</h3>
-                {books.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeBook(index)}
-                    className="remove-book-button"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-
-              <div className="form-grid">
-                <div className="form-field">
-                  <label className="form-field isbn-field">ISBN</label>
-                  <SearchField
-                    value={book.ISBN}
-                    onChange={handleISBNSearch}
-                    results={activeISBNIndex === index ? isbnResults : []}
-                    onSelect={handleBookSelect}
-                    isSearching={isSearching && activeISBNIndex === index}
-                    placeholder="Enter ISBN"
-                    index={index}
-                  />
-                </div>
-
-                <div className="form-field">
-                  <label>Title</label>
-                  <SearchField
-                    value={book.Title}
-                    onChange={handleTitleSearch}
-                    results={activeTitleIndex === index ? titleResults : []}
-                    onSelect={handleBookSelect}
-                    isSearching={isTitleSearching && activeTitleIndex === index}
-                    placeholder="Enter book title"
-                    index={index}
-                  />
-                </div>
-
-                <div className="form-field">
-                  <label>Author</label>
-                  <input
-                    type="text"
-                    value={book.Author}
-                    onChange={(e) => {
-                      const newBooks = [...books];
-                      newBooks[index].Author = e.target.value;
-                      setBooks(newBooks);
-                    }}
-                    // className="w-full p-2 border rounded"
-                    required
-                  />
-                </div>
-
-                <div className="form-field">
-                  <label>Editor</label>
-                  <input
-                    type="text"
-                    value={book.Editor}
-                    onChange={(e) => {
-                      const newBooks = [...books];
-                      newBooks[index].Editor = e.target.value;
-                      setBooks(newBooks);
-                    }}
-                    // className="w-full p-2 border rounded"
-                    required
-                  />
-                </div>
-
-                <div className="form-field">
-                  <label>Price</label>
-                  <input
-                    type="number"
-                    value={book.Price_new}
-                    onChange={(e) => {
-                      const newBooks = [...books];
-                      newBooks[index].Price_new = Number(e.target.value);
-                      setBooks(newBooks);
-                    }}
-                    // className="w-full p-2 border rounded"
-                    required
-                    step="0.01"
-                  />
-                </div>
-
-                <div className="form-field">
-                  <label>Condition</label>
-                  <select
-                    value={book.Dec_conditions}
-                    onChange={(e) => {
-                      const newBooks = [...books];
-                      newBooks[index].Dec_conditions = e.target
-                        .value as BookEntry["Dec_conditions"];
-                      setBooks(newBooks);
-                    }}
-                    // className="w-full p-2 border rounded"
-                    required
-                  >
-                    <option value="good">Good</option>
-                    <option value="average">Average</option>
-                    <option value="bad">Bad</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+            <BookEntryComponent
+              key={index}
+              book={book}
+              index={index}
+              showComment={true} // Can be configurable
+              disabledFields={false} // Can specify fields to disable
+              onBookChange={handleBookChange}
+              onRemove={books.length > 1 ? removeBook : undefined}
+              isSearchingISBN={isSearchingISBN}
+              isSearchingTitle={isSearchingTitle}
+              isbnResults={isbnResults}
+              titleResults={titleResults}
+              activeISBNIndex={activeISBNIndex}
+              activeTitleIndex={activeTitleIndex}
+            />
           ))}
-
           <button type="button" onClick={addBook} className="add-book-button">
             Add Another Book
           </button>

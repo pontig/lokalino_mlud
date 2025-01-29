@@ -7,6 +7,7 @@ export const SearchField: React.FC<SearchFieldProps> = ({
   results,
   onSelect,
   isSearching,
+  disabled = false,
   placeholder,
   type = "text",
   index
@@ -25,6 +26,7 @@ export const SearchField: React.FC<SearchFieldProps> = ({
         className="w-full p-2 border rounded"
         placeholder={placeholder}
         required
+        disabled={disabled}
       />
 
       {isSearching && (

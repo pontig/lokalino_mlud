@@ -9,4 +9,5 @@ export default interface SearchFieldProps {
   placeholder?: string;
   type?: string;
   index: number;
+  disabled?: boolean;
 }
