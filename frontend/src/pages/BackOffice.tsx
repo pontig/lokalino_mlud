@@ -70,7 +70,7 @@ const options = [
     choice: "Show mailing list subscribers ",
     url: "/mailingList",
     icon: <IoMailOutline />,
-    status: "not yet started",
+    status: "OK",
   },
   {
     choice: "Show statistics",

@@ -102,3 +102,19 @@ function liquidateProvider($provider_id)
 
     $conn->close();
 }
+
+function getMailingList()
+{
+    $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
+
+    $sql = "SELECT * FROM Provider WHERE Mail_list = 1;";
+
+    $result = $conn->query($sql) or die($conn->error);
+
+    $providers = $result->fetch_all(MYSQLI_ASSOC);
+
+    $conn->close();
+
+    $providers = json_encode($providers);
+    return $providers;
+}

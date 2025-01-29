@@ -1,9 +1,6 @@
 <?php
 
 // require_once "utils/session.php";
-
-header('Access-Control-Max-Age: 86400'); // 24 hours cache for preflight
-
 require_once "dao/personDao.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {

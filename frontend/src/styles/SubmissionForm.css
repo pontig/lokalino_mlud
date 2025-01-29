@@ -597,6 +597,28 @@ ty-p, ty-h1 {
 }
 
 /* ================================= */
+/* Mailing list */
+/* ================================= */
+
+.content-ml {
+  grid-template-columns: 1fr;
+}
+
+.mailing-list {
+  width: 100%;
+  min-height: 10vh;
+}
+
+.mailing-list:hover {
+  transform: none;
+}
+
+.no-gap {
+  gap: none;
+  grid-gap: none;
+}
+
+/* ================================= */
 /* Responsive */
 /* ================================= */
 @media (max-width: 768px) {
