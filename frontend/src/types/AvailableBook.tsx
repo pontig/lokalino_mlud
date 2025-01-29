@@ -1,6 +1,6 @@
 import Book from "./Book";
 
-interface AvailableBook extends Book {
+export default interface AvailableBook extends Book {
   PB_Id: number;
   Dec_conditions: String;
   ProviderName: String;
@@ -8,4 +8,3 @@ interface AvailableBook extends Book {
   Comment?: String;
 }
 
-export default AvailableBook;

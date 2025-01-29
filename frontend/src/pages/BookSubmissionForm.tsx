@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/SubmissionForm.css";
 import BookEntry from "../types/BookEntry";
 import Book from "../types/Book";
+import SearchField from "../components/SearchField";
 
 interface PersonalInfo {
   Name: string;
@@ -15,64 +16,64 @@ interface PersonalInfo {
   Mail_list: boolean;
 }
 
-interface ISBNLookupFieldProps {
-  value: string;
-  onChange: (value: string) => void;
-  results: Book[];
-  onSelect: (result: Book) => void;
-  isSearching: boolean;
-}
+// interface ISBNLookupFieldProps {
+//   value: string;
+//   onChange: (value: string) => void;
+//   results: Book[];
+//   onSelect: (result: Book) => void;
+//   isSearching: boolean;
+// }
 
-const ISBNLookupField: React.FC<ISBNLookupFieldProps> = ({
-  value,
-  onChange,
-  results,
-  onSelect,
-  isSearching,
-}) => {
-  return (
-    <div className="relative w-full">
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => {
-          const newValue = e.target.value;
-          if (/^\d*$/.test(newValue)) {
-            onChange(newValue);
-          }
-        }}
-        className="w-full p-2 border rounded"
-        placeholder="no spaces or dashes"
-        required
-      />
+// const ISBNLookupField: React.FC<ISBNLookupFieldProps> = ({
+//   value,
+//   onChange,
+//   results,
+//   onSelect,
+//   isSearching,
+// }) => {
+//   return (
+//     <div className="relative w-full">
+//       <input
+//         type="text"
+//         value={value}
+//         onChange={(e) => {
+//           const newValue = e.target.value;
+//           if (/^\d*$/.test(newValue)) {
+//             onChange(newValue);
+//           }
+//         }}
+//         className="w-full p-2 border rounded"
+//         placeholder="no spaces or dashes"
+//         required
+//       />
 
-      {isSearching && (
-        <div className="absolute w-full mt-1 text-sm text-gray-500">
-          Searching...
-        </div>
-      )}
+//       {isSearching && (
+//         <div className="absolute w-full mt-1 text-sm text-gray-500">
+//           Searching...
+//         </div>
+//       )}
 
-      {results.length > 0 && (
-        <div>
-          <div className="isbn-results">
-            {results.map((result) => (
-              <button
-                key={result.ISBN}
-                onClick={() => onSelect(result)}
-                className="isbn-result-item"
-              >
-                <div className="font-medium">{result.Title}</div>
-                <div className="text-sm text-gray-600">
-                  by {result.Author} • {result.Editor}
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+//       {results.length > 0 && (
+//         <div>
+//           <div className="isbn-results">
+//             {results.map((result) => (
+//               <button
+//                 key={result.ISBN}
+//                 onClick={() => onSelect(result)}
+//                 className="isbn-result-item"
+//               >
+//                 <div className="font-medium">{result.Title}</div>
+//                 <div className="text-sm text-gray-600">
+//                   by {result.Author} • {result.Editor}
+//                 </div>
+//               </button>
+//             ))}
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
 
 const BookSubmissionForm: React.FC = () => {
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
@@ -94,8 +95,11 @@ const BookSubmissionForm: React.FC = () => {
     },
   ]);
   const [isbnResults, setIsbnResults] = useState<Book[]>([]);
+  const [titleResults, setTitleResults] = useState<Book[]>([]);
   const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [isTitleSearching, setIsTitleSearching] = useState<boolean>(false);
   const [activeISBNIndex, setActiveISBNIndex] = useState<number | null>(null);
+  const [activeTitleIndex, setActiveTitleIndex] = useState<number | null>(null);
   const [showTerms, setShowTerms] = useState<boolean>(false);
   const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -104,26 +108,39 @@ const BookSubmissionForm: React.FC = () => {
     baseUrl: "/be",
 
     // Search for a book by ISBN
-    async searchISBN(isbn: string, index: number): Promise<void> {
+    async searchISBN(isbn: string, index: number): Promise<[Book[], number]> {
       if (isbn.length < 2) {
-        setIsbnResults([]);
-        return;
+        return [[], index];
       }
-
-      setActiveISBNIndex(index);
-      setIsSearching(true);
 
       try {
         const response = await fetch(
           `${this.baseUrl}/getExistingBooks.php?ISBN=${isbn}`
         );
-        const data: Book[] = await response.json();
-        setIsbnResults(data);
+        const data = await response.json();
+        return [data, index];
       } catch (error) {
         console.error("Error searching ISBN:", error);
-        setIsbnResults([]);
-      } finally {
-        setIsSearching(false);
+        return [[], index];
+      }
+    },
+
+    async searchTitle(title: string, index: number): Promise<[Book[], number]> {
+      if (title.length < 2) {
+        return [[], index];
+      }
+
+      try {
+        const response = await fetch(
+          `${this.baseUrl}/getExistingBooks.php?title=${encodeURIComponent(
+            title
+          )}`
+        );
+        const data = await response.json();
+        return [data, index];
+      } catch (error) {
+        console.error("Error searching title:", error);
+        return [[], index];
       }
     },
 
@@ -174,7 +191,7 @@ const BookSubmissionForm: React.FC = () => {
     });
   };
 
-  const handleBookSelect = (result: Book, index: number): void => {
+  const handleBookSelect = (result: Book, index: number) => {
     const newBooks = [...books];
     newBooks[index] = {
       ...newBooks[index],
@@ -186,7 +203,9 @@ const BookSubmissionForm: React.FC = () => {
     };
     setBooks(newBooks);
     setIsbnResults([]);
+    setTitleResults([]);
     setActiveISBNIndex(null);
+    setActiveTitleIndex(null);
   };
 
   const addBook = (): void => {
@@ -223,6 +242,30 @@ const BookSubmissionForm: React.FC = () => {
     }
     console.log({ personalInfo, books });
     api.submitForm(personalInfo, books);
+  };
+
+  const handleISBNSearch = async (value: string, index: number) => {
+    const newBooks = [...books];
+    newBooks[index].ISBN = value;
+    setBooks(newBooks);
+    
+    setIsSearching(true);
+    const [results, resultIndex] = await api.searchISBN(value, index);
+    setIsbnResults(results);
+    setActiveISBNIndex(resultIndex);
+    setIsSearching(false);
+  };
+
+  const handleTitleSearch = async (value: string, index: number) => {
+    const newBooks = [...books];
+    newBooks[index].Title = value;
+    setBooks(newBooks);
+    
+    setIsTitleSearching(true);
+    const [results, resultIndex] = await api.searchTitle(value, index);
+    setTitleResults(results);
+    setActiveTitleIndex(resultIndex);
+    setIsTitleSearching(false);
   };
 
   return (
@@ -279,32 +322,27 @@ const BookSubmissionForm: React.FC = () => {
               <div className="form-grid">
                 <div className="form-field">
                   <label className="form-field isbn-field">ISBN</label>
-                  <ISBNLookupField
+                  <SearchField
                     value={book.ISBN}
-                    onChange={(value: string) => {
-                      const newBooks = [...books];
-                      newBooks[index].ISBN = value;
-                      setBooks(newBooks);
-                      api.searchISBN(value, index);
-                    }}
+                    onChange={handleISBNSearch}
                     results={activeISBNIndex === index ? isbnResults : []}
-                    onSelect={(result) => handleBookSelect(result, index)}
+                    onSelect={handleBookSelect}
                     isSearching={isSearching && activeISBNIndex === index}
+                    placeholder="Enter ISBN"
+                    index={index}
                   />
                 </div>
 
                 <div className="form-field">
                   <label>Title</label>
-                  <input
-                    type="text"
+                  <SearchField
                     value={book.Title}
-                    onChange={(e) => {
-                      const newBooks = [...books];
-                      newBooks[index].Title = e.target.value;
-                      setBooks(newBooks);
-                    }}
-                    // className="w-full p-2 border rounded"
-                    required
+                    onChange={handleTitleSearch}
+                    results={activeTitleIndex === index ? titleResults : []}
+                    onSelect={handleBookSelect}
+                    isSearching={isTitleSearching && activeTitleIndex === index}
+                    placeholder="Enter book title"
+                    index={index}
                   />
                 </div>
 

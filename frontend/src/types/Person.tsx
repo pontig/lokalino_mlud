@@ -1,4 +1,4 @@
-interface Person {
+export default interface Person {
     Provider_Id: number;
     Name: string;
     Surname: string;
@@ -8,4 +8,3 @@ interface Person {
     Mail_list: boolean;
 }
 
-export default Person;

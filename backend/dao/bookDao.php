@@ -75,6 +75,79 @@ function getBooksByISBN($isbn, $debug = false)
     }
 }
 
+function getBooksByTitle($title, $debug = false)
+{
+    if ($debug) {
+        echo "Debug Mode: ON\n";
+        echo "Searching for Title: $title\n";
+    }
+
+    $conn = getConnection();
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+
+    if ($debug) {
+        echo "Database connection established.\n";
+    }
+
+    $stmt = null;
+
+    try {
+        $sql = "SELECT * FROM Book WHERE Title LIKE CONCAT('%', ?, '%')";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Failed to prepare statement: " . $conn->error);
+        }
+
+        if ($debug) {
+            echo "SQL Query Prepared: $sql\n";
+        }
+
+        $stmt->bind_param("s", $title);
+
+        if ($debug) {
+            echo "Parameter bound: Title = $title\n";
+        }
+
+        if (!$stmt->execute()) {
+            throw new Exception("Failed to execute query: " . $stmt->error);
+        }
+
+        if ($debug) {
+            echo "Query executed successfully.\n";
+        }
+
+        $result = $stmt->get_result();
+        $books = $result->fetch_all(MYSQLI_ASSOC);
+
+        if ($debug) {
+            echo "Query results:\n";
+            var_dump($books);
+        }
+
+        return json_encode($books);
+    } catch (Exception $e) {
+        if ($debug) {
+            echo "Error encountered: " . $e->getMessage() . "\n";
+        }
+        return json_encode(array("status" => "error", "message" => $e->getMessage()));
+    } finally {
+        if ($stmt) {
+            $stmt->close();
+            if ($debug) {
+                echo "Statement closed.\n";
+            }
+        }
+        if ($conn) {
+            $conn->close();
+            if ($debug) {
+                echo "Database connection closed.\n";
+            }
+        }
+    }
+}
+
 
 function getAvailableBooksBySearch($search)
 {

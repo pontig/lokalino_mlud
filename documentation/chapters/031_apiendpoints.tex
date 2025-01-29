@@ -42,12 +42,13 @@ A PR submits its books to the system, and gives its personal information.\\
 \textbf{Response} : \texttt{200} if the submission is successful, \texttt{400} if the request is malformed.
 
 \subsection{Get Existing Books}
-The system returns the information of the books already in the system, searching by ISBN.\\
+The system returns the information of the books already in the system, searching by ISBN or Title, depending on the parameters.\\
 \textbf{Method} : GET \\
 \textbf{EndPoint} : /getExistingBooks.php \\
 \textbf{URL parameters} :
 \begin{itemize}
     \item \texttt{ISBN}: String
+    \item \texttt{Title}: String
 \end{itemize}
 \textbf{Response} :
 \begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]

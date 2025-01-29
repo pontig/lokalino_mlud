@@ -1,7 +1,6 @@
 import Book from "./Book";
 
-interface BookEntry extends Book {
+export default interface BookEntry extends Book {
     Dec_conditions: string;
 }
 
-export default BookEntry;

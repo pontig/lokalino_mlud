@@ -17,4 +17,11 @@ if (isset($_GET['ISBN'])) {
     echo $books;
 }
 
+if (isset($_GET['title'])) {
+    $search_key = $_GET['title'];
+    $books = getBooksByTitle($search_key);
+    echo $books;
+    
+}
+
 http_response_code(200);
