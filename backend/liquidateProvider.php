@@ -12,7 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     exit;
 }
 
-if (!isset($_POST['Provider_Id'])) {
+$body = json_decode(file_get_contents('php://input'), true);
+
+if (!isset($body['Provider_Id'])) {
     http_response_code(400);
     echo json_encode([
         'error' => 'Bad Request',
@@ -21,7 +23,7 @@ if (!isset($_POST['Provider_Id'])) {
     exit;
 }
 
-$provider_id = $_POST['Provider_Id'];
+$provider_id = $body['Provider_Id']['Provider_Id'];
 liquidateProvider($provider_id);
 
 echo json_encode([

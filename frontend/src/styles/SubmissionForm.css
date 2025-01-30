@@ -277,6 +277,7 @@ ty-p, ty-h1 {
   border: 1px solid #e2e8f0;
   border-radius: 0.375rem;
   font-size: 1rem;
+  width: 90%;
 }
 
 .form-field input:focus,
@@ -616,8 +617,8 @@ ty-p, ty-h1 {
 }
 
 .no-gap {
-  gap: none;
-  grid-gap: none;
+  gap: 0;
+  grid-gap: 0;
 }
 
 /* ================================= */

@@ -1,12 +1,14 @@
 import React from 'react';
-import  SearchFieldProps  from '../types/SearchFieldProps';
+import SearchFieldProps from '../types/SearchFieldProps';
+import Book from '../types/Book';
 
-export const SearchField: React.FC<SearchFieldProps> = ({
+const SearchField: React.FC<SearchFieldProps> = ({
   value,
   onChange,
   results,
   onSelect,
   isSearching,
+  disabled = false,
   placeholder,
   type = "text",
   index
@@ -25,6 +27,7 @@ export const SearchField: React.FC<SearchFieldProps> = ({
         className="w-full p-2 border rounded"
         placeholder={placeholder}
         required
+        disabled={disabled}
       />
 
       {isSearching && (
@@ -36,10 +39,10 @@ export const SearchField: React.FC<SearchFieldProps> = ({
       {results.length > 0 && (
         <div>
           <div className="isbn-results">
-            {results.map((result: any) => (
+            {results.map((result: Book) => (
               <button
                 key={result.ISBN}
-                onClick={() => onSelect(result, index)}
+                onClick={() => onSelect(result)}
                 className="isbn-result-item"
               >
                 <div className="font-medium">{result.Title}</div>

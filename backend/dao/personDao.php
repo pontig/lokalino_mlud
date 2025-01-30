@@ -92,16 +92,63 @@ function insertNewProvider($name, $surname, $school, $email, $phone, $mail_list)
     return $provider_id;
 }
 
-function liquidateProvider($provider_id)
+function liquidateProvider($provider_id, $debug = false)
 {
-    $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
+    if ($debug) {
+        echo "Debug Mode: ON\n";
+        echo "Provider ID to liquidate: $provider_id\n";
+    }
 
-    $sql = "UPDATE Provider_Book SET Liquidation_date = CURRENT_DATE WHERE Provider_Id = $provider_id AND Liquidation_date IS NULL;";
+    $conn = getConnection();
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
 
-    $conn->query($sql) or die($conn->error);
+    if ($debug) {
+        echo "Database connection established.\n";
+    }
 
-    $conn->close();
+    try {
+        $sql = "UPDATE Provider_Book SET Liquidation_date = CURRENT_TIMESTAMP WHERE Provider_Id = ? AND Liquidation_date IS NULL";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Failed to prepare statement: " . $conn->error);
+        }
+
+        $stmt->bind_param("i", $provider_id);
+
+        if ($debug) {
+            echo "SQL Query Prepared: $sql\n";
+            echo "Parameter bound: Provider ID = $provider_id\n";
+        }
+
+        if (!$stmt->execute()) {
+            throw new Exception("Query execution failed: " . $stmt->error);
+        }
+
+        if ($debug) {
+            echo "Query executed successfully. Rows affected: " . $stmt->affected_rows . "\n";
+        }
+    } catch (Exception $e) {
+        if ($debug) {
+            echo "Error encountered: " . $e->getMessage() . "\n";
+        }
+    } finally {
+        if ($stmt) {
+            $stmt->close();
+            if ($debug) {
+                echo "Statement closed.\n";
+            }
+        }
+        if ($conn) {
+            $conn->close();
+            if ($debug) {
+                echo "Database connection closed.\n";
+            }
+        }
+    }
 }
+
 
 function getMailingList()
 {
