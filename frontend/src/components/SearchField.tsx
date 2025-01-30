@@ -1,7 +1,8 @@
 import React from 'react';
-import  SearchFieldProps  from '../types/SearchFieldProps';
+import SearchFieldProps from '../types/SearchFieldProps';
+import Book from '../types/Book';
 
-export const SearchField: React.FC<SearchFieldProps> = ({
+const SearchField: React.FC<SearchFieldProps> = ({
   value,
   onChange,
   results,
@@ -38,10 +39,10 @@ export const SearchField: React.FC<SearchFieldProps> = ({
       {results.length > 0 && (
         <div>
           <div className="isbn-results">
-            {results.map((result: any) => (
+            {results.map((result: Book) => (
               <button
                 key={result.ISBN}
-                onClick={() => onSelect(result, index)}
+                onClick={() => onSelect(result)}
                 className="isbn-result-item"
               >
                 <div className="font-medium">{result.Title}</div>

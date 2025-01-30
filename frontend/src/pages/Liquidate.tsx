@@ -330,6 +330,7 @@ const Liquidate: React.FC = () => {
       </div>
 
       <div className="content">
+        <h2>Unsold books</h2>
         {books.map((book) => (
           <div key={book.PB_Id} className="book-card">
             <div className="book-content">

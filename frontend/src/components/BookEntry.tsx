@@ -1,5 +1,4 @@
-import React from "react";
-
+import React, { useState, useCallback, useRef } from "react";
 import SearchField from "./SearchField";
 import BookEntryProps from "../types/BookEntryProps";
 import BookEntry from "../types/BookEntry";
@@ -12,55 +11,52 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
   disabledFields = false,
   onBookChange,
   onRemove,
-  isSearchingISBN = false,
-  isSearchingTitle = false,
-  isbnResults = [],
-  titleResults = [],
-  activeISBNIndex,
-  activeTitleIndex,
 }) => {
+  const [isSearchingISBN, setIsSearchingISBN] = useState(false);
+  const [isSearchingTitle, setIsSearchingTitle] = useState(false);
+  const [isbnResults, setIsbnResults] = useState<Book[]>([]);
+  const [titleResults, setTitleResults] = useState<Book[]>([]);
+  
+  // Use refs to handle debouncing
+  const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
-      const api = {
-        baseUrl: "/be",
+  const api = {
+    baseUrl: "/be",
     
-        // Search for a book by ISBN
-        async searchISBN(isbn: string, index: number): Promise<[Book[], number]> {
-          if (isbn.length < 2) {
-            return [[], index];
-          }
-    
-          try {
-            const response = await fetch(
-              `${this.baseUrl}/getExistingBooks.php?ISBN=${isbn}`
-            );
-            const data = await response.json();
-            return [data, index];
-          } catch (error) {
-            console.error("Error searching ISBN:", error);
-            return [[], index];
-          }
-        },
-    
-        async searchTitle(title: string, index: number): Promise<[Book[], number]> {
-          if (title.length < 2) {
-            return [[], index];
-          }
-    
-          try {
-            const response = await fetch(
-              `${this.baseUrl}/getExistingBooks.php?title=${encodeURIComponent(
-                title
-              )}`
-            );
-            const data = await response.json();
-            return [data, index];
-          } catch (error) {
-            console.error("Error searching title:", error);
-            return [[], index];
-          }
-        },
- 
-      };
+    async searchISBN(isbn: string): Promise<Book[]> {
+      if (isbn.length < 2) {
+        return [];
+      }
+
+      try {
+        const response = await fetch(
+          `${this.baseUrl}/getExistingBooks.php?ISBN=${isbn}`
+        );
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error("Error searching ISBN:", error);
+        return [];
+      }
+    },
+
+    async searchTitle(title: string): Promise<Book[]> {
+      if (title.length < 2) {
+        return [];
+      }
+
+      try {
+        const response = await fetch(
+          `${this.baseUrl}/getExistingBooks.php?title=${encodeURIComponent(title)}`
+        );
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error("Error searching title:", error);
+        return [];
+      }
+    },
+  };
 
   const handleFieldChange = (
     field: keyof BookEntry,
@@ -75,36 +71,67 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
     );
   };
 
-  const handleISBNSearch = async (value: string, fieldIndex: number) => {
+  const handleISBNSearch = useCallback(async (value: string) => {
     handleFieldChange("ISBN", value);
-    const [results, resultIndex] = await api.searchISBN(
-      value,
-      fieldIndex
-    );
-    return [results, resultIndex];
-  };
+    
+    // Clear previous timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
 
-  const handleTitleSearch = async (value: string, fieldIndex: number) => {
+    if (value.length < 2) {
+      setIsbnResults([]);
+      return;
+    }
+
+    setIsSearchingISBN(true);
+
+    // Debounce the search
+    searchTimeoutRef.current = setTimeout(async () => {
+      const results = await api.searchISBN(value);
+      setIsbnResults(results);
+      setIsSearchingISBN(false);
+    }, 300);
+  }, [book, index, onBookChange]);
+
+  const handleTitleSearch = useCallback(async (value: string) => {
     handleFieldChange("Title", value);
-    const [results, resultIndex] = await api.searchTitle(
-      value,
-      fieldIndex
-    );
-    return [results, resultIndex];
-  };
 
-  const handleBookSelect = (result: Book) => {
+    // Clear previous timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    if (value.length < 2) {
+      setTitleResults([]);
+      return;
+    }
+
+    setIsSearchingTitle(true);
+
+    // Debounce the search
+    searchTimeoutRef.current = setTimeout(async () => {
+      const results = await api.searchTitle(value);
+      setTitleResults(results);
+      setIsSearchingTitle(false);
+    }, 300);
+  }, [book, index, onBookChange]);
+
+  const handleBookSelect = (selectedBook: Book) => {
     onBookChange(
       {
         ...book,
-        ISBN: result.ISBN,
-        Title: result.Title,
-        Author: result.Author,
-        Editor: result.Editor,
-        Price_new: result.Price_new,
+        ISBN: selectedBook.ISBN,
+        Title: selectedBook.Title,
+        Author: selectedBook.Author,
+        Editor: selectedBook.Editor,
+        Price_new: selectedBook.Price_new,
       },
       index
     );
+    // Clear results after selection
+    setIsbnResults([]);
+    setTitleResults([]);
   };
 
   return (
@@ -128,12 +155,12 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
           <SearchField
             value={book.ISBN}
             onChange={handleISBNSearch}
-            results={activeISBNIndex === index ? isbnResults : []}
+            results={isbnResults}
             onSelect={handleBookSelect}
-            isSearching={isSearchingISBN && activeISBNIndex === index}
+            isSearching={isSearchingISBN}
             placeholder="Enter ISBN"
-            index={index}
             disabled={disabledFields}
+            index={index}
           />
         </div>
 
@@ -142,12 +169,12 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
           <SearchField
             value={book.Title}
             onChange={handleTitleSearch}
-            results={activeTitleIndex === index ? titleResults : []}
+            results={titleResults}
             onSelect={handleBookSelect}
-            isSearching={isSearchingTitle && activeTitleIndex === index}
+            isSearching={isSearchingTitle}
             placeholder="Enter book title"
-            index={index}
             disabled={disabledFields}
+            index={index}
           />
         </div>
 
@@ -180,9 +207,7 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
           <input
             type="number"
             value={book.Price_new}
-            onChange={(e) =>
-              handleFieldChange("Price_new", Number(e.target.value))
-            }
+            onChange={(e) => handleFieldChange("Price_new", Number(e.target.value))}
             className="w-full p-2 border rounded"
             required
             step="0.01"
@@ -194,12 +219,7 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
           <label>Condition</label>
           <select
             value={book.Dec_conditions}
-            onChange={(e) =>
-              handleFieldChange(
-                "Dec_conditions",
-                e.target.value as BookEntry["Dec_conditions"]
-              )
-            }
+            onChange={(e) => handleFieldChange("Dec_conditions", e.target.value as BookEntry["Dec_conditions"])}
             className="w-full p-2 border rounded"
             required
             disabled={disabledFields}
@@ -212,14 +232,14 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
 
         {showComment && (
           <div className="form-field" style={{ gridColumn: "span 2" }}>
-          <label>Add a comment if needed</label>
-          <input
-            type="text"
-            value={book.Comment}
-            onChange={(e) => handleFieldChange("Comment", e.target.value)}            
-            // className="w-full p-2 border rounded"
-          />
-        </div>
+            <label>Add a comment if needed</label>
+            <input
+              type="text"
+              value={book.Comment}
+              onChange={(e) => handleFieldChange("Comment", e.target.value)}
+              className="w-full p-2 border rounded"
+            />
+          </div>
         )}
       </div>
     </div>

@@ -234,14 +234,14 @@ const BookSubmissionForm: React.FC = () => {
     const allFieldsFilled =
       Object.values(personalInfo).every((value) => value !== "") &&
       books.every((book) =>
-        Object.values(book).every((value) => value !== "" && value !== 0)
+      Object.entries(book).every(([key, value]) => key === "Comment" || (value !== "" && value !== 0))
       );
 
+    console.log({ personalInfo, books });
     if (!allFieldsFilled || !acceptTerms) {
       alert("Please fill in all required fields.");
       return;
     }
-    console.log({ personalInfo, books });
     api.submitForm(personalInfo, books);
   };
 
@@ -336,7 +336,7 @@ const BookSubmissionForm: React.FC = () => {
               key={index}
               book={book}
               index={index}
-              showComment={true} // Can be configurable
+              showComment={false} // Can be configurable
               disabledFields={false} // Can specify fields to disable
               onBookChange={handleBookChange}
               onRemove={books.length > 1 ? removeBook : undefined}

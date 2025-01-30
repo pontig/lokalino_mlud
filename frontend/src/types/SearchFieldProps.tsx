@@ -4,10 +4,10 @@ export default interface SearchFieldProps {
   value: string;
   onChange: (value: string, index: number) => void;
   results: Book[];
-  onSelect: (result: Book, index: number) => void;
+  onSelect: (book: Book) => void;
   isSearching: boolean;
+  disabled?: boolean;
   placeholder?: string;
   type?: string;
   index: number;
-  disabled?: boolean;
 }
