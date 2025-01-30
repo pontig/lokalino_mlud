@@ -5,6 +5,7 @@ export default interface BookEntryProps {
   book: BookEntry;
   index: number;
   showComment?: boolean;
+  showConditions?: boolean;
   disabledFields?: boolean;
   onBookChange: (book: BookEntry, index: number) => void;
   onRemove?: (index: number) => void;

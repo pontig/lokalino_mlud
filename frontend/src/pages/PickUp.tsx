@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/SubmissionForm.css";
 import Book from "../types/Book";
 import BookEntry from "../types/BookEntry";
+import BookEntryComponent from "../components/BookEntry";
 
 interface PersonalInfo {
   name: string;
@@ -459,247 +460,46 @@ const PickUp: React.FC = () => {
             <div className="empty-message">No books to remove</div>
           )}
           {booksInseredByPr.map((book, index) => (
-            <div key={index} className="book-entry">
-              <div className="book-header">
-                <h3>Book {index + 1}</h3>
-                {showConfirm !== book.PB_Id && (
-                  <button
-                    type="button"
-                    onClick={() => sureToRemove(book.PB_Id)}
-                    className="remove-book-button"
-                  >
-                    Remove
-                  </button>
-                )}
-                {showConfirm === book.PB_Id && (
-                  <div className="mt-4 p-4 border rounded-lg bg-white">
-                    <p className="text-center mb-4">
-                      Sure? there's no going back
-                    </p>
-                    <div className="confirm-buttons">
-                      <button
-                        onClick={() => removePrBook(index, book.PB_Id)}
-                        className="cart-button cart-button-add confirm-button"
-                      >
-                        Yes
-                      </button>
-                      <button
-                        onClick={cancelDelete}
-                        className="cart-button cart-button-remove confirm-button"
-                      >
-                        No
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="form-grid">
-                <div className="form-field">
-                  <label className="form-field isbn-field">ISBN</label>
-                  <input type="text" value={book.ISBN} disabled />
-                </div>
-
-                <div className="form-field">
-                  <label>Title</label>
-                  <input type="text" value={book.Title} disabled required />
-                </div>
-
-                <div className="form-field">
-                  <label>Author</label>
-                  <input
-                    type="text"
-                    value={book.Author}
-                    disabled
-                    // className="w-full p-2 border rounded"
-                    required
-                  />
-                </div>
-
-                <div className="form-field">
-                  <label>Editor</label>
-                  <input
-                    type="text"
-                    value={book.Editor}
-                    disabled
-                    // className="w-full p-2 border rounded"
-                    required
-                  />
-                </div>
-
-                <div className="form-field">
-                  <label>Price</label>
-                  <input
-                    type="number"
-                    value={book.Price_new}
-                    disabled
-                    // className="w-full p-2 border rounded"
-                    required
-                    step="0.01"
-                  />
-                </div>
-
-                <div className="form-field">
-                  <label>Condition</label>
-                  <select
-                    value={book.Dec_conditions}
-                    onChange={(e) => {
-                      const newBooks = [...booksInseredByPr];
-                      newBooks[index].Dec_conditions = e.target
-                        .value as BookEntry_commented["Dec_conditions"];
-                      setBooksInseredByPr(newBooks);
-                    }}
-                    // className="w-full p-2 border rounded"
-                    required
-                  >
-                    <option value="good">Good</option>
-                    <option value="average">Average</option>
-                    <option value="bad">Bad</option>
-                  </select>
-                </div>
-
-                <div className="form-field" style={{ gridColumn: "span 2" }}>
-                  <label>Add a comment if needed</label>
-                  <input
-                    type="text"
-                    value={book.Comment}
-                    onChange={(e) => {
-                      const newBooks = [...booksInseredByPr];
-                      newBooks[index].Comment = e.target.value;
-                      setBooksInseredByPr(newBooks);
-                    }}
-                    // className="w-full p-2 border rounded"
-                  />
-                </div>
-              </div>
-            </div>
+            <BookEntryComponent
+              key={index}
+              book={book}
+              index={index}
+              showComment
+              showConditions
+              onBookChange={(book, index) => {
+                const newBooks = [...booksInseredByPr];
+                newBooks[index] = {
+                  ...book,
+                  Comment: book.Comment || "",
+                  Dec_conditions: book.Dec_conditions || "good",
+                  PB_Id: book.PB_Id || 0,
+                }
+                setBooksInseredByPr(newBooks);
+              }}
+              onRemove={(index) => removePrBook(index, book.PB_Id)}
+              disabledFields
+            />
           ))}
 
           {manuallyAddedBooks.map((book, index) => (
-            <div key={index} className="book-entry">
-              <div className="book-header">
-                <h3>Book {index + 1}</h3>
-                <button
-                  type="button"
-                  onClick={() => removeManBook(index)}
-                  className="remove-book-button"
-                >
-                  Remove
-                </button>
-              </div>
-
-              <div className="form-grid">
-                <div className="form-field">
-                  <label className="form-field isbn-field">ISBN</label>
-                  <ISBNLookupField
-                    value={book.ISBN}
-                    onChange={(value: string) => {
-                      const newBooks = [...manuallyAddedBooks];
-                      newBooks[index].ISBN = value;
-                      setManuallyAddedBooks(newBooks);
-                      api.searchISBN(value, index);
-                    }}
-                    results={activeISBNIndex === index ? isbnResults : []}
-                    onSelect={(result) => handleBookSelect(result, index)}
-                    isSearching={isSearching && activeISBNIndex === index}
-                  />
-                </div>
-
-                <div className="form-field">
-                  <label>Title</label>
-                  <input
-                    type="text"
-                    value={book.Title}
-                    onChange={(e) => {
-                      const newBooks = [...manuallyAddedBooks];
-                      newBooks[index].Title = e.target.value;
-                      setManuallyAddedBooks(newBooks);
-                    }}
-                    // className="w-full p-2 border rounded"
-                    required
-                  />
-                </div>
-
-                <div className="form-field">
-                  <label>Author</label>
-                  <input
-                    type="text"
-                    value={book.Author}
-                    onChange={(e) => {
-                      const newBooks = [...manuallyAddedBooks];
-                      newBooks[index].Author = e.target.value;
-                      setManuallyAddedBooks(newBooks);
-                    }}
-                    // className="w-full p-2 border rounded"
-                    required
-                  />
-                </div>
-
-                <div className="form-field">
-                  <label>Editor</label>
-                  <input
-                    type="text"
-                    value={book.Editor}
-                    onChange={(e) => {
-                      const newBooks = [...manuallyAddedBooks];
-                      newBooks[index].Editor = e.target.value;
-                      setManuallyAddedBooks(newBooks);
-                    }}
-                    // className="w-full p-2 border rounded"
-                    required
-                  />
-                </div>
-
-                <div className="form-field">
-                  <label>Price</label>
-                  <input
-                    type="number"
-                    value={book.Price_new}
-                    onChange={(e) => {
-                      const newBooks = [...manuallyAddedBooks];
-                      newBooks[index].Price_new = Number(e.target.value);
-                      setManuallyAddedBooks(newBooks);
-                    }}
-                    // className="w-full p-2 border rounded"
-                    required
-                    step="0.01"
-                  />
-                </div>
-
-                <div className="form-field">
-                  <label>Condition</label>
-                  <select
-                    value={book.Dec_conditions}
-                    onChange={(e) => {
-                      const newBooks = [...manuallyAddedBooks];
-                      newBooks[index].Dec_conditions = e.target
-                        .value as BookEntry_commented["Dec_conditions"];
-                      setManuallyAddedBooks(newBooks);
-                    }}
-                    // className="w-full p-2 border rounded"
-                    required
-                  >
-                    <option value="good">Good</option>
-                    <option value="average">Average</option>
-                    <option value="bad">Bad</option>
-                  </select>
-                </div>
-
-                <div className="form-field" style={{ gridColumn: "span 2" }}>
-                  <label>Add a comment if needed</label>
-                  <input
-                    type="text"
-                    value={book.Comment}
-                    onChange={(e) => {
-                      const newBooks = [...manuallyAddedBooks];
-                      newBooks[index].Comment = e.target.value;
-                      setManuallyAddedBooks(newBooks);
-                    }}
-                    // className="w-full p-2 border rounded"
-                  />
-                </div>
-              </div>
-            </div>
+            <BookEntryComponent
+              key={index}
+              book={book}
+              index={index}
+              showComment
+              showConditions
+              onBookChange={(book, index) => {
+                const newBooks = [...manuallyAddedBooks];
+                newBooks[index] = {
+                  ...book,
+                  Comment: book.Comment || "",
+                  Dec_conditions: book.Dec_conditions || "good",
+                  PB_Id: 0,
+                };
+                setManuallyAddedBooks(newBooks);
+              }}
+              onRemove={(index) => removeManBook(index)}
+            />
           ))}
 
           <button type="button" onClick={addBook} className="add-book-button">

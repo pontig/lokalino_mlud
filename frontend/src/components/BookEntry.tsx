@@ -9,6 +9,7 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
   index,
   showComment = false,
   disabledFields = false,
+  showConditions = true,
   onBookChange,
   onRemove,
 }) => {
@@ -16,13 +17,13 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
   const [isSearchingTitle, setIsSearchingTitle] = useState(false);
   const [isbnResults, setIsbnResults] = useState<Book[]>([]);
   const [titleResults, setTitleResults] = useState<Book[]>([]);
-  
+
   // Use refs to handle debouncing
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
   const api = {
     baseUrl: "/be",
-    
+
     async searchISBN(isbn: string): Promise<Book[]> {
       if (isbn.length < 2) {
         return [];
@@ -47,7 +48,9 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
 
       try {
         const response = await fetch(
-          `${this.baseUrl}/getExistingBooks.php?title=${encodeURIComponent(title)}`
+          `${this.baseUrl}/getExistingBooks.php?title=${encodeURIComponent(
+            title
+          )}`
         );
         const data = await response.json();
         return data;
@@ -71,51 +74,57 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
     );
   };
 
-  const handleISBNSearch = useCallback(async (value: string) => {
-    handleFieldChange("ISBN", value);
-    
-    // Clear previous timeout
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-    }
+  const handleISBNSearch = useCallback(
+    async (value: string) => {
+      handleFieldChange("ISBN", value);
 
-    if (value.length < 2) {
-      setIsbnResults([]);
-      return;
-    }
+      // Clear previous timeout
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
 
-    setIsSearchingISBN(true);
+      if (value.length < 2) {
+        setIsbnResults([]);
+        return;
+      }
 
-    // Debounce the search
-    searchTimeoutRef.current = setTimeout(async () => {
-      const results = await api.searchISBN(value);
-      setIsbnResults(results);
-      setIsSearchingISBN(false);
-    }, 300);
-  }, [book, index, onBookChange]);
+      setIsSearchingISBN(true);
 
-  const handleTitleSearch = useCallback(async (value: string) => {
-    handleFieldChange("Title", value);
+      // Debounce the search
+      searchTimeoutRef.current = setTimeout(async () => {
+        const results = await api.searchISBN(value);
+        setIsbnResults(results);
+        setIsSearchingISBN(false);
+      }, 300);
+    },
+    [book, index, onBookChange]
+  );
 
-    // Clear previous timeout
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-    }
+  const handleTitleSearch = useCallback(
+    async (value: string) => {
+      handleFieldChange("Title", value);
 
-    if (value.length < 2) {
-      setTitleResults([]);
-      return;
-    }
+      // Clear previous timeout
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
 
-    setIsSearchingTitle(true);
+      if (value.length < 2) {
+        setTitleResults([]);
+        return;
+      }
 
-    // Debounce the search
-    searchTimeoutRef.current = setTimeout(async () => {
-      const results = await api.searchTitle(value);
-      setTitleResults(results);
-      setIsSearchingTitle(false);
-    }, 300);
-  }, [book, index, onBookChange]);
+      setIsSearchingTitle(true);
+
+      // Debounce the search
+      searchTimeoutRef.current = setTimeout(async () => {
+        const results = await api.searchTitle(value);
+        setTitleResults(results);
+        setIsSearchingTitle(false);
+      }, 300);
+    },
+    [book, index, onBookChange]
+  );
 
   const handleBookSelect = (selectedBook: Book) => {
     onBookChange(
@@ -207,7 +216,9 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
           <input
             type="number"
             value={book.Price_new}
-            onChange={(e) => handleFieldChange("Price_new", Number(e.target.value))}
+            onChange={(e) =>
+              handleFieldChange("Price_new", Number(e.target.value))
+            }
             className="w-full p-2 border rounded"
             required
             step="0.01"
@@ -215,20 +226,26 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
           />
         </div>
 
-        <div className="form-field">
-          <label>Condition</label>
-          <select
-            value={book.Dec_conditions}
-            onChange={(e) => handleFieldChange("Dec_conditions", e.target.value as BookEntry["Dec_conditions"])}
-            className="w-full p-2 border rounded"
-            required
-            disabled={disabledFields}
-          >
-            <option value="good">Good</option>
-            <option value="average">Average</option>
-            <option value="bad">Bad</option>
-          </select>
-        </div>
+        {showConditions && (
+          <div className="form-field">
+            <label>Condition</label>
+            <select
+              value={book.Dec_conditions}
+              onChange={(e) =>
+                handleFieldChange(
+                  "Dec_conditions",
+                  e.target.value as BookEntry["Dec_conditions"]
+                )
+              }
+              className="w-full p-2 border rounded"
+              required
+            >
+              <option value="good">Good</option>
+              <option value="average">Average</option>
+              <option value="bad">Bad</option>
+            </select>
+          </div>
+        )}
 
         {showComment && (
           <div className="form-field" style={{ gridColumn: "span 2" }}>
