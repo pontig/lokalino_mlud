@@ -11,6 +11,7 @@ import InsertBooks from "./pages/InsertBooks";
 import PickUp from "./pages/PickUp";
 import Liquidate from "./pages/Liquidate";
 import MailingList from "./pages/mailingList";
+import Login from "./pages/Login";
 
 const App = () => {
   const [cart, setCart] = useState<AvailableBook[]>([]);
@@ -26,7 +27,8 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<BackOffice />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/backOffice" element={<BackOffice />} />
         <Route
           path="/sell"
           element={
