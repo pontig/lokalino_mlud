@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   HashRouter as Router,
   Route,
@@ -17,6 +17,7 @@ import { CgInsertAfterO } from "react-icons/cg";
 import { GiReceiveMoney } from "react-icons/gi";
 import { IoMailOutline } from "react-icons/io5";
 import { MdQueryStats } from "react-icons/md";
+import { IoIosLogOut } from "react-icons/io";
 
 const getGradientColor = (index: number, total: number) => {
   const startColor = [0, 100, 0];
@@ -56,7 +57,7 @@ const options = [
   },
   {
     choice: "Provider: insert books",
-    url: "/bookSubmission",
+    url: "/",
     icon: <FaBookOpen />,
     status: "OK",
   },
@@ -78,10 +79,25 @@ const options = [
     icon: <MdQueryStats />,
     status: "not yet started",
   },
+  {
+    choice: "Logout",
+    url: null,
+    icon: <IoIosLogOut />,
+    status: "OK",
+  },
 ];
 
 const BackOffice: React.FC = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch("/be/utils/session.php").then((response) => {
+      if (response.status === 401) {
+        navigate("/login");
+      }
+    });
+  }, []);
+
   return (
     <div className="bookstore-container">
       <h1 style={{ textAlign: "center" }}>Back Office</h1>
@@ -94,7 +110,19 @@ const BackOffice: React.FC = () => {
               key={index}
               style={{ backgroundColor, color }}
               className="choice"
-              onClick={() => navigate(option.url)}
+              onClick={() => {
+                if (option.url) {
+                  navigate(option.url);
+                } else {
+                  fetch("/be/utils/session.php?logout=true").then(
+                    (response) => {
+                      if (response.status === 401) {
+                        navigate("/login");
+                      }
+                    }
+                  );
+                }
+              }}
             >
               <div style={{ fontSize: "2em" }}>{option.icon}</div>
               {option.choice}

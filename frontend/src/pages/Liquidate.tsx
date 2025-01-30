@@ -115,40 +115,20 @@ const Liquidate: React.FC = () => {
 
     async getProviders(): Promise<Provider[]> {
       const response = await fetch(`${this.baseUrl}/getProviders.php`);
+      if (response.status === 401) {
+        navigate("/login");
+        return [];
+      }
       if (!response.ok) throw new Error("Failed to fetch providers");
       const data = await response.json();
       const res = data.filter((provider: any) => provider.State === "1");
       return res;
     },
 
-    // Search for a book by ISBN
-    async searchISBN(isbn: string, index: number): Promise<void> {
-      if (isbn.length < 2) {
-        setIsbnResults([]);
-        return;
-      }
-
-      setActiveISBNIndex(index);
-      setIsSearching(true);
-
-      try {
-        const response = await fetch(
-          `${this.baseUrl}/getExistingBooks.php?ISBN=${isbn}`
-        );
-        const data: Book[] = await response.json();
-        setIsbnResults(data);
-      } catch (error) {
-        console.error("Error searching ISBN:", error);
-        setIsbnResults([]);
-      } finally {
-        setIsSearching(false);
-      }
-    },
-
-    async submitForm(    ): Promise<void> {
+    async submitForm(): Promise<void> {
       const requestBody = {
-        Provider_Id: selectedProvider
-      }
+        Provider_Id: selectedProvider,
+      };
 
       const response = await fetch(`${this.baseUrl}/liquidateProvider.php`, {
         method: "POST",
@@ -158,6 +138,11 @@ const Liquidate: React.FC = () => {
         body: JSON.stringify(requestBody),
       });
 
+      if (response.status === 401) {
+        navigate("/login");
+        return;
+      }
+
       if (response.status === 200) {
         console.log("Provider liquidated");
         setSelectedProvider(null);
@@ -165,7 +150,6 @@ const Liquidate: React.FC = () => {
       } else {
         console.log("Liquidation failed");
       }
-      // setSelectedProvider(null);
     },
 
     async getBooksByProvider(providerId: number): Promise<{
@@ -176,6 +160,14 @@ const Liquidate: React.FC = () => {
       const response = await fetch(
         `${this.baseUrl}/getBooksByProvider.php?Provider_Id=${providerId}`
       );
+      if (response.status === 401) {
+        navigate("/login");
+        return {
+          personalInfo: { name: "", surname: "" },
+          books: [],
+          liquidation: 0,
+        };
+      }
       if (!response.ok) throw new Error("Failed to fetch provider books");
       const data = await response.json();
 
@@ -240,7 +232,7 @@ const Liquidate: React.FC = () => {
     return (
       <div className="bokstore-container form-container">
         <div className="form-header">
-          <Link to="/" className="back-button">
+          <Link to="/backOffice" className="back-button">
             ← Back to Provider list
           </Link>
           <h1 className="form-title">Select a provider</h1>
@@ -354,20 +346,22 @@ const Liquidate: React.FC = () => {
         )}
       </div>
       <div className="search-container" style={{ gridTemplateColumns: "1fr" }}>
-      {!confirming && (
-        <button
-          type="submit"
-          className="submit-button"
-          onClick={() => setConfirming(true)}
-        >
-          Mark as liquidated
-        </button>
-      )}
+        {!confirming && (
+          <button
+            type="submit"
+            className="submit-button"
+            onClick={() => setConfirming(true)}
+          >
+            Mark as liquidated
+          </button>
+        )}
 
         {confirming && (
           <div className="confirm">
             <div className="confirm-message">
-              <p style={{textAlign: "center"}}>Are you sure you want to mark all books as liquidated?</p>
+              <p style={{ textAlign: "center" }}>
+                Are you sure you want to mark all books as liquidated?
+              </p>
             </div>
             <div className="confirm-buttons">
               <button

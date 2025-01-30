@@ -1,6 +1,6 @@
 // InsertBooks.tsx
-import React, { useState, ChangeEvent, FormEvent } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 import Book from "../types/Book";
 import BookEntryComponent from "../components/BookEntry";
@@ -66,6 +66,7 @@ import BookEntry from "../types/BookEntry";
 // };
 
 const InsertBooks: React.FC = () => {
+  const navigate = useNavigate();
   const [books, setBooks] = useState<BookEntry>({
     ISBN: "",
     Title: "",
@@ -85,29 +86,6 @@ const InsertBooks: React.FC = () => {
 
   const api = {
     baseUrl: "/be",
-
-    // Search for a book by ISBN
-    // async searchISBN(isbn: string): Promise<void> {
-    //   if (isbn.length < 2) {
-    //     setIsbnResults([]);
-    //     return;
-    //   }
-
-    //   setIsSearching(true);
-
-    //   try {
-    //     const response = await fetch(
-    //       `${this.baseUrl}/getExistingBooks.php?ISBN=${isbn}`
-    //     );
-    //     const data: Book[] = await response.json();
-    //     setIsbnResults(data);
-    //   } catch (error) {
-    //     console.error("Error searching ISBN:", error);
-    //     setIsbnResults([]);
-    //   } finally {
-    //     setIsSearching(false);
-    //   }
-    // },
 
     async submitForm(book: Book): Promise<void> {
       try {
@@ -131,12 +109,35 @@ const InsertBooks: React.FC = () => {
             Dec_conditions: "New",
           });
           alert("Book submitted successfully!");
+        } else if (response.status === 401) {
+          navigate("/login");
         }
       } catch (error) {
         console.error("Error submitting form:", error);
       }
     },
+
+    async checkSession(): Promise<void> {
+      try {
+        const response = await fetch(`${this.baseUrl}/utils/session`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.status === 401) {
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error("Error checking session:", error);
+      }
+    },
   };
+
+  useEffect(() => {
+    api.checkSession();
+  }, []);
 
   const handleBookSelect = (result: BookEntry, index = 0): void => {
     const newBooks = {
@@ -161,7 +162,7 @@ const InsertBooks: React.FC = () => {
   return (
     <div className="form-container">
       <div className="form-header">
-        <Link to="/" className="back-button">
+        <Link to="/backOffice" className="back-button">
           ← Back to Main
         </Link>
         <h1 className="form-title">Pisello Submit Books</h1>

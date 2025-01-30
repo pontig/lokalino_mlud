@@ -10,63 +10,67 @@ interface BookListProps {
   addToCart: (book: AvailableBook) => void;
   removeFromCart: (bookId: number) => void;
 }
-
-// API service for books
-const api = {
-  baseUrl: '/be',
-
-  // Get all books
-  async getBooks(): Promise<AvailableBook[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/getAvailableBooks.php`);
-      const data = (await response.json()) as AvailableBook[];
-      console.log(data);
-      console.log(data.reduce((sum, book) => sum + book.Price_new, 0));
-      return data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        throw new Error(
-          error.response?.data?.message || "Failed to fetch books"
-        );
-      }
-      throw error;
-    }
-  },
-
-  // You can add more API methods here as needed
-  async getBookById(id: string): Promise<Book> {
-    try {
-      const response = await axios.get(`${this.baseUrl}/api/books/${id}`);
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        throw new Error(
-          error.response?.data?.message || "Failed to fetch book"
-        );
-      }
-      throw error;
-    }
-  },
-};
-
-// // Utility functions for cart storage
-// const saveCartToStorage = (cart: Book[]) => {
-//   localStorage.setItem("bookstore-cart", JSON.stringify(cart));
-// };
-
-// const loadCartFromStorage = (): Book[] => {
-//   const savedCart = localStorage.getItem("bookstore-cart");
-//   if (savedCart) console.log(savedCart);
-//   return savedCart ? (JSON.parse(savedCart) as Book[]) : [];
-// };
-
 const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
+  const navigate = useNavigate();
+
+  // API service for books
+  const api = {
+    baseUrl: "/be",
+
+    // Get all books
+    async getBooks(): Promise<AvailableBook[]> {
+      try {
+        const response = await fetch(`${this.baseUrl}/getAvailableBooks.php`);
+        if (response.status === 401) {
+          navigate("/login");
+          return [];
+        }
+        const data = (await response.json()) as AvailableBook[];
+        console.log(data);
+        console.log(data.reduce((sum, book) => sum + book.Price_new, 0));
+        return data;
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          throw new Error(
+            error.response?.data?.message || "Failed to fetch books"
+          );
+        }
+        throw error;
+      }
+    },
+
+    // You can add more API methods here as needed
+    async getBookById(id: string): Promise<Book> {
+      try {
+        const response = await axios.get(`${this.baseUrl}/api/books/${id}`);
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          throw new Error(
+            error.response?.data?.message || "Failed to fetch book"
+          );
+        }
+        throw error;
+      }
+    },
+  };
+
+  // // Utility functions for cart storage
+  // const saveCartToStorage = (cart: Book[]) => {
+  //   localStorage.setItem("bookstore-cart", JSON.stringify(cart));
+  // };
+
+  // const loadCartFromStorage = (): Book[] => {
+  //   const savedCart = localStorage.getItem("bookstore-cart");
+  //   if (savedCart) console.log(savedCart);
+  //   return savedCart ? (JSON.parse(savedCart) as Book[]) : [];
+  // };
+
   const [books, setBooks] = useState<AvailableBook[]>([]);
   const [filteredBooks, setFilteredBooks] = useState<AvailableBook[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   // // Load cart from localStorage on initial render
   // useEffect(() => {
@@ -155,9 +159,9 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
 
   return (
     <div className="bookstore-container">
-      <h1 style={{textAlign: "center"}}>Select books</h1>
+      <h1 style={{ textAlign: "center" }}>Select books</h1>
       <div className="search-container">
-      <Link to="/" className="back-button">
+        <Link to="/backOffice" className="back-button">
           ← Back to Main
         </Link>
         <input
@@ -167,7 +171,7 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        {(cart.length > 0) && (
+        {cart.length > 0 && (
           <Link to="/cart" className="cart-icon">
             <div className="cart-badge">
               <span className="abso</div>lute -top-2 -right-2 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
@@ -201,7 +205,9 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
                 Provided by {book.ProviderName} {book.ProviderSurname},{" "}
                 {book.Dec_conditions} state
               </p>
-              {book.Comment && <p className="book-description">{book.Comment}</p>}
+              {book.Comment && (
+                <p className="book-description">{book.Comment}</p>
+              )}
               <div className="book-footer">
                 <span className="book-price">
                   €{Number(book.Price_new).toFixed(2)}
@@ -225,11 +231,11 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
           </div>
         ))}
 
-      {filteredBooks.length === 0 && (
-        <div className="empty-message">
-          No books found matching your search.
-        </div>
-      )}
+        {filteredBooks.length === 0 && (
+          <div className="empty-message">
+            No books found matching your search.
+          </div>
+        )}
       </div>
     </div>
   );

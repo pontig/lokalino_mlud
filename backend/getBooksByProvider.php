@@ -1,7 +1,6 @@
 <?php
 
-// require_once "utils/session.php";
-
+require_once "utils/session.php";
 include_once "dao/bookDao.php";
 
 

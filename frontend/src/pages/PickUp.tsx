@@ -134,6 +134,10 @@ const PickUp: React.FC = () => {
 
     async getProviders(): Promise<Provider[]> {
       const response = await fetch(`${this.baseUrl}/getProviders.php`);
+      if (response.status === 401) {
+      navigate("/login");
+      return [];
+      }
       if (!response.ok) throw new Error("Failed to fetch providers");
       const data = await response.json();
       const res = data.filter((provider: any) => provider.State === "0");
@@ -143,24 +147,28 @@ const PickUp: React.FC = () => {
     // Search for a book by ISBN
     async searchISBN(isbn: string, index: number): Promise<void> {
       if (isbn.length < 2) {
-        setIsbnResults([]);
-        return;
+      setIsbnResults([]);
+      return;
       }
 
       setActiveISBNIndex(index);
       setIsSearching(true);
 
       try {
-        const response = await fetch(
-          `${this.baseUrl}/getExistingBooks.php?ISBN=${isbn}`
-        );
-        const data: Book[] = await response.json();
-        setIsbnResults(data);
+      const response = await fetch(
+        `${this.baseUrl}/getExistingBooks.php?ISBN=${isbn}`
+      );
+      if (response.status === 401) {
+        navigate("/login");
+        return;
+      }
+      const data: Book[] = await response.json();
+      setIsbnResults(data);
       } catch (error) {
-        console.error("Error searching ISBN:", error);
-        setIsbnResults([]);
+      console.error("Error searching ISBN:", error);
+      setIsbnResults([]);
       } finally {
-        setIsSearching(false);
+      setIsSearching(false);
       }
     },
 
@@ -168,26 +176,30 @@ const PickUp: React.FC = () => {
       console.log("Submitting form:", form);
 
       try {
-        const response = await fetch(`${this.baseUrl}/storeBooks.php`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(form),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to submit form");
-        }
+      const response = await fetch(`${this.baseUrl}/storeBooks.php`, {
+        method: "POST",
+        headers: {
+        "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+      if (response.status === 401) {
+        navigate("/login");
+        return;
+      }
+      if (!response.ok) {
+        throw new Error("Failed to submit form");
+      }
 
-        navigate("/");
+      navigate("/");
       } catch (error) {
-        console.error("Error submitting form:", error);
-        alert("Failed to submit form");
+      console.error("Error submitting form:", error);
+      alert("Failed to submit form");
       }
 
       if (!form) {
-        alert("Form data is missing");
-        return;
+      alert("Form data is missing");
+      return;
       }
     },
 
@@ -196,27 +208,31 @@ const PickUp: React.FC = () => {
       books: BookEntry_commented[];
     }> {
       const response = await fetch(
-        `${this.baseUrl}/getBooksByProvider.php?Provider_Id=${providerId}`
+      `${this.baseUrl}/getBooksByProvider.php?Provider_Id=${providerId}`
       );
+      if (response.status === 401) {
+      navigate("/login");
+      return { personalInfo: { name: "", surname: "" }, books: [] };
+      }
       if (!response.ok) throw new Error("Failed to fetch provider books");
       const data = await response.json();
 
       return {
-        personalInfo: {
-          name: data.provider[0].Name || "",
-          surname: data.provider[0].Surname || "",
-        },
-        books:
-          data.books.map((book: BookEntry_commented) => ({
-            ISBN: book.ISBN || "",
-            Title: book.Title || "",
-            Author: book.Author || "",
-            Editor: book.Editor || "",
-            Price_new: book.Price_new || 0.0,
-            Dec_conditions: book.Dec_conditions || "good",
-            Comment: book.Comment || "",
-            PB_Id: book.PB_Id || 0,
-          })) || [],
+      personalInfo: {
+        name: data.provider[0].Name || "",
+        surname: data.provider[0].Surname || "",
+      },
+      books:
+        data.books.map((book: BookEntry_commented) => ({
+        ISBN: book.ISBN || "",
+        Title: book.Title || "",
+        Author: book.Author || "",
+        Editor: book.Editor || "",
+        Price_new: book.Price_new || 0.0,
+        Dec_conditions: book.Dec_conditions || "good",
+        Comment: book.Comment || "",
+        PB_Id: book.PB_Id || 0,
+        })) || [],
       };
     },
 
@@ -314,7 +330,7 @@ const PickUp: React.FC = () => {
       <div className="bokstore-container form-container">
         <h1 style={{ textAlign: "center" }}>Select a provider</h1>
         <div className="search-container">
-          <Link to="/" className="back-button">
+          <Link to="/backOffice" className="back-button">
             ← Back to Main
           </Link>
           <input

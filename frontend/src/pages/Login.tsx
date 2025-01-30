@@ -25,7 +25,7 @@ const Login: React.FC = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          password: await hashPassword(password),
+          password: password,
           submit: true,
         }),
       });
@@ -38,6 +38,12 @@ const Login: React.FC = () => {
     },
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      api.login();
+    }
+  };
+
   return (
     <div className="thank-you">
       <h1 className="ty-h1">Login to lokalino mlud</h1>
@@ -47,6 +53,7 @@ const Login: React.FC = () => {
         placeholder="Enter your password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        onKeyPress={handleKeyPress}
       />
       <button
         className="submit-button"

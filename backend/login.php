@@ -4,7 +4,7 @@ session_start();
 
 require_once("utils/secret.php");
 
-$debug = false; // Set to true for debugging
+$debug = true; // Set to true for debugging
 
 if ($debug) {
     echo "Debug Mode: ON\n";
@@ -25,12 +25,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($debug) {
             echo "Received Password: $password\n";
+            echo "Hashed received password: " . hash('sha256', $password) . "\n";
+            echo "Original Password: $original_password\n";
         }
 
         // Secure password comparison
         // if (password_verify($password, $original_password)) { // use if password is not hashed
-        if ($password == $original_password) {
-            $_SESSION['checkPassword'] = true;
+        if ($original_password == hash('sha256', $password)) {
+            $_SESSION['passwordCheck'] = true;
             $_SESSION['expire'] = time() + 30 * 60;
             http_response_code(200);
 

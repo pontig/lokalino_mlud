@@ -49,6 +49,9 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
           cart.forEach((book) => removeFromCart(book.PB_Id));
           alert("Checkout successful");
           navigate("/");
+        } else if (response.status === 401) {
+          alert("The session has expired. Please log in again. The transaction has not been completed.");
+          navigate("/login");
         } else {
           console.log("Checkout failed");
         }

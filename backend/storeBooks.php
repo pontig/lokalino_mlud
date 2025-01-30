@@ -1,7 +1,6 @@
 <?php
 
-// require_once "utils/session.php";
-
+require_once "utils/session.php";
 require_once "dao/bookDao.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {

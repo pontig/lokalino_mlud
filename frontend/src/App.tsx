@@ -27,7 +27,7 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/backOffice" element={<BackOffice />} />
         <Route
           path="/sell"
@@ -40,7 +40,7 @@ const App = () => {
           }
         />
         <Route path="/insertBooks" element={<InsertBooks />} />
-        <Route path="/bookSubmission" element={<BookSubmissionForm />} />
+        <Route path="/" element={<BookSubmissionForm />} />
         <Route
           path="/cart"
           element={<CartPage cart={cart} removeFromCart={removeFromCart} />}

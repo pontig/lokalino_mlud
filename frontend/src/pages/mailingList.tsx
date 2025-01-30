@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from "react";
 import Person from "../types/Person";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const MailingList: React.FC = () => {
+const navigate = useNavigate();
+
   const [providers, setProviders] = useState<Person[]>([]);
   const api = {
     baseUrl: "/be",
 
     async fetchMailingList(): Promise<void> {
       const response = await fetch(`${this.baseUrl}/mailingList.php`);
+      if (response.status === 401) {
+        navigate("/login");
+        return;
+      }
       if (!response.ok) throw new Error("Failed to fetch providers");
       const data = (await response.json()) as Person[];
       setProviders(data);
@@ -23,7 +29,7 @@ const MailingList: React.FC = () => {
     <div className="bokstore-container form-container">
       <h1 style={{ textAlign: "center" }}>Select a provider</h1>
       <div className="search-container">
-        <Link to="/" className="back-button">
+        <Link to="/backOffice" className="back-button">
           ← Back to Main
         </Link>
         {/* <input
