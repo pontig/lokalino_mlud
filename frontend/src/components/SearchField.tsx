@@ -47,7 +47,7 @@ const SearchField: React.FC<SearchFieldProps> = ({
               >
                 <div className="font-medium">{result.Title}</div>
                 <div className="text-sm text-gray-600">
-                  by {result.Author} • {result.Editor}
+                  di {result.Author} • {result.Editor}
                 </div>
               </button>
             ))}

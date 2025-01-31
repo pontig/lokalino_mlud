@@ -76,3 +76,13 @@ The use cases are illustrated in the diagram in Figure \ref{fig:use_cases}.
 In order to facilitate the filling of the form by the PR, the system will provide a search function that will suggest the book's information when the ISBN is entered. In order to generate this suggestion, the system will also allow the OP to manually enter the book's information, possibly before the beginning of the event.
 
 The system will keep the data of the PRs and the books for 1 year after the event, and after that, it will be deleted. The only data that will be kept indefinitely is the list of persons who have subscribed to the mailing list.
+
+\section{Assumptions}
+\label{sec:assumptions}
+
+A couple of assumptions have been made in the design of the system:
+
+\begin{itemize}
+    \item Even if in the implementation every PR will be identified by a unique ID, the system will check the uniqueness of the email address; this comes into play when a PR submits the form: if the email address is already in the system and the PR fills out the form again, the system will not create a new record and will work as if the same PR is inserting more books.
+    \item Same thing for the ISBN: if the ISBN is already in the system, the system will suggest the book's information, and the PR will not have to fill out the form for that book. If the PR wants to insert different informations for a book that is already in the system (for example, a different price, or a different author), the system will discard the data inputted by the PR and will use the data already in the system.
+\end{itemize}

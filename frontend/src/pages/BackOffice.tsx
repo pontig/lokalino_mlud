@@ -37,26 +37,26 @@ const getFontColor = (rgb: string) => {
 
 const options = [
   {
-    choice: "Insert book in the system",
+    choice: "Inserimento nuovo libro nel sistema",
     url: "/insertBooks",
     icon: <CgInsertAfterO />,
     status: "OK",
   },
-  { choice: "Sell books", url: "/sell", icon: <FaDollarSign />, status: "OK" },
+  { choice: "Vendita libri", url: "/sell", icon: <FaDollarSign />, status: "OK" },
   {
-    choice: "Pick up books",
+    choice: "Ritiro libri da vendere",
     url: "/pickUp",
     icon: <GiReceiveMoney />,
     status: "OK",
   },
   {
-    choice: "Liquidate a seller ",
+    choice: "Liquidazione libri invenduti",
     url: "/liquidate",
     icon: <FaMoneyCheckAlt />,
     status: "OK",
   },
   {
-    choice: "Provider: insert books",
+    choice: "Registrazione venditori",
     url: "/",
     icon: <FaBookOpen />,
     status: "OK",
@@ -68,13 +68,13 @@ const options = [
     status: "not yet started",
   },
   {
-    choice: "Show mailing list subscribers ",
+    choice: "Mailing list",
     url: "/mailingList",
     icon: <IoMailOutline />,
     status: "OK",
   },
   {
-    choice: "Show statistics",
+    choice: "Statistiche",
     url: "/statistics",
     icon: <MdQueryStats />,
     status: "not yet started",
@@ -100,7 +100,7 @@ const BackOffice: React.FC = () => {
 
   return (
     <div className="bookstore-container">
-      <h1 style={{ textAlign: "center" }}>Back Office</h1>
+      <h1 style={{ textAlign: "center" }}>Pannello di controllo</h1>
       <div className="content">
         {options.map((option, index) => {
           const backgroundColor = getGradientColor(index, options.length);
@@ -126,7 +126,7 @@ const BackOffice: React.FC = () => {
             >
               <div style={{ fontSize: "2em" }}>{option.icon}</div>
               {option.choice}
-              <i style={{ fontSize: "small" }}>{option.status}</i>
+              {/* <i style={{ fontSize: "small" }}>{option.status}</i> */}
             </div>
           );
         })}

@@ -119,7 +119,7 @@ const InsertBooks: React.FC = () => {
 
     async checkSession(): Promise<void> {
       try {
-        const response = await fetch(`${this.baseUrl}/utils/session`, {
+        const response = await fetch(`${this.baseUrl}/utils/session.php`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -163,9 +163,9 @@ const InsertBooks: React.FC = () => {
     <div className="form-container">
       <div className="form-header">
         <Link to="/backOffice" className="back-button">
-          ← Back to Main
+          ← Torna alla Dashboard
         </Link>
-        <h1 className="form-title">Pisello Submit Books</h1>
+        <h1 className="form-title">Inserisci libro nel sistema</h1>
       </div>
       <form onSubmit={handleSubmit} className="submission-form">
         <div className="books-section">
@@ -182,7 +182,7 @@ const InsertBooks: React.FC = () => {
         </div>
 
         <button type="submit" className="submit-button" onClick={handleSubmit}>
-          Submit Form
+          Fatto
         </button>
       </form>
     </div>

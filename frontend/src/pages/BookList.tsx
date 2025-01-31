@@ -134,7 +134,7 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-lg">Loading books...</div>
+        <div className="text-lg">Caricamento...</div>
       </div>
     );
   }
@@ -148,25 +148,25 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
             onClick={fetchBooks}
             className="ml-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            Retry
+            Riprova
           </button>
         </div>
       </div>
     );
   }
 
-  console.log(filteredBooks);
+  // console.log(filteredBooks);
 
   return (
     <div className="bookstore-container">
-      <h1 style={{ textAlign: "center" }}>Select books</h1>
+      <h1 style={{ textAlign: "center" }}>Seleziona libri</h1>
       <div className="search-container">
         <Link to="/backOffice" className="back-button">
-          ← Back to Main
+          ← Pannello di controllo
         </Link>
         <input
           type="text"
-          placeholder="Search books..."
+          placeholder="🔍 Cerca libri..."
           className="search-input"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -200,10 +200,11 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
           <div key={book.PB_Id} className="book-card">
             <div className="book-content">
               <h3 className="book-title">{book.Title}</h3>
-              <p className="book-author">by {book.Author}</p>
+              <p className="book-author">di {book.Author}</p>
+              <p className="book-description">Editore: {book.Editor}</p>
               <p className="book-description">
-                Provided by {book.ProviderName} {book.ProviderSurname},{" "}
-                {book.Dec_conditions} state
+                Venduto da {book.ProviderName} {book.ProviderSurname},{" "}
+                stato {book.Dec_conditions}
               </p>
               {book.Comment && (
                 <p className="book-description">{book.Comment}</p>
@@ -224,7 +225,7 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
                       : addToCartAndClearSearch(book)
                   }
                 >
-                  {isInCart(book.PB_Id) ? "Remove from Cart" : "Add to Cart"}
+                  {isInCart(book.PB_Id) ? "Rimuovi" : "Nel carrello"}
                 </button>
               </div>
             </div>
@@ -233,7 +234,7 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
 
         {filteredBooks.length === 0 && (
           <div className="empty-message">
-            No books found matching your search.
+            Nessun libro trovato. Prova a cercare qualcos'altro.
           </div>
         )}
       </div>

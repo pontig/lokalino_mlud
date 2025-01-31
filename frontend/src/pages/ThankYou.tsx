@@ -8,8 +8,8 @@ const ThankYouPage: React.FC = () => {
 
   return (
     <div className="thank-you">
-      <h1 className="ty-h1">Thank You, {name}!</h1>
-      <p className="ty-p">Your books have been successfully submitted.</p>
+      <h1 className="ty-h1">Grazie, {name}!</h1>
+      <p className="ty-p">Puoi venire a consegnare questi ilbri dal.. al..</p>
     </div>
   );
 };

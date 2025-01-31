@@ -92,7 +92,7 @@ const BookSubmissionForm: React.FC = () => {
       Author: "",
       Editor: "",
       Price_new: 0.0,
-      Dec_conditions: "good",
+      Dec_conditions: "Buono",
     },
   ]);
   const [isbnResults, setIsbnResults] = useState<Book[]>([]);
@@ -218,7 +218,7 @@ const BookSubmissionForm: React.FC = () => {
   //       Author: "",
   //       Editor: "",
   //       Price_new: 0.0,
-  //       Dec_conditions: "good",
+  //       Dec_conditions: "Buono",
   //     },
   //   ]);
   // };
@@ -239,7 +239,7 @@ const BookSubmissionForm: React.FC = () => {
 
     console.log({ personalInfo, books });
     if (!allFieldsFilled || !acceptTerms) {
-      alert("Please fill in all required fields.");
+      alert("Inserisci tutte le informazioni necessarie.");
       return;
     }
     api.submitForm(personalInfo, books);
@@ -284,7 +284,7 @@ const BookSubmissionForm: React.FC = () => {
         Author: "",
         Editor: "",
         Price_new: 0.0,
-        Dec_conditions: "good",
+        Dec_conditions: "Buono",
         Comment: "",
       },
     ]);
@@ -300,13 +300,13 @@ const BookSubmissionForm: React.FC = () => {
     <div className="form-container">
       <div className="form-header">
         <h1 className="form-title" style={{ textAlign: "center" }}>
-          Submit Books
+          Vendi libri
         </h1>
       </div>
       <form onSubmit={handleSubmit} className="submission-form">
         {/* Personal Info Section */}
         <div className="personal-info-section">
-          <h2>Personal Information</h2>
+          <h2>Informazioni di contatto</h2>
           <div className="form-grid">
             {Object.entries(personalInfo).map(
               ([key, value]) =>
@@ -349,7 +349,7 @@ const BookSubmissionForm: React.FC = () => {
             />
           ))}
           <button type="button" onClick={addBook} className="add-book-button">
-            Add Another Book
+            Aggiungi un altro libro
           </button>
         </div>
 
@@ -361,7 +361,7 @@ const BookSubmissionForm: React.FC = () => {
               required
               onClick={() => setAcceptTerms(!acceptTerms)}
             />
-            <span className="checkbox-style"></span>I accept the {"  "}
+            <span className="checkbox-style"></span>Ho letto e accetto i {"  "}
             <button
               type="button"
               onClick={() => {
@@ -369,12 +369,12 @@ const BookSubmissionForm: React.FC = () => {
               }}
               className="link-button term-link"
             >
-              terms and conditions
+              termni e condizioni
             </button>
           </label>
           {showTerms && (
             <div className="terms-and-conditions">
-              <h2>Terms and Conditions</h2>
+              <h2>Termini e condizioni</h2>
               <p>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                 Maecenas fermentum ex diam, vel tincidunt elit vulputate vel.
@@ -549,7 +549,7 @@ const BookSubmissionForm: React.FC = () => {
                   setShowTerms(false);
                 }}
               >
-                Close
+                Chiudi
               </button>
             </div>
           )}
@@ -569,12 +569,12 @@ const BookSubmissionForm: React.FC = () => {
               }
             />
             <span className="checkbox-style"></span>
-            Subscribe to newsletter
+            Voglio rimanere aggiornato sulle novità del Lokalino
           </label>
         </div>
 
         <button type="submit" className="submit-button" onClick={handleSubmit}>
-          Submit Form
+          Invia
         </button>
       </form>
     </div>

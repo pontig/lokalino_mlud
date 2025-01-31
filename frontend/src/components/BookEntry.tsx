@@ -146,14 +146,14 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
   return (
     <div className="book-entry">
       <div className="book-header">
-        <h3>Book {index + 1}</h3>
+        <h3>Libro #{index + 1}</h3>
         {onRemove && (
           <button
             type="button"
             onClick={() => onRemove(index)}
             className="remove-book-button"
           >
-            Remove
+            Rimuovi
           </button>
         )}
       </div>
@@ -167,28 +167,28 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
             results={isbnResults}
             onSelect={handleBookSelect}
             isSearching={isSearchingISBN}
-            placeholder="Enter ISBN"
+            placeholder="Niente spazi o trattini"
             disabled={disabledFields}
             index={index}
           />
         </div>
 
         <div className="form-field">
-          <label>Title</label>
+          <label>Titolo</label>
           <SearchField
             value={book.Title}
             onChange={handleTitleSearch}
             results={titleResults}
             onSelect={handleBookSelect}
             isSearching={isSearchingTitle}
-            placeholder="Enter book title"
+            placeholder="Digita per cercare"
             disabled={disabledFields}
             index={index}
           />
         </div>
 
         <div className="form-field">
-          <label>Author</label>
+          <label>Autore</label>
           <input
             type="text"
             value={book.Author}
@@ -200,7 +200,7 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
         </div>
 
         <div className="form-field">
-          <label>Editor</label>
+          <label>Editore</label>
           <input
             type="text"
             value={book.Editor}
@@ -212,7 +212,7 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
         </div>
 
         <div className="form-field">
-          <label>Price</label>
+          <label>Prezzo nuovo (xx,xx)</label>
           <input
             type="number"
             value={book.Price_new}
@@ -228,7 +228,7 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
 
         {showConditions && (
           <div className="form-field">
-            <label>Condition</label>
+            <label>Condizioni</label>
             <select
               value={book.Dec_conditions}
               onChange={(e) =>
@@ -240,21 +240,22 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
               className="w-full p-2 border rounded"
               required
             >
-              <option value="good">Good</option>
-              <option value="average">Average</option>
-              <option value="bad">Bad</option>
+              <option value="good">Buono</option>
+              <option value="average">Nella media</option>
+              <option value="bad">Molto usurato</option>
             </select>
           </div>
         )}
 
         {showComment && (
           <div className="form-field" style={{ gridColumn: "span 2" }}>
-            <label>Add a comment if needed</label>
+            <label>Aggiungi un commento se necessario</label>
             <input
               type="text"
               value={book.Comment}
               onChange={(e) => handleFieldChange("Comment", e.target.value)}
               className="w-full p-2 border rounded"
+              placeholder="Es. Copertina rovinata"
             />
           </div>
         )}

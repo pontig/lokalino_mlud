@@ -46,7 +46,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="thank-you">
-      <h1 className="ty-h1">Login to lokalino mlud</h1>
+      <h1 className="ty-h1">Login al nuovo merkatino libri usati digitale</h1>
       <input
         type="password"
         className="password-field-input"
@@ -54,7 +54,8 @@ const Login: React.FC = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         onKeyPress={handleKeyPress}
-      />
+        style={{ width: "20vw" }}
+        />
       <button
         className="submit-button"
         style={{ width: "10vw", marginTop: "2vh" }}

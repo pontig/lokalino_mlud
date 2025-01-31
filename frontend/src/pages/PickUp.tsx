@@ -112,7 +112,7 @@ const PickUp: React.FC = () => {
       Author: "",
       Editor: "",
       Price_new: 0.0,
-      Dec_conditions: "good",
+      Dec_conditions: "Buono",
       Comment: "",
       PB_Id: 0,
     },
@@ -191,7 +191,7 @@ const PickUp: React.FC = () => {
         throw new Error("Failed to submit form");
       }
 
-      navigate("/");
+      navigate("/backOffice");
       } catch (error) {
       console.error("Error submitting form:", error);
       alert("Failed to submit form");
@@ -229,7 +229,7 @@ const PickUp: React.FC = () => {
         Author: book.Author || "",
         Editor: book.Editor || "",
         Price_new: book.Price_new || 0.0,
-        Dec_conditions: book.Dec_conditions || "good",
+        Dec_conditions: book.Dec_conditions || "Buono",
         Comment: book.Comment || "",
         PB_Id: book.PB_Id || 0,
         })) || [],
@@ -328,14 +328,14 @@ const PickUp: React.FC = () => {
   if (!selectedProvider) {
     return (
       <div className="bokstore-container form-container">
-        <h1 style={{ textAlign: "center" }}>Select a provider</h1>
+        <h1 style={{ textAlign: "center" }}>Seleziona un venditore</h1>
         <div className="search-container">
           <Link to="/backOffice" className="back-button">
-            ← Back to Main
+            ← Torna alla Dashboard
           </Link>
           <input
             type="text"
-            placeholder="Search books..."
+            placeholder="🔍 Cerca venditore..."
             className="search-input"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -344,7 +344,7 @@ const PickUp: React.FC = () => {
         <div className="content">
           {filteredProviders.length === 0 ? (
             <div className="empty-message">
-              No providers found matching your search
+              Nessuna corrispondenza trovata per "{searchQuery}"
             </div>
           ) : (
             filteredProviders.map((provider) => (
@@ -460,10 +460,10 @@ const PickUp: React.FC = () => {
           style={{ cursor: "pointer" }}
           onClick={() => setSelectedProvider(null)}
         >
-          ← Back to Provider list
+          ← Seleziona un altro venditore
         </span>
         <h1 className="form-title">
-          Check all is good for {selectedProvider.Name}{" "}
+          Controlla libri portati da {selectedProvider.Name}{" "}
           {selectedProvider.Surname}
         </h1>
       </div>
@@ -471,9 +471,9 @@ const PickUp: React.FC = () => {
       <form onSubmit={handleSubmit} className="submission-form">
         {/* Books Section */}
         <div className="books-section">
-          <h2>Books Information</h2>
+          <h2>Libri dichiarati</h2>
           {booksInseredByPr.length === 0 && (
-            <div className="empty-message">No books to remove</div>
+            <div className="empty-message">Hai rimosso un po' troppo...</div>
           )}
           {booksInseredByPr.map((book, index) => (
             <BookEntryComponent
@@ -519,11 +519,11 @@ const PickUp: React.FC = () => {
           ))}
 
           <button type="button" onClick={addBook} className="add-book-button">
-            Add Another Book
+            Aggiungi manualmente un libro
           </button>
         </div>
         <button type="submit" className="submit-button" onClick={handleSubmit}>
-          Submit Form
+          Segna come ritirato
         </button>
       </form>
     </div>

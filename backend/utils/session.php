@@ -2,9 +2,8 @@
 
 session_start();
 
-echo "Diobono";
-
-var_dump($_GET);
+// echo "Diobono";
+// var_dump($_GET);
 
 if (isset($_GET['logout']) || !isset($_SESSION['expire']) || $_SESSION['expire'] - time() < 0 || !isset($_SESSION['passwordCheck']) || $_SESSION['passwordCheck'] == false) {
     session_unset();

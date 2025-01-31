@@ -29,57 +29,6 @@ interface ISBNLookupFieldProps {
   isSearching: boolean;
 }
 
-const ISBNLookupField: React.FC<ISBNLookupFieldProps> = ({
-  value,
-  onChange,
-  results,
-  onSelect,
-  isSearching,
-}) => {
-  return (
-    <div className="relative w-full">
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => {
-          const newValue = e.target.value;
-          if (/^\d*$/.test(newValue)) {
-            onChange(newValue);
-          }
-        }}
-        className="w-full p-2 border rounded"
-        placeholder="no spaces or dashes"
-        required
-      />
-
-      {isSearching && (
-        <div className="absolute w-full mt-1 text-sm text-gray-500">
-          Searching...
-        </div>
-      )}
-
-      {results.length > 0 && (
-        <div>
-          <div className="isbn-results">
-            {results.map((result) => (
-              <button
-                key={result.ISBN}
-                onClick={() => onSelect(result)}
-                className="isbn-result-item"
-              >
-                <div className="font-medium">{result.Title}</div>
-                <div className="text-sm text-gray-600">
-                  by {result.Author} • {result.Editor}
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
 const Liquidate: React.FC = () => {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [selectedProvider, setSelectedProvider] = useState<Provider | null>(
@@ -96,7 +45,7 @@ const Liquidate: React.FC = () => {
       Author: "",
       Editor: "",
       Price_new: 0.0,
-      Dec_conditions: "good",
+      Dec_conditions: "Buono",
       Comment: "",
       Sold_date: undefined,
       PB_Id: -1,
@@ -146,7 +95,7 @@ const Liquidate: React.FC = () => {
       if (response.status === 200) {
         console.log("Provider liquidated");
         setSelectedProvider(null);
-        navigate("/");
+        navigate("/backOffice");
       } else {
         console.log("Liquidation failed");
       }
@@ -233,9 +182,9 @@ const Liquidate: React.FC = () => {
       <div className="bokstore-container form-container">
         <div className="form-header">
           <Link to="/backOffice" className="back-button">
-            ← Back to Provider list
+            ← Torna alla Dashboard
           </Link>
-          <h1 className="form-title">Select a provider</h1>
+          <h1 className="form-title">Seleziona un venditore</h1>
         </div>
         <div className="content">
           {providers.map((provider) => (
@@ -307,28 +256,28 @@ const Liquidate: React.FC = () => {
           style={{ cursor: "pointer" }}
           onClick={() => setSelectedProvider(null)}
         >
-          ← Back to Provider list
+          ← Seleziona un altro venditore
         </span>
         <h1 className="form-title">
-          Check all is good for {selectedProvider.Name}{" "}
+          Riepilogo per {selectedProvider.Name}{" "}
           {selectedProvider.Surname}
         </h1>
       </div>
 
       <div className="search-container">
         <h2 style={{ textAlign: "center" }} className="form-title">
-          Amount to liquidate: €{liquidation.toFixed(2)}
+          Soldi da restituire: €{liquidation.toFixed(2)}
         </h2>
       </div>
 
       <div className="content">
-        <h2>Unsold books</h2>
+        <h2>Libri invenduti</h2>
         {books.map((book) => (
           <div key={book.PB_Id} className="book-card">
             <div className="book-content">
               <h3 className="book-title">{book.Title}</h3>
-              <p className="book-author">by {book.Author}</p>
-              <p className="book-description">{book.Dec_conditions} state</p>
+              <p className="book-author">di {book.Author}</p>
+              <p className="book-description">Stato {book.Dec_conditions}</p>
               {book.Comment && (
                 <p className="book-description">{book.Comment}</p>
               )}
@@ -342,7 +291,7 @@ const Liquidate: React.FC = () => {
         ))}
 
         {books.length === 0 && (
-          <div className="empty-message">All books were sold.</div>
+          <div className="empty-message">✨Yay! ha venduto tutti i suoi libri✨</div>
         )}
       </div>
       <div className="search-container" style={{ gridTemplateColumns: "1fr" }}>
@@ -352,7 +301,7 @@ const Liquidate: React.FC = () => {
             className="submit-button"
             onClick={() => setConfirming(true)}
           >
-            Mark as liquidated
+            Contrassegna come liquidato
           </button>
         )}
 
@@ -360,7 +309,7 @@ const Liquidate: React.FC = () => {
           <div className="confirm">
             <div className="confirm-message">
               <p style={{ textAlign: "center" }}>
-                Are you sure you want to mark all books as liquidated?
+                Sicuro sicuro sicuro?? Va che non si torna indietro
               </p>
             </div>
             <div className="confirm-buttons">
@@ -368,13 +317,13 @@ const Liquidate: React.FC = () => {
                 className="cart-button cart-button-remove confirm-button"
                 onClick={() => setConfirming(false)}
               >
-                Cancel
+                Non coooosì sicuro
               </button>
               <button
                 className="cart-button cart-button-add confirm-button"
                 onClick={handleSubmit}
               >
-                Confirm
+                Vai uomo
               </button>
             </div>
           </div>

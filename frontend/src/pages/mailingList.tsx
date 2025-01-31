@@ -27,10 +27,10 @@ const navigate = useNavigate();
 
   return (
     <div className="bokstore-container form-container">
-      <h1 style={{ textAlign: "center" }}>Select a provider</h1>
+      <h1 style={{ textAlign: "center" }}>Iscritti alla mailing list</h1>
       <div className="search-container">
         <Link to="/backOffice" className="back-button">
-          ← Back to Main
+          ← Torna alla Dashboard
         </Link>
         {/* <input
           type="text"
@@ -54,7 +54,7 @@ const navigate = useNavigate();
         ))}
       </div>
       <div className="content content-ml no-gap">
-        <h2>List to copy-paste more easily</h2>
+        <h2>Lista più comoda per il copia-incolla</h2>
         {providers.map((provider) => (
           <p>{provider.Email}</p>
         ))}

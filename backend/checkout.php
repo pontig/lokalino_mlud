@@ -1,12 +1,7 @@
 <?php
 
+require_once 'utils/session.php';
 require_once 'dao/bookDao.php';
-
-// Handle preflight OPTIONS request
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
 
 // Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

@@ -200,7 +200,7 @@ function getAllAvailableBooks()
                 FROM Book
                 JOIN Provider_Book ON Book.ISBN = Provider_Book.ISBN
                 JOIN Provider ON Provider_Book.Provider_Id = Provider.Provider_Id
-                WHERE Sold_date IS NULL AND Consign_date IS NOT NULL";
+                WHERE Sold_date IS NULL AND Consign_date IS NOT NULL AND Liquidation_date IS NULL";
 
         $result = $conn->query($sql);
         if (!$result) {

@@ -48,9 +48,9 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
         if (response.status === 200) {
           cart.forEach((book) => removeFromCart(book.PB_Id));
           alert("Checkout successful");
-          navigate("/");
+          navigate("/backOffice");
         } else if (response.status === 401) {
-          alert("The session has expired. Please log in again. The transaction has not been completed.");
+          alert("La sessione è scaduta, effettua nuovamente il login. Le tue modifiche NON sono state salvate.");
           navigate("/login");
         } else {
           console.log("Checkout failed");
@@ -84,16 +84,16 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
     <div className="bookstore-container">
       <div className="cart-header">
         <Link to="/sell" className="back-button">
-          ← Back to Books
+          ← Torna ai libri
         </Link>
-        <h1 className="cart-title">Your Cart ({cart.length} items)</h1>
+        <h1 className="cart-title">Carrello ({cart.length} libri)</h1>
       </div>
 
       {cart.length === 0 ? (
         <div className="empty-cart">
-          <p>Your cart is empty</p>
+          <p>Il tuo carrello è vuoto</p>
           <Link to="/sell" className="cart-button cart-button-add">
-            Browse Books
+            Seleziona libri
           </Link>
         </div>
       ) : (
@@ -104,7 +104,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
                 <div className="cart-item-details">
                   <h3 className="cart-item-title">{book.Title}</h3>
                   <p className="cart-item-author">
-                    by {book.Author}, brought by {book.ProviderName}{" "}
+                    di {book.Author}, venduto da {book.ProviderName}{" "}
                     {book.ProviderSurname}
                   </p>
                   <p className="cart-item-price">
@@ -114,36 +114,36 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
                     className="cart-button cart-button-remove"
                     onClick={() => removeFromCart(book.PB_Id)}
                   >
-                    Remove
+                    Rimuovi
                   </button>
                 </div>
               </div>
             ))}
           </div>
           <div className="cart-summary">
-            <h2>Order Summary</h2>
+            <h2>Sommario</h2>
             <div className="cart-total">
-                <span style={{ color: "#888" }}>Total (new books): €{total}</span>
-                <span>Total (actual due):</span>
+                <span style={{ color: "#888" }}>Totale (nuovi): €{total}</span>
+                <span>Totale (prezzo usato):</span>
               <span style={{fontSize: "2rem"}}>€{(total/2).toFixed(2)}</span>
             </div>
             <button
               className="cart-button cart-button-add checkout-button"
               onClick={handleCheckout}
             >
-              Proceed to Checkout
+              Checkout
             </button>
             {showConfirm && (
               <div className="mt-4 p-4 border rounded-lg bg-white">
                 <p className="text-center mb-4">
-                  Are you sure you want to proceed with checkout?
+                  Sei sicuro di voler procedere con il checkout? Questa azione è irreversibile.
                 </p>
                 <div className="confirm-buttons">
                   <button
                     onClick={confirmCheckout}
                     className="cart-button cart-button-add confirm-button"
                   >
-                    Yes
+                    Conferma
                   </button>
                   <button
                     onClick={cancelCheckout}
