@@ -3,9 +3,7 @@ import Person from "../types/Person";
 import { Link, useNavigate } from "react-router-dom";
 
 const MailingList: React.FC = () => {
-const navigate = useNavigate();
-
-  const [providers, setProviders] = useState<Person[]>([]);
+  // API service
   const api = {
     baseUrl: "/be",
 
@@ -21,6 +19,11 @@ const navigate = useNavigate();
     },
   };
 
+  // Navigation and state
+  const navigate = useNavigate();
+  const [providers, setProviders] = useState<Person[]>([]);
+
+  // Effects
   useEffect(() => {
     api.fetchMailingList();
   }, []);

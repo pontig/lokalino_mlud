@@ -1,14 +1,7 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-  HashRouter as Router,
-  Route,
-  Routes,
-  useNavigate,
-} from "react-router-dom";
-import {
-  FaBook,
   FaDollarSign,
-  FaTruck,
   FaMoneyCheckAlt,
   FaBookOpen,
   FaUserShield,
@@ -19,77 +12,11 @@ import { IoMailOutline } from "react-icons/io5";
 import { MdQueryStats } from "react-icons/md";
 import { IoIosLogOut } from "react-icons/io";
 
-const getGradientColor = (index: number, total: number) => {
-  const startColor = [0, 100, 0];
-  const endColor = [59, 130, 246];
-  const ratio = index / (total - 1);
-  const color = startColor.map((start, i) =>
-    Math.round(start + ratio * (endColor[i] - start))
-  );
-  return `rgb(${color.join(",")})`;
-};
-
-const getFontColor = (rgb: string) => {
-  const [r, g, b] = rgb.match(/\d+/g)!.map(Number);
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-  return brightness > 125 ? "black" : "white";
-};
-
-const options = [
-  {
-    choice: "Inserimento nuovo libro nel sistema",
-    url: "/insertBooks",
-    icon: <CgInsertAfterO />,
-    status: "OK",
-  },
-  { choice: "Vendita libri", url: "/sell", icon: <FaDollarSign />, status: "OK" },
-  {
-    choice: "Ritiro libri da vendere",
-    url: "/pickUp",
-    icon: <GiReceiveMoney />,
-    status: "OK",
-  },
-  {
-    choice: "Liquidazione libri invenduti",
-    url: "/liquidate",
-    icon: <FaMoneyCheckAlt />,
-    status: "OK",
-  },
-  {
-    choice: "Registrazione venditori",
-    url: "/",
-    icon: <FaBookOpen />,
-    status: "OK",
-  },
-  {
-    choice: "admin: insert books as cool kids ",
-    url: "/admin",
-    icon: <FaUserShield />,
-    status: "not yet started",
-  },
-  {
-    choice: "Mailing list",
-    url: "/mailingList",
-    icon: <IoMailOutline />,
-    status: "OK",
-  },
-  {
-    choice: "Statistiche",
-    url: "/statistics",
-    icon: <MdQueryStats />,
-    status: "not yet started",
-  },
-  {
-    choice: "Logout",
-    url: null,
-    icon: <IoIosLogOut />,
-    status: "OK",
-  },
-];
-
 const BackOffice: React.FC = () => {
+  // Navigation and state
   const navigate = useNavigate();
 
+  // Effects
   useEffect(() => {
     fetch("/be/utils/session.php").then((response) => {
       if (response.status === 401) {
@@ -97,6 +24,80 @@ const BackOffice: React.FC = () => {
       }
     });
   }, []);
+
+  // Functions
+  const getGradientColor = (index: number, total: number) => {
+    const startColor = [0, 100, 0];
+    const endColor = [59, 130, 246];
+    const ratio = index / (total - 1);
+    const color = startColor.map((start, i) =>
+      Math.round(start + ratio * (endColor[i] - start))
+    );
+    return `rgb(${color.join(",")})`;
+  };
+
+  const getFontColor = (rgb: string) => {
+    const [r, g, b] = rgb.match(/\d+/g)!.map(Number);
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness > 125 ? "black" : "white";
+  };
+
+  const options = [
+    {
+      choice: "Inserimento nuovo libro nel sistema",
+      url: "/insertBooks",
+      icon: <CgInsertAfterO />,
+      status: "OK",
+    },
+    {
+      choice: "Vendita libri",
+      url: "/sell",
+      icon: <FaDollarSign />,
+      status: "OK",
+    },
+    {
+      choice: "Ritiro libri da vendere",
+      url: "/pickUp",
+      icon: <GiReceiveMoney />,
+      status: "OK",
+    },
+    {
+      choice: "Liquidazione libri invenduti",
+      url: "/liquidate",
+      icon: <FaMoneyCheckAlt />,
+      status: "OK",
+    },
+    {
+      choice: "Registrazione venditori",
+      url: "/",
+      icon: <FaBookOpen />,
+      status: "OK",
+    },
+    {
+      choice: "admin: insert books as cool kids ",
+      url: "/admin",
+      icon: <FaUserShield />,
+      status: "not yet started",
+    },
+    {
+      choice: "Mailing list",
+      url: "/mailingList",
+      icon: <IoMailOutline />,
+      status: "OK",
+    },
+    {
+      choice: "Statistiche",
+      url: "/statistics",
+      icon: <MdQueryStats />,
+      status: "not yet started",
+    },
+    {
+      choice: "Logout",
+      url: null,
+      icon: <IoIosLogOut />,
+      status: "OK",
+    },
+  ];
 
   return (
     <div className="bookstore-container">

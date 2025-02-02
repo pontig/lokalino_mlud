@@ -1,89 +1,13 @@
 // InsertBooks.tsx
-import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import React, { useState, FormEvent, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import Book from "../types/Book";
 import BookEntryComponent from "../components/BookEntry";
 import BookEntry from "../types/BookEntry";
 
-// interface ISBNLookupFieldProps {
-//   value: string;
-//   onChange: (value: string) => void;
-//   results: Book[];
-//   onSelect: (result: Book) => void;
-//   isSearching: boolean;
-// }
-
-// const ISBNLookupField: React.FC<ISBNLookupFieldProps> = ({
-//   value,
-//   onChange,
-//   results,
-//   onSelect,
-//   isSearching,
-// }) => {
-//   return (
-//     <div className="relative w-full">
-//       <input
-//         type="text"
-//         value={value}
-//         onChange={(e) => {
-//           const newValue = e.target.value;
-//           if (/^\d*$/.test(newValue)) {
-//             onChange(newValue);
-//           }
-//         }}
-//         className="w-full p-2 border rounded"
-//         placeholder="no spaces or dashes"
-//         required
-//       />
-
-//       {isSearching && (
-//         <div className="absolute w-full mt-1 text-sm text-gray-500">
-//           Searching...
-//         </div>
-//       )}
-
-//       {results.length > 0 && (
-//         <div>
-//           <div className="isbn-results">
-//             {results.map((result) => (
-//               <button
-//                 key={result.ISBN}
-//                 onClick={() => onSelect(result)}
-//                 className="isbn-result-item"
-//               >
-//                 <div className="font-medium">{result.Title}</div>
-//                 <div className="text-sm text-gray-600">
-//                   by {result.Author} • {result.Editor}
-//                 </div>
-//               </button>
-//             ))}
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
 const InsertBooks: React.FC = () => {
-  const navigate = useNavigate();
-  const [books, setBooks] = useState<BookEntry>({
-    ISBN: "",
-    Title: "",
-    Author: "",
-    Editor: "",
-    Price_new: 0.0,
-    Dec_conditions: "New",
-  });
-  // const [isbnResults, setIsbnResults] = useState<Book[]>([]);
-  // const [isSearching, setIsSearching] = useState<boolean>(false);
-  // const [activeISBNIndex, setActiveISBNIndex] = useState<number | null>(null);
-
-  const [isSearchingISBN, setIsSearchingISBN] = useState<boolean>(false);
-  const [isSearchingTitle, setIsSearchingTitle] = useState<boolean>(false);
-  const [isbnResults, setIsbnResults] = useState<Book[]>([]);
-  const [titleResults, setTitleResults] = useState<Book[]>([]);
-
+  // API service
   const api = {
     baseUrl: "/be",
 
@@ -135,10 +59,27 @@ const InsertBooks: React.FC = () => {
     },
   };
 
+  // Navigation and state
+  const navigate = useNavigate();
+  const [books, setBooks] = useState<BookEntry>({
+    ISBN: "",
+    Title: "",
+    Author: "",
+    Editor: "",
+    Price_new: 0.0,
+    Dec_conditions: "New",
+  });
+  const [isSearchingISBN, setIsSearchingISBN] = useState<boolean>(false);
+  const [isSearchingTitle, setIsSearchingTitle] = useState<boolean>(false);
+  const [isbnResults, setIsbnResults] = useState<Book[]>([]);
+  const [titleResults, setTitleResults] = useState<Book[]>([]);
+
+  // Effects
   useEffect(() => {
     api.checkSession();
   }, []);
 
+  // Functions
   const handleBookSelect = (result: BookEntry, index = 0): void => {
     const newBooks = {
       ISBN: result.ISBN,

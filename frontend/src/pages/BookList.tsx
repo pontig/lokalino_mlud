@@ -11,9 +11,7 @@ interface BookListProps {
   removeFromCart: (bookId: number) => void;
 }
 const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
-  const navigate = useNavigate();
-
-  // API service for books
+  // API service
   const api = {
     baseUrl: "/be",
 
@@ -55,43 +53,29 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
     },
   };
 
-  // // Utility functions for cart storage
-  // const saveCartToStorage = (cart: Book[]) => {
-  //   localStorage.setItem("bookstore-cart", JSON.stringify(cart));
-  // };
-
-  // const loadCartFromStorage = (): Book[] => {
-  //   const savedCart = localStorage.getItem("bookstore-cart");
-  //   if (savedCart) console.log(savedCart);
-  //   return savedCart ? (JSON.parse(savedCart) as Book[]) : [];
-  // };
-
+  // Navigation and state
+  const navigate = useNavigate();
   const [books, setBooks] = useState<AvailableBook[]>([]);
   const [filteredBooks, setFilteredBooks] = useState<AvailableBook[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // // Load cart from localStorage on initial render
-  // useEffect(() => {
-  //   const savedCart = loadCartFromStorage();
-  //   savedCart.forEach(book => {
-  //     if (!cart.some(item => item.id === book.ISBN)) {
-  //       addToCart(book);
-  //     }
-  //   });
-  // }, []);
-
-  // // Save cart to localStorage whenever it changes
-  // useEffect(() => {
-  //   saveCartToStorage(cart);
-  // }, [cart]);
-
-  // Fetch books from API
+  // Effects
   useEffect(() => {
     fetchBooks();
   }, []);
 
+  useEffect(() => {
+    const filtered = books.filter(
+      (book) =>
+        book.Title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.Author.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredBooks(filtered);
+  }, [searchTerm, books]);
+
+  // Functions
   const fetchBooks = async () => {
     try {
       setIsLoading(true);
@@ -116,16 +100,6 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
     addToCart(book);
     setSearchTerm("");
   };
-
-  // Filter books based on search term
-  useEffect(() => {
-    const filtered = books.filter(
-      (book) =>
-        book.Title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        book.Author.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredBooks(filtered);
-  }, [searchTerm, books]);
 
   const isInCart = (bookId: number) => {
     return cart.some((book) => book.PB_Id === bookId);
@@ -154,8 +128,6 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
       </div>
     );
   }
-
-  // console.log(filteredBooks);
 
   return (
     <div className="bookstore-container">
@@ -203,8 +175,8 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
               <p className="book-author">di {book.Author}</p>
               <p className="book-description">Editore: {book.Editor}</p>
               <p className="book-description">
-                Venduto da {book.ProviderName} {book.ProviderSurname},{" "}
-                stato {book.Dec_conditions}
+                Venduto da {book.ProviderName} {book.ProviderSurname}, stato{" "}
+                {book.Dec_conditions}
               </p>
               {book.Comment && (
                 <p className="book-description">{book.Comment}</p>

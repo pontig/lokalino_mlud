@@ -2,19 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
-  const navigator = useNavigate();
-  const [password, setPassword] = useState("");
-
-  const hashPassword = async (password: string) => {
-    const msgUint8 = new TextEncoder().encode(password);
-    const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
-    return hashHex;
-  };
-
+  // API service
   const api = {
     baseUrl: "/be",
 
@@ -38,6 +26,11 @@ const Login: React.FC = () => {
     },
   };
 
+  // Navigation and state
+  const navigator = useNavigate();
+  const [password, setPassword] = useState("");
+
+  // Functions
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       api.login();
@@ -55,7 +48,7 @@ const Login: React.FC = () => {
         onChange={(e) => setPassword(e.target.value)}
         onKeyPress={handleKeyPress}
         style={{ width: "20vw" }}
-        />
+      />
       <button
         className="submit-button"
         style={{ width: "10vw", marginTop: "2vh" }}

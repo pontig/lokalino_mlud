@@ -21,44 +21,8 @@ interface BookEntry_commented extends BookEntry {
   PB_Id: number;
 }
 
-interface ISBNLookupFieldProps {
-  value: string;
-  onChange: (value: string) => void;
-  results: Book[];
-  onSelect: (result: Book) => void;
-  isSearching: boolean;
-}
-
 const Liquidate: React.FC = () => {
-  const [providers, setProviders] = useState<Provider[]>([]);
-  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(
-    null
-  );
-  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
-    name: "",
-    surname: "",
-  });
-  const [books, setBooks] = useState<BookEntry_commented[]>([
-    {
-      ISBN: "",
-      Title: "",
-      Author: "",
-      Editor: "",
-      Price_new: 0.0,
-      Dec_conditions: "Buono",
-      Comment: "",
-      Sold_date: undefined,
-      PB_Id: -1,
-    },
-  ]);
-  const [isbnResults, setIsbnResults] = useState<Book[]>([]);
-  const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [activeISBNIndex, setActiveISBNIndex] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [liquidation, setLiquidation] = useState<number>(0);
-  const [confirming, setConfirming] = useState<boolean>(false);
-  const navigate = useNavigate();
-
+  // API service
   const api = {
     baseUrl: "/be",
 
@@ -150,6 +114,37 @@ const Liquidate: React.FC = () => {
     },
   };
 
+  // Navigation and state
+  const navigate = useNavigate();
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(
+    null
+  );
+  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
+    name: "",
+    surname: "",
+  });
+  const [books, setBooks] = useState<BookEntry_commented[]>([
+    {
+      ISBN: "",
+      Title: "",
+      Author: "",
+      Editor: "",
+      Price_new: 0.0,
+      Dec_conditions: "Buono",
+      Comment: "",
+      Sold_date: undefined,
+      PB_Id: -1,
+    },
+  ]);
+  const [isbnResults, setIsbnResults] = useState<Book[]>([]);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [activeISBNIndex, setActiveISBNIndex] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [liquidation, setLiquidation] = useState<number>(0);
+  const [confirming, setConfirming] = useState<boolean>(false);
+
+  // Effects
   useEffect(() => {
     const loadProviders = async () => {
       try {
@@ -162,6 +157,7 @@ const Liquidate: React.FC = () => {
     loadProviders();
   }, []);
 
+  // Functions
   const handleProviderSelect = async (provider: Provider) => {
     setSelectedProvider(provider);
     setIsLoading(true);

@@ -1,11 +1,10 @@
 // BookSubmissionForm.tsx
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import "../styles/SubmissionForm.css";
 import BookEntry from "../types/BookEntry";
 import Book from "../types/Book";
-import SearchField from "../components/SearchField";
 import BookEntryComponent from "../components/BookEntry";
 
 interface PersonalInfo {
@@ -17,94 +16,8 @@ interface PersonalInfo {
   Mail_list: boolean;
 }
 
-// interface ISBNLookupFieldProps {
-//   value: string;
-//   onChange: (value: string) => void;
-//   results: Book[];
-//   onSelect: (result: Book) => void;
-//   isSearching: boolean;
-// }
-
-// const ISBNLookupField: React.FC<ISBNLookupFieldProps> = ({
-//   value,
-//   onChange,
-//   results,
-//   onSelect,
-//   isSearching,
-// }) => {
-//   return (
-//     <div className="relative w-full">
-//       <input
-//         type="text"
-//         value={value}
-//         onChange={(e) => {
-//           const newValue = e.target.value;
-//           if (/^\d*$/.test(newValue)) {
-//             onChange(newValue);
-//           }
-//         }}
-//         className="w-full p-2 border rounded"
-//         placeholder="no spaces or dashes"
-//         required
-//       />
-
-//       {isSearching && (
-//         <div className="absolute w-full mt-1 text-sm text-gray-500">
-//           Searching...
-//         </div>
-//       )}
-
-//       {results.length > 0 && (
-//         <div>
-//           <div className="isbn-results">
-//             {results.map((result) => (
-//               <button
-//                 key={result.ISBN}
-//                 onClick={() => onSelect(result)}
-//                 className="isbn-result-item"
-//               >
-//                 <div className="font-medium">{result.Title}</div>
-//                 <div className="text-sm text-gray-600">
-//                   by {result.Author} • {result.Editor}
-//                 </div>
-//               </button>
-//             ))}
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
 const BookSubmissionForm: React.FC = () => {
-  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
-    Name: "",
-    Surname: "",
-    School: "",
-    Email: "",
-    Phone_no: "",
-    Mail_list: false,
-  });
-  const [books, setBooks] = useState<BookEntry[]>([
-    {
-      ISBN: "",
-      Title: "",
-      Author: "",
-      Editor: "",
-      Price_new: 0.0,
-      Dec_conditions: "Buono",
-    },
-  ]);
-  const [isbnResults, setIsbnResults] = useState<Book[]>([]);
-  const [titleResults, setTitleResults] = useState<Book[]>([]);
-  const [isSearchingISBN, setIsSearchingISBN] = useState<boolean>(false);
-  const [isSearchingTitle, setIsSearchingTitle] = useState<boolean>(false);
-  const [activeISBNIndex, setActiveISBNIndex] = useState<number | null>(null);
-  const [activeTitleIndex, setActiveTitleIndex] = useState<number | null>(null);
-  const [showTerms, setShowTerms] = useState<boolean>(false);
-  const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
-  const navigate = useNavigate();
-
+  // API service
   const api = {
     baseUrl: "/be",
 
@@ -185,6 +98,36 @@ const BookSubmissionForm: React.FC = () => {
     },
   };
 
+  // Navigation and state
+  const navigate = useNavigate();
+  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
+    Name: "",
+    Surname: "",
+    School: "",
+    Email: "",
+    Phone_no: "",
+    Mail_list: false,
+  });
+  const [books, setBooks] = useState<BookEntry[]>([
+    {
+      ISBN: "",
+      Title: "",
+      Author: "",
+      Editor: "",
+      Price_new: 0.0,
+      Dec_conditions: "Buono",
+    },
+  ]);
+  const [isbnResults, setIsbnResults] = useState<Book[]>([]);
+  const [titleResults, setTitleResults] = useState<Book[]>([]);
+  const [isSearchingISBN, setIsSearchingISBN] = useState<boolean>(false);
+  const [isSearchingTitle, setIsSearchingTitle] = useState<boolean>(false);
+  const [activeISBNIndex, setActiveISBNIndex] = useState<number | null>(null);
+  const [activeTitleIndex, setActiveTitleIndex] = useState<number | null>(null);
+  const [showTerms, setShowTerms] = useState<boolean>(false);
+  const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
+
+  // Functions
   const handlePersonalInfoChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setPersonalInfo({
       ...personalInfo,
@@ -192,49 +135,14 @@ const BookSubmissionForm: React.FC = () => {
     });
   };
 
-  const handleBookSelect = (result: Book, index: number) => {
-    const newBooks = [...books];
-    newBooks[index] = {
-      ...newBooks[index],
-      ISBN: result.ISBN,
-      Title: result.Title,
-      Author: result.Author,
-      Editor: result.Editor,
-      Price_new: result.Price_new,
-    };
-    setBooks(newBooks);
-    setIsbnResults([]);
-    setTitleResults([]);
-    setActiveISBNIndex(null);
-    setActiveTitleIndex(null);
-  };
-
-  // const addBook = (): void => {
-  //   setBooks([
-  //     ...books,
-  //     {
-  //       ISBN: "",
-  //       Title: "",
-  //       Author: "",
-  //       Editor: "",
-  //       Price_new: 0.0,
-  //       Dec_conditions: "Buono",
-  //     },
-  //   ]);
-  // };
-
-  // const removeBook = (index: number): void => {
-  //   if (books.length > 1) {
-  //     setBooks(books.filter((_, i) => i !== index));
-  //   }
-  // };
-
   const handleSubmit = (e: FormEvent): void => {
     e.preventDefault();
     const allFieldsFilled =
       Object.values(personalInfo).every((value) => value !== "") &&
       books.every((book) =>
-      Object.entries(book).every(([key, value]) => key === "Comment" || (value !== "" && value !== 0))
+        Object.entries(book).every(
+          ([key, value]) => key === "Comment" || (value !== "" && value !== 0)
+        )
       );
 
     console.log({ personalInfo, books });
@@ -243,30 +151,6 @@ const BookSubmissionForm: React.FC = () => {
       return;
     }
     api.submitForm(personalInfo, books);
-  };
-
-  const handleISBNSearch = async (value: string, index: number) => {
-    const newBooks = [...books];
-    newBooks[index].ISBN = value;
-    setBooks(newBooks);
-    
-    setIsSearchingISBN(true);
-    const [results, resultIndex] = await api.searchISBN(value, index);
-    setIsbnResults(results);
-    setActiveISBNIndex(resultIndex);
-    setIsSearchingISBN(false);
-  };
-
-  const handleTitleSearch = async (value: string, index: number) => {
-    const newBooks = [...books];
-    newBooks[index].Title = value;
-    setBooks(newBooks);
-    
-    setIsSearchingTitle(true);
-    const [results, resultIndex] = await api.searchTitle(value, index);
-    setTitleResults(results);
-    setActiveTitleIndex(resultIndex);
-    setIsSearchingTitle(false);
   };
 
   const handleBookChange = (updatedBook: BookEntry, index: number) => {

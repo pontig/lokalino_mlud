@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-
 import AvailableBook from "../types/AvailableBook";
 
 interface CartPageProps {
@@ -11,24 +10,7 @@ interface CartPageProps {
 }
 
 const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
-  const navigate = useNavigate();
-  const total = cart.reduce((sum, book) => sum + Number(book.Price_new), 0);
-  const [showConfirm, setShowConfirm] = useState(false);
-
-  // TODO: mmigliorare sta cosa
-  // useEffect(() => {
-  //   const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-  //     event.preventDefault();
-  //     return "Are you sure you want to leave? Your cart will be lost.";
-  //   };
-
-  //   window.addEventListener("beforeunload", handleBeforeUnload);
-
-  //   return () => {
-  //     window.removeEventListener("beforeunload", handleBeforeUnload);
-  //   };
-  // }, []);
-
+  // API service
   const api = {
     baseUrl: "/be",
 
@@ -50,7 +32,9 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
           alert("Checkout successful");
           navigate("/backOffice");
         } else if (response.status === 401) {
-          alert("La sessione è scaduta, effettua nuovamente il login. Le tue modifiche NON sono state salvate.");
+          alert(
+            "La sessione è scaduta, effettua nuovamente il login. Le tue modifiche NON sono state salvate."
+          );
           navigate("/login");
         } else {
           console.log("Checkout failed");
@@ -61,11 +45,19 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
     },
   };
 
+  // Navigation and state
+  const navigate = useNavigate();
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  // Effects
   useEffect(() => {
     if (cart.length === 0) {
       navigate("/sell");
     }
   }, [cart.length]);
+
+  // Functions
+  const total = cart.reduce((sum, book) => sum + Number(book.Price_new), 0);
 
   const handleCheckout = () => {
     setShowConfirm(true);
@@ -123,9 +115,11 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
           <div className="cart-summary">
             <h2>Sommario</h2>
             <div className="cart-total">
-                <span style={{ color: "#888" }}>Totale (nuovi): €{total}</span>
-                <span>Totale (prezzo usato):</span>
-              <span style={{fontSize: "2rem"}}>€{(total/2).toFixed(2)}</span>
+              <span style={{ color: "#888" }}>Totale (nuovi): €{total}</span>
+              <span>Totale (prezzo usato):</span>
+              <span style={{ fontSize: "2rem" }}>
+                €{(total / 2).toFixed(2)}
+              </span>
             </div>
             <button
               className="cart-button cart-button-add checkout-button"
@@ -136,7 +130,8 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
             {showConfirm && (
               <div className="mt-4 p-4 border rounded-lg bg-white">
                 <p className="text-center mb-4">
-                  Sei sicuro di voler procedere con il checkout? Questa azione è irreversibile.
+                  Sei sicuro di voler procedere con il checkout? Questa azione è
+                  irreversibile.
                 </p>
                 <div className="confirm-buttons">
                   <button
