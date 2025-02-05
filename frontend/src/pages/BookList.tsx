@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 
 import Book from "../types/Book";
 import AvailableBook from "../types/AvailableBook";
@@ -10,45 +9,28 @@ interface BookListProps {
   addToCart: (book: AvailableBook) => void;
   removeFromCart: (bookId: number) => void;
 }
-const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
+const BookList: React.FC<BookListProps> = ({ cart, removeFromCart, addToCart }) => {
   // API service
   const api = {
     baseUrl: "/be",
 
     // Get all books
-    async getBooks(): Promise<AvailableBook[]> {
+    async fetchBooks(): Promise<void> {
       try {
+        setIsLoading(true);
+        setError(null);
         const response = await fetch(`${this.baseUrl}/getAvailableBooks.php`);
         if (response.status === 401) {
           navigate("/login");
-          return [];
         }
         const data = (await response.json()) as AvailableBook[];
-        console.log(data);
-        console.log(data.reduce((sum, book) => sum + book.Price_new, 0));
-        return data;
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          throw new Error(
-            error.response?.data?.message || "Failed to fetch books"
-          );
-        }
-        throw error;
-      }
-    },
-
-    // You can add more API methods here as needed
-    async getBookById(id: string): Promise<Book> {
-      try {
-        const response = await axios.get(`${this.baseUrl}/api/books/${id}`);
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          throw new Error(
-            error.response?.data?.message || "Failed to fetch book"
-          );
-        }
-        throw error;
+        setBooks(data);
+        setFilteredBooks(data);
+      } catch (err) {
+        console.error("Error fetching books:", err);
+      } finally {
+        setIsLoading(false);
+        return
       }
     },
   };
@@ -63,7 +45,7 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
 
   // Effects
   useEffect(() => {
-    fetchBooks();
+    api.fetchBooks();
   }, []);
 
   useEffect(() => {
@@ -76,26 +58,6 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
   }, [searchTerm, books]);
 
   // Functions
-  const fetchBooks = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      let fetchedBooks = await api.getBooks();
-
-      setBooks(fetchedBooks);
-      setFilteredBooks(fetchedBooks);
-    } catch (err) {
-      console.error("Error fetching books:", err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : "An error occurred while fetching books"
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const addToCartAndClearSearch = (book: AvailableBook) => {
     addToCart(book);
     setSearchTerm("");
@@ -119,7 +81,7 @@ const BookList = ({ cart, removeFromCart, addToCart }: BookListProps) => {
         <div>
           Error: {error}
           <button
-            onClick={fetchBooks}
+            onClick={api.fetchBooks}
             className="ml-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Riprova

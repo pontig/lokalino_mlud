@@ -21,42 +21,42 @@ const BookSubmissionForm: React.FC = () => {
   const api = {
     baseUrl: "/be",
 
-    // Search for a book by ISBN
-    async searchISBN(isbn: string, index: number): Promise<[Book[], number]> {
-      if (isbn.length < 2) {
-        return [[], index];
-      }
+    // // Search for a book by ISBN
+    // async searchISBN(isbn: string, index: number): Promise<[Book[], number]> {
+    //   if (isbn.length < 2) {
+    //     return [[], index];
+    //   }
 
-      try {
-        const response = await fetch(
-          `${this.baseUrl}/getExistingBooks.php?ISBN=${isbn}`
-        );
-        const data = await response.json();
-        return [data, index];
-      } catch (error) {
-        console.error("Error searching ISBN:", error);
-        return [[], index];
-      }
-    },
+    //   try {
+    //     const response = await fetch(
+    //       `${this.baseUrl}/getExistingBooks.php?ISBN=${isbn}`
+    //     );
+    //     const data = await response.json();
+    //     return [data, index];
+    //   } catch (error) {
+    //     console.error("Error searching ISBN:", error);
+    //     return [[], index];
+    //   }
+    // },
 
-    async searchTitle(title: string, index: number): Promise<[Book[], number]> {
-      if (title.length < 2) {
-        return [[], index];
-      }
+    // async searchTitle(title: string, index: number): Promise<[Book[], number]> {
+    //   if (title.length < 2) {
+    //     return [[], index];
+    //   }
 
-      try {
-        const response = await fetch(
-          `${this.baseUrl}/getExistingBooks.php?title=${encodeURIComponent(
-            title
-          )}`
-        );
-        const data = await response.json();
-        return [data, index];
-      } catch (error) {
-        console.error("Error searching title:", error);
-        return [[], index];
-      }
-    },
+    //   try {
+    //     const response = await fetch(
+    //       `${this.baseUrl}/getExistingBooks.php?title=${encodeURIComponent(
+    //         title
+    //       )}`
+    //     );
+    //     const data = await response.json();
+    //     return [data, index];
+    //   } catch (error) {
+    //     console.error("Error searching title:", error);
+    //     return [[], index];
+    //   }
+    // },
 
     async submitForm(
       personalInfo: PersonalInfo,

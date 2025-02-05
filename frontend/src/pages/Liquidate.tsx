@@ -26,16 +26,16 @@ const Liquidate: React.FC = () => {
   const api = {
     baseUrl: "/be",
 
-    async getProviders(): Promise<Provider[]> {
+    async fetchProviders(): Promise<void> {
       const response = await fetch(`${this.baseUrl}/getProviders.php`);
       if (response.status === 401) {
         navigate("/login");
-        return [];
       }
       if (!response.ok) throw new Error("Failed to fetch providers");
       const data = await response.json();
       const res = data.filter((provider: any) => provider.State === "1");
-      return res;
+      setProviders(res);
+      return 
     },
 
     async submitForm(): Promise<void> {
@@ -146,15 +146,7 @@ const Liquidate: React.FC = () => {
 
   // Effects
   useEffect(() => {
-    const loadProviders = async () => {
-      try {
-        const data = await api.getProviders();
-        setProviders(data);
-      } catch (error) {
-        console.error("Error loading providers:", error);
-      }
-    };
-    loadProviders();
+    api.fetchProviders();
   }, []);
 
   // Functions

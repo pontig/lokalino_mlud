@@ -39,15 +39,15 @@ const PickUp: React.FC = () => {
   const api = {
     baseUrl: "/be",
 
-    async getProviders(): Promise<Provider[]> {
+    async fetchProviders(): Promise<void> {
       const response = await fetch(`${this.baseUrl}/getProviders.php`);
       if (response.status === 401) {
         navigate("/login");
-        return [];
       }
       if (!response.ok) throw new Error("Failed to fetch providers");
       const data = await response.json();
       const res = data.filter((provider: any) => provider.State === "0");
+      setProviders(res);
       return res;
     },
 
@@ -110,26 +110,23 @@ const PickUp: React.FC = () => {
       }
     },
 
-    async getBooksByProvider(providerId: number): Promise<{
-      personalInfo: PersonalInfo;
-      books: BookEntry_commented[];
-    }> {
-      const response = await fetch(
-        `${this.baseUrl}/getBooksByProvider.php?Provider_Id=${providerId}`
-      );
-      if (response.status === 401) {
-        navigate("/login");
-        return { personalInfo: { name: "", surname: "" }, books: [] };
-      }
-      if (!response.ok) throw new Error("Failed to fetch provider books");
-      const data = await response.json();
+    async getBooksByProvider(provider: Provider): Promise<void> {
+      setSelectedProvider(provider);
+      setIsLoading(true);
+      try {
+        const response = await fetch(
+          `${this.baseUrl}/getBooksByProvider.php?Provider_Id=${provider.Provider_Id}`
+        );
+        if (response.status === 401) {
+          navigate("/login");
+        }
+        const data = await response.json();
+        setPersonalInfo({
+          name: data.provider[0].Name,
+          surname: data.provider[0].Surname,
+        });
 
-      return {
-        personalInfo: {
-          name: data.provider[0].Name || "",
-          surname: data.provider[0].Surname || "",
-        },
-        books:
+        setBooksInseredByPr(
           data.books.map((book: BookEntry_commented) => ({
             ISBN: book.ISBN || "",
             Title: book.Title || "",
@@ -139,8 +136,13 @@ const PickUp: React.FC = () => {
             Dec_conditions: book.Dec_conditions || "Buono",
             Comment: book.Comment || "",
             PB_Id: book.PB_Id || 0,
-          })) || [],
-      };
+          })) || []
+        );
+      } catch (error) {
+        console.error("Error loading provider books:", error);
+      } finally {
+        setIsLoading(false);
+      }
     },
   };
 
@@ -182,15 +184,7 @@ const PickUp: React.FC = () => {
 
   // Effects
   useEffect(() => {
-    const loadProviders = async () => {
-      try {
-        const data = await api.getProviders();
-        setProviders(data);
-      } catch (error) {
-        console.error("Error loading providers:", error);
-      }
-    };
-    loadProviders();
+    api.fetchProviders();
   }, []);
 
   useEffect(() => {
@@ -218,22 +212,6 @@ const PickUp: React.FC = () => {
       .includes(searchQuery.toLowerCase())
   );
 
-  const handleProviderSelect = async (provider: Provider) => {
-    setSelectedProvider(provider);
-    setIsLoading(true);
-    try {
-      const data = await api.getBooksByProvider(provider.Provider_Id);
-      setPersonalInfo(data.personalInfo);
-      setBooksInseredByPr(data.books);
-      console.log(data);
-      console.log(data.books);
-    } catch (error) {
-      console.error("Error loading provider books:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   if (!selectedProvider) {
     return (
       <div className="bokstore-container form-container">
@@ -259,7 +237,7 @@ const PickUp: React.FC = () => {
             filteredProviders.map((provider) => (
               <button
                 key={provider.Provider_Id}
-                onClick={() => handleProviderSelect(provider)}
+                onClick={() => api.getBooksByProvider(provider)}
                 className="choice"
               >
                 {provider.Name} {provider.Surname}
@@ -270,21 +248,6 @@ const PickUp: React.FC = () => {
       </div>
     );
   }
-
-  const handleBookSelect = (result: Book, index: number): void => {
-    const newBooks = [...manuallyAddedBooks];
-    newBooks[index] = {
-      ...newBooks[index],
-      ISBN: result.ISBN,
-      Title: result.Title,
-      Author: result.Author,
-      Editor: result.Editor,
-      Price_new: result.Price_new,
-    };
-    setManuallyAddedBooks(newBooks);
-    setIsbnResults([]);
-    setActiveISBNIndex(null);
-  };
 
   const addBook = (): void => {
     setManuallyAddedBooks([

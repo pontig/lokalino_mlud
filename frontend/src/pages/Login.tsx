@@ -6,7 +6,7 @@ const Login: React.FC = () => {
   const api = {
     baseUrl: "/be",
 
-    async login() {
+    async login(): Promise<void> {
       const response = await fetch(`${api.baseUrl}/login.php`, {
         method: "POST",
         headers: {

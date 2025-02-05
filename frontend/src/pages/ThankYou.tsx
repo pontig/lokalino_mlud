@@ -9,7 +9,7 @@ const ThankYouPage: React.FC = () => {
   return (
     <div className="thank-you">
       <h1 className="ty-h1">Grazie, {name}!</h1>
-      <p className="ty-p">Puoi venire a consegnare questi ilbri dal.. al..</p>
+      <p className="ty-p">Puoi venire a consegnare questi libri dal.. al..</p>
     </div>
   );
 };
