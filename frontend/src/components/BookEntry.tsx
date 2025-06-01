@@ -212,7 +212,7 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
         </div>
 
         <div className="form-field">
-          <label>Prezzo nuovo (xx,xx)</label>
+          <label>Prezzo di copertina (xx,xx)</label>
           <input
             type="number"
             value={book.Price_new}
@@ -240,9 +240,11 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
               className="w-full p-2 border rounded"
               required
             >
+              <option value="">--</option>
+              <option value="new">Nuovo</option>
+              <option value="optimal">Ottimo</option>
               <option value="good">Buono</option>
-              <option value="average">Nella media</option>
-              <option value="bad">Molto usurato</option>
+              <option value="bad">Usurato</option>
             </select>
           </div>
         )}

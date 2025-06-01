@@ -96,7 +96,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
                 <div className="cart-item-details">
                   <h3 className="cart-item-title">{book.Title}</h3>
                   <p className="cart-item-author">
-                    di {book.Author}, venduto da {book.ProviderName}{" "}
+                    di {book.Author}, venduto da <b>(ID#{book.Provider_Id})</b>{" "}{book.ProviderName}{" "}
                     {book.ProviderSurname}
                   </p>
                   <p className="cart-item-price">

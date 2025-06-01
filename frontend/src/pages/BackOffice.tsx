@@ -101,7 +101,7 @@ const BackOffice: React.FC = () => {
 
   return (
     <div className="bookstore-container">
-      <h1 style={{ textAlign: "center" }}>Pannello di controllo</h1>
+      <h1 style={{ textAlign: "center" }}>MLUD dashboard</h1>
       <div className="content">
         {options.map((option, index) => {
           const backgroundColor = getGradientColor(index, options.length);

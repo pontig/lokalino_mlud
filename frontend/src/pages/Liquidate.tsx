@@ -181,7 +181,7 @@ const Liquidate: React.FC = () => {
               onClick={() => handleProviderSelect(provider)}
               className="choice"
             >
-              {provider.Name} {provider.Surname}
+              <b>(ID#{provider.Provider_Id})</b> {provider.Name} {provider.Surname}
             </button>
           ))}
         </div>
@@ -247,7 +247,7 @@ const Liquidate: React.FC = () => {
           ← Seleziona un altro venditore
         </span>
         <h1 className="form-title">
-          Riepilogo per {selectedProvider.Name}{" "}
+          Riepilogo per <b>(ID#{selectedProvider.Provider_Id})</b> {selectedProvider.Name}{" "}
           {selectedProvider.Surname}
         </h1>
       </div>

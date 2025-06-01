@@ -8,11 +8,11 @@ import Book from "../types/Book";
 import BookEntryComponent from "../components/BookEntry";
 
 interface PersonalInfo {
-  Name: string;
-  Surname: string;
-  School: string;
+  Nome: string;
+  Cognome: string;
+  Scuola: string;
   Email: string;
-  Phone_no: string;
+  N_telefono: string;
   Mail_list: boolean;
 }
 
@@ -79,17 +79,17 @@ const BookSubmissionForm: React.FC = () => {
         if (response.status === 200) {
           // Clear form
           setPersonalInfo({
-            Name: "",
-            Surname: "",
-            School: "",
+            Nome: "",
+            Cognome: "",
+            Scuola: "",
             Email: "",
-            Phone_no: "",
+            N_telefono: "",
             Mail_list: false,
           });
           setBooks([]);
         }
         const pm = new URLSearchParams({
-          name: personalInfo.Name + " " + personalInfo.Surname,
+          name: personalInfo.Nome + " " + personalInfo.Cognome,
         });
         navigate("/thank-you?" + pm.toString());
       } catch (error) {
@@ -101,11 +101,11 @@ const BookSubmissionForm: React.FC = () => {
   // Navigation and state
   const navigate = useNavigate();
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
-    Name: "",
-    Surname: "",
-    School: "",
+    Nome: "",
+    Cognome: "",
+    Scuola: "",
     Email: "",
-    Phone_no: "",
+    N_telefono: "",
     Mail_list: false,
   });
   const [books, setBooks] = useState<BookEntry[]>([
@@ -115,7 +115,7 @@ const BookSubmissionForm: React.FC = () => {
       Author: "",
       Editor: "",
       Price_new: 0.0,
-      Dec_conditions: "Buono",
+      Dec_conditions: "",
     },
   ]);
   const [isbnResults, setIsbnResults] = useState<Book[]>([]);
@@ -168,7 +168,7 @@ const BookSubmissionForm: React.FC = () => {
         Author: "",
         Editor: "",
         Price_new: 0.0,
-        Dec_conditions: "Buono",
+        Dec_conditions: "",
         Comment: "",
       },
     ]);
