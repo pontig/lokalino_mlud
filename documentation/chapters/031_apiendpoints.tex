@@ -282,3 +282,41 @@ Logout the OP.\\
 \textbf{Method} : GET \\
 \textbf{EndPoint} : /logout.php \\
 \textbf{Response} : \texttt{200} if the logout is successful.
+
+\subsection{Get Schools}
+When a PR starts to fill the form, it has to select its school of origin. The system returns the list of schools.\\
+\textbf{Method} : GET \\
+\textbf{EndPoint} : /getSchools.php \\
+\textbf{Response} :
+\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+[
+    {
+        "School_Id": Number,
+        "Name": String,
+        "Is_HighSchool": Boolean
+    },
+    ...
+]
+\end{lstlisting}
+
+\subsection{Get Book Adopted by a School}
+When a PR fills the "school of origin" field, the system suggests the books adopted by that school.\\
+\textbf{Method} : GET \\
+\textbf{EndPoint} : /getAdoptedBooks.php \\
+\textbf{URL parameters} :
+\begin{itemize}
+    \item \texttt{School\_Id}: Number
+\end{itemize}
+\textbf{Response} :
+\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+[
+    {
+        "ISBN": String,
+        "Title": String,
+        "Author": String,
+        "Editor": String,
+        "Price_new": Number
+    },
+    ...
+]
+\end{lstlisting}

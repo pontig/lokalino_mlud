@@ -31,12 +31,13 @@ The use cases are illustrated in the diagram in Figure \ref{fig:use_cases}.
     \item The PR accesses the system.
     \item The PR fills out the form, providing:
           \begin{itemize}
-              \item Personal information (name, surname, email, phone number).
+              \item Personal information (name, surname, email, phone number, school of origin).
               \item Information for an arbitrary number of books (ISBN, title, author, edition, price, condition).
               \item Acceptance of the terms and conditions.
+              \item Acceptance of Lokalino rules.
               \item Preference for subscription to the mailing list.
           \end{itemize}
-          When entering the ISBN, the system will suggest the book's information if it is already in the system.
+          The system will allow the PR to fill out the book information after the school of origin, so that the suggestion of the book's information can be generated based on the schools that adopted the books.
     \item The PR submits the form, it is redirected to a confirmation page and receives a confirmation email.
 \end{enumerate}
 
@@ -73,16 +74,15 @@ The use cases are illustrated in the diagram in Figure \ref{fig:use_cases}.
 
 \section{Special Requirements}
 
-In order to facilitate the filling of the form by the PR, the system will provide a search function that will suggest the book's information when the ISBN is entered. In order to generate this suggestion, the system will also allow the OP to manually enter the book's information, possibly before the beginning of the event.
-
-The system will keep the data of the PRs and the books for 1 year after the event, and after that, it will be deleted. The only data that will be kept indefinitely is the list of persons who have subscribed to the mailing list.
+\begin{itemize}
+    \item In order to generate the list of books that can be suggested to the PR, the system will provide the possibility to the OP to insert the list of books that have been adopted by the schools in the area. The OP will be able to insert the list of books in a facilitated way, to be defined directly with the OP a short time before the delivery.
+    \item The system will keep the data of the PRs and the books for 1 year after the event, and after that, it will be deleted. The only data that will be kept indefinitely is the list of persons who have subscribed to the mailing list.
+    \item Every time an OP handles information about a PR, the system will also show the unique ID of the PR, so that the OP can easily label and identify the books.
+\end{itemize}
 
 \section{Assumptions}
 \label{sec:assumptions}
 
-A couple of assumptions have been made in the design of the system:
+An assumptions have been made in the design of the system:
 
-\begin{itemize}
-    \item Even if in the implementation every PR will be identified by a unique ID, the system will check the uniqueness of the email address; this comes into play when a PR submits the form: if the email address is already in the system and the PR fills out the form again, the system will not create a new record and will work as if the same PR is inserting more books.
-    \item Same thing for the ISBN: if the ISBN is already in the system, the system will suggest the book's information, and the PR will not have to fill out the form for that book. If the PR wants to insert different informations for a book that is already in the system (for example, a different price, or a different author), the system will discard the data inputted by the PR and will use the data already in the system.
-\end{itemize}
+Even if in the implementation every PR will be identified by a unique ID, the system will check the uniqueness of the email address; this comes into play when a PR submits the form: if the email address is already in the system and the PR fills out the form again, the system will not create a new record and will work as if the same PR is inserting more books.
