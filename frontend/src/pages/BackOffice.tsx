@@ -6,11 +6,11 @@ import {
   FaBookOpen,
   FaUserShield,
 } from "react-icons/fa";
-import { CgInsertAfterO } from "react-icons/cg";
 import { GiReceiveMoney } from "react-icons/gi";
 import { IoMailOutline } from "react-icons/io5";
 import { MdQueryStats } from "react-icons/md";
 import { IoIosLogOut } from "react-icons/io";
+import { AiFillSchedule } from "react-icons/ai";
 
 const BackOffice: React.FC = () => {
   // Navigation and state
@@ -42,8 +42,18 @@ const BackOffice: React.FC = () => {
     return brightness > 125 ? "black" : "white";
   };
 
-  const options = [
-  
+    const options: {
+    choice: string;
+    url: string | null;
+    icon: React.ReactNode;
+    status: string;
+  }[] = [
+    {
+      choice: "Previsione consegne",
+      url: "/schedule",
+      icon: <AiFillSchedule />,
+      status: "OK",
+    },
     {
       choice: "Vendita libri",
       url: "/sell",

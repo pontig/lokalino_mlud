@@ -5,8 +5,11 @@ CREATE TABLE Provider (
     Surname VARCHAR(100) NOT NULL,
     Phone_no VARCHAR(15) NOT NULL,
     Email VARCHAR(100) NOT NULL,
-    School VARCHAR(100) NOT NULL,
-    Mail_list BOOLEAN NOT NULL
+    School INT NOT NULL,
+    Mail_list BOOLEAN NOT NULL,
+    Delivery_period INT NOT NULL,
+    FOREIGN KEY (School) REFERENCES School(School_Id),
+    FOREIGN KEY (Delivery_period) REFERENCES Period(P_Id)
 );
 
 -- Table: Book
@@ -47,3 +50,9 @@ CREATE TABLE Provider_Book (
     FOREIGN KEY (ISBN) REFERENCES Book(ISBN),
     FOREIGN KEY (Provider_Id) REFERENCES Provider(Provider_Id)
 );
+
+-- Table: Period of book delivery
+CREATE TABLE Period (
+    P_Id SERIAL PRIMARY KEY,
+    Description VARCHAR(100) NOT NULL
+)

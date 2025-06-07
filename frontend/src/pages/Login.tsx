@@ -19,6 +19,8 @@ const Login: React.FC = () => {
       });
 
       if (response.ok) {
+        // Change page title
+        document.title = "MLUD - Dashboard";
         navigator("/backOffice");
       } else {
         alert("Failed to login");

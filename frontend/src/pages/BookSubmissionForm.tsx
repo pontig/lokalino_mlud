@@ -15,6 +15,12 @@ interface PersonalInfo {
   Email: string;
   N_telefono: string;
   Mail_list: boolean;
+  Periodo: number;
+}
+
+interface Period {
+  P_id: number;
+  Description: string;
 }
 
 const BookSubmissionForm: React.FC = () => {
@@ -87,6 +93,17 @@ const BookSubmissionForm: React.FC = () => {
       return data;
     },
 
+    async fetchPeriods(): Promise<Period[]> {
+      const response = await fetch(
+        `${this.baseUrl}/getPeriodsAndAffluences.php`
+      );
+      if (!response.ok) throw new Error("Failed to fetch periods");
+      const data = await response.json();
+      setPeriods(data);
+      return data;
+      // TODO: Handle affluences
+    },
+
     async submitForm(
       personalInfo: PersonalInfo,
       books: BookEntry[]
@@ -114,6 +131,7 @@ const BookSubmissionForm: React.FC = () => {
             Email: "",
             N_telefono: "",
             Mail_list: false,
+            Periodo: -1,
           });
           setBooks([]);
         }
@@ -136,6 +154,7 @@ const BookSubmissionForm: React.FC = () => {
     Email: "",
     N_telefono: "",
     Mail_list: false,
+    Periodo: -1,
   });
   const [books, setBooks] = useState<BookEntry[]>([
     {
@@ -155,13 +174,17 @@ const BookSubmissionForm: React.FC = () => {
   const [activeTitleIndex, setActiveTitleIndex] = useState<number | null>(null);
   const [showTerms, setShowTerms] = useState<boolean>(false);
   const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
+  const [showRules, setShowRules] = useState<boolean>(false);
+  const [acceptRules, setAcceptRules] = useState<boolean>(false);
   const [schools, setSchools] = useState<School[]>([]);
   const [selectedSchool, setSelectedSchool] = useState<number>(-1);
   const [adoptedBooks, setAdoptedBooks] = useState<Book[]>([]);
+  const [periods, setPeriods] = useState<Period[]>([]);
 
   // Effects
   useEffect(() => {
     api.fetchSchools();
+    api.fetchPeriods();
   }, []);
 
   useEffect(() => {
@@ -176,24 +199,25 @@ const BookSubmissionForm: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: FormEvent): void => {
-    e.preventDefault();
-    const allFieldsFilled =
-      personalInfo.Istituto !== "-1" &&
-      Object.values(personalInfo).every((value) => value !== "") &&
-      books.every((book) =>
-        Object.entries(book).every(
-          ([key, value]) => key === "Comment" || (value !== "" && value !== 0)
-        )
-      );
+const handleSubmit = (e: FormEvent): void => {
+  e.preventDefault();
+  const allFieldsFilled =
+    personalInfo.Istituto !== "-1" &&
+    personalInfo.Periodo !== -1 &&
+    Object.values(personalInfo).every((value) => value !== "") &&
+    books.every((book) =>
+      Object.entries(book).every(
+        ([key, value]) => key === "Comment" || (value !== "" && value !== 0)
+      )
+    );
 
-    console.log({ personalInfo, books });
-    if (!allFieldsFilled || !acceptTerms) {
-      alert("Inserisci tutte le informazioni necessarie.");
-      return;
-    }
-    api.submitForm(personalInfo, books);
-  };
+  console.log({ personalInfo, books });
+  if (!allFieldsFilled || !acceptTerms || !acceptRules) {
+    alert("Inserisci tutte le informazioni necessarie e accetta i termini e l'informativa sulla privacy.");
+    return;
+  }
+  api.submitForm(personalInfo, books);
+};
 
   const handleBookChange = (updatedBook: BookEntry, index: number) => {
     const newBooks = [...books];
@@ -236,7 +260,8 @@ const BookSubmissionForm: React.FC = () => {
           <div className="form-grid">
             {Object.entries(personalInfo).map(
               ([key, value]) =>
-                key !== "Mail_list" && (
+                key !== "Mail_list" &&
+                key !== "Periodo" && (
                   <div key={key} className="form-field">
                     <label className="block text-sm font-medium mb-1">
                       {key.charAt(0).toUpperCase() + key.slice(1)}
@@ -304,9 +329,23 @@ const BookSubmissionForm: React.FC = () => {
           {selectedSchool === -1 ? (
             <p>Seleziona il tuo istituto per proseguire</p>
           ) : (
-            <button type="button" onClick={addBook} className="add-book-button">
-              Aggiungi un libro
-            </button>
+            <>
+              {books.length > 0 && (
+                <p style={{ color: "red" }}>
+                  <strong>Non trovi il tuo libro nella lista?</strong>
+                  <br />
+                  Potrebbe essere un nostro errore. Porta comunque il libro al
+                  lokalino e analizzeremo la situazione insieme.
+                </p>
+              )}
+              <button
+                type="button"
+                onClick={addBook}
+                className="add-book-button"
+              >
+                Aggiungi un libro
+              </button>
+            </>
           )}
         </div>
 
@@ -514,6 +553,53 @@ const BookSubmissionForm: React.FC = () => {
             <div className="screen" onClick={() => setShowTerms(false)}></div>
           )}
         </div>
+
+        <div className="form-field">
+          <label className="custom-checkbox">
+            <input
+              type="checkbox"
+              required
+              onClick={() => setAcceptRules(!acceptRules)}
+            />
+            <span className="checkbox-style"></span>Ho letto e accetto le {"  "}
+            <button
+              type="button"
+              onClick={() => {
+          setShowRules(true);
+              }}
+              className="link-button term-link"
+            >
+              regole del Lokalino
+            </button>
+          </label>
+          {showRules && (
+            <div className="terms-and-conditions">
+              <h2>Regole del Lokalino</h2>
+              <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          Maecenas fermentum ex diam, vel tincidunt elit vulputate vel.
+          Phasellus ornare accumsan neque vitae scelerisque. Duis erat
+          diam, dapibus ac accumsan at, tincidunt eu sem. Proin pharetra
+          elit semper venenatis tincidunt. Quisque elementum, nulla quis
+          posuere varius, massa purus vulputate ligula, eu ultrices elit
+          dui sed mi.
+              </p>
+              <button
+          className="remove-book-button"
+          onClick={(e) => {
+            e.preventDefault();
+            setShowRules(false);
+          }}
+              >
+          Chiudi
+              </button>
+            </div>
+          )}
+          {showRules && (
+            <div className="screen" onClick={() => setShowRules(false)}></div>
+          )}
+        </div>
+
         <div className="form-field">
           <label className="custom-checkbox">
             <input
@@ -528,6 +614,35 @@ const BookSubmissionForm: React.FC = () => {
             <span className="checkbox-style"></span>
             Voglio rimanere aggiornato sulle novità del Lokalino
           </label>
+        </div>
+
+        {/* Period Section */}
+        <div className="form-field">
+          <br /><br />
+          <label className="block text-sm font-medium mb-1">
+            Verrò a consegnare questi libri indicativamente nel periodo (non è
+            una scelta vincolante, ma ci aiuta a organizzare meglio il personale che si occuperà
+            della raccolta dei libri):
+          </label>
+          <select
+            name="period"
+            className="period-select"
+            value={personalInfo.Periodo}
+            onChange={(e) =>
+              setPersonalInfo({
+                ...personalInfo,
+                Periodo: Number(e.target.value),
+              })
+            }
+            required
+          >
+            <option value="-1">Seleziona periodo</option>
+            {periods.map((period) => (
+              <option key={period.P_id} value={period.P_id}>
+                {period.Description}
+              </option>
+            ))}
+          </select>
         </div>
 
         <button type="submit" className="submit-button" onClick={handleSubmit}>

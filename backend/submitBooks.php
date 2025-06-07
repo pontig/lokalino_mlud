@@ -20,9 +20,9 @@ $body = json_decode(file_get_contents('php://input'), true);
 body parameters:
 {
     "personalInfo": {
-        "Name": String,
-        "Surname": String,
-        "School": String,
+        "Nome": String,
+        "Cognome": String,
+        "Istituto": String,
         "Email": String,
         "Phone_no": String
         "Mail_list": Boolean
@@ -68,11 +68,11 @@ foreach ($requiredFields as $field => $type) {
 }
 
 $personalInfoFields = [
-    'Name' => 'string',
-    'Surname' => 'string',
-    'School' => 'string',
+    'Nome' => 'string',
+    'Cognome' => 'string',
+    'Istituto' => 'string',
     'Email' => 'string',
-    'Phone_no' => 'string',
+    'N_telefono' => 'string',
     'Mail_list' => 'boolean',
 ];
 
@@ -98,12 +98,13 @@ foreach ($personalInfoFields as $field => $type) {
 var_dump($body);
 
 $providerId = insertNewProvider(
-    $body['personalInfo']['Name'],
-    $body['personalInfo']['Surname'],
-    $body['personalInfo']['School'],
+    $body['personalInfo']['Nome'],
+    $body['personalInfo']['Cognome'],
+    $body['personalInfo']['Istituto'],
     $body['personalInfo']['Email'],
-    $body['personalInfo']['Phone_no'],
-    $body['personalInfo']['Mail_list']
+    $body['personalInfo']['N_telefono'],
+    $body['personalInfo']['Mail_list'],
+    $body['personalInfo']['Periodo'] 
 );
 
 $result = addBooksToDelivery($providerId, $body['books'], false);

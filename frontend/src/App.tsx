@@ -12,6 +12,7 @@ import PickUp from "./pages/PickUp";
 import Liquidate from "./pages/Liquidate";
 import MailingList from "./pages/mailingList";
 import Login from "./pages/Login";
+import Schedule from "./pages/Schedule";
 
 const App = () => {
   const [cart, setCart] = useState<AvailableBook[]>([]);
@@ -49,6 +50,7 @@ const App = () => {
         <Route path="/pickUp" element={<PickUp />} />
         <Route path="/liquidate" element={<Liquidate />} />
         <Route path="/mailinglist" element={<MailingList />} />
+        <Route path="/schedule" element={<Schedule />} />
       </Routes>
     </Router>
   );

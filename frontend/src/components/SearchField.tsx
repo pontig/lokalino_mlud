@@ -54,12 +54,6 @@ const SearchField: React.FC<SearchFieldProps> = ({
           </div>
         </div>
       )}
-
-      {results.length === 0 && value !== "" && !isSearching && (
-        <div className="absolute w-full mt-1 text-sm text-red-500">
-          Qui ci scrivo il messaggio ma non ho voglia di formattarlo.
-        </div>
-      )}
     </div>
   );
 };

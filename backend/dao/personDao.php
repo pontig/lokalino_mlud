@@ -31,14 +31,14 @@ function getAllProviders()
     return $providers;
 }
 
-function insertNewProvider($name, $surname, $school, $email, $phone, $mail_list)
+function insertNewProvider($name, $surname, $school, $email, $phone, $mail_list, $period)
 {
     print("Starting insertNewProvider function...\n");
 
     $mail_list = $mail_list ? 1 : 0;
 
     // Debugging: Print function inputs
-    print("Inputs - Name: $name, Surname: $surname, School: $school, Email: $email, Phone: $phone, Mail List: $mail_list\n");
+    print("Inputs - Name: $name, Surname: $surname, School: $school, Email: $email, Phone: $phone, Mail List: $mail_list, Period: $period\n");
 
     $conn = getConnection();
     if (!$conn) {
@@ -71,12 +71,12 @@ function insertNewProvider($name, $surname, $school, $email, $phone, $mail_list)
     print("Provider does not exist, proceeding with insertion.\n");
 
     // Insert new provider
-    $insertStmt = $conn->prepare("INSERT INTO Provider (Name, Surname, School, Email, Phone_no, Mail_list) VALUES (?, ?, ?, ?, ?, ?)");
+    $insertStmt = $conn->prepare("INSERT INTO Provider (Name, Surname, School, Email, Phone_no, Mail_list, Delivery_period) VALUES (?, ?, ?, ?, ?, ?, ?)");
     if (!$insertStmt) {
         die("Insert statement preparation failed: " . $conn->error . "\n");
     }
 
-    $insertStmt->bind_param("ssssss", $name, $surname, $school, $email, $phone, $mail_list);
+    $insertStmt->bind_param("ssssssi", $name, $surname, $school, $email, $phone, $mail_list, $period);
 
     if (!$insertStmt->execute()) {
         print("Error executing insert statement: " . $insertStmt->error . "\n");
@@ -149,7 +149,6 @@ function liquidateProvider($provider_id, $debug = false)
     }
 }
 
-
 function getMailingList()
 {
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
@@ -164,4 +163,20 @@ function getMailingList()
 
     $providers = json_encode($providers);
     return $providers;
+}
+
+function getPeriods()
+{
+    $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
+
+    $sql = "SELECT pe.P_id, pe.Description, COUNT(pr.Delivery_period) AS 'Num_Providers'
+            FROM Period pe
+            LEFT JOIN Provider pr ON pr.Delivery_period = pe.P_id
+            GROUP BY pe.P_id, pe.Description;";
+    $result = $conn->query($sql) or die($conn->error);
+    $periods = $result->fetch_all(MYSQLI_ASSOC);
+    $conn->close();
+    $periods = json_encode($periods);
+    // TODO: color code based on person count
+    return $periods;
 }
