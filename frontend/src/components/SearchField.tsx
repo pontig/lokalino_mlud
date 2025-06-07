@@ -1,6 +1,6 @@
-import React from 'react';
-import SearchFieldProps from '../types/SearchFieldProps';
-import Book from '../types/Book';
+import React from "react";
+import SearchFieldProps from "../types/SearchFieldProps";
+import Book from "../types/Book";
 
 const SearchField: React.FC<SearchFieldProps> = ({
   value,
@@ -11,7 +11,7 @@ const SearchField: React.FC<SearchFieldProps> = ({
   disabled = false,
   placeholder,
   type = "text",
-  index
+  index,
 }) => {
   return (
     <div className="relative w-full">
@@ -52,6 +52,12 @@ const SearchField: React.FC<SearchFieldProps> = ({
               </button>
             ))}
           </div>
+        </div>
+      )}
+
+      {results.length === 0 && value !== "" && !isSearching && (
+        <div className="absolute w-full mt-1 text-sm text-red-500">
+          Qui ci scrivo il messaggio ma non ho voglia di formattarlo.
         </div>
       )}
     </div>

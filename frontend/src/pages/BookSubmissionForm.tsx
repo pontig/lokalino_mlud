@@ -1,16 +1,17 @@
 // BookSubmissionForm.tsx
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "../styles/SubmissionForm.css";
 import BookEntry from "../types/BookEntry";
 import Book from "../types/Book";
+import School from "../types/School";
 import BookEntryComponent from "../components/BookEntry";
 
 interface PersonalInfo {
   Nome: string;
   Cognome: string;
-  Scuola: string;
+  Istituto: string;
   Email: string;
   N_telefono: string;
   Mail_list: boolean;
@@ -58,6 +59,34 @@ const BookSubmissionForm: React.FC = () => {
     //   }
     // },
 
+    async fetchSchools(): Promise<School[]> {
+      const response = await fetch(`${this.baseUrl}/getSchools.php`);
+      if (!response.ok) throw new Error("Failed to fetch schools");
+      const data = await response.json();
+      setSchools(data);
+      return data;
+    },
+
+    async fetchAdoptedBooks(schoolId: number): Promise<Book[]> {
+      let data: Book[] = [];
+      if (schoolId === -2) {
+        data = [];
+      } else {
+        const response = await fetch(
+          `${this.baseUrl}/getAdoptedBooks.php?School_Id=${schoolId}`
+        );
+        if (!response.ok) throw new Error("Failed to fetch adopted books");
+        data = (await response.json()) as Book[];
+        setBooks((prevBooks) =>
+          prevBooks.filter((book) =>
+            data.some((adopted) => adopted.ISBN === book.ISBN)
+          )
+        );
+      }
+      setAdoptedBooks(data);
+      return data;
+    },
+
     async submitForm(
       personalInfo: PersonalInfo,
       books: BookEntry[]
@@ -81,7 +110,7 @@ const BookSubmissionForm: React.FC = () => {
           setPersonalInfo({
             Nome: "",
             Cognome: "",
-            Scuola: "",
+            Istituto: "",
             Email: "",
             N_telefono: "",
             Mail_list: false,
@@ -103,7 +132,7 @@ const BookSubmissionForm: React.FC = () => {
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     Nome: "",
     Cognome: "",
-    Scuola: "",
+    Istituto: "",
     Email: "",
     N_telefono: "",
     Mail_list: false,
@@ -126,6 +155,18 @@ const BookSubmissionForm: React.FC = () => {
   const [activeTitleIndex, setActiveTitleIndex] = useState<number | null>(null);
   const [showTerms, setShowTerms] = useState<boolean>(false);
   const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
+  const [schools, setSchools] = useState<School[]>([]);
+  const [selectedSchool, setSelectedSchool] = useState<number>(-1);
+  const [adoptedBooks, setAdoptedBooks] = useState<Book[]>([]);
+
+  // Effects
+  useEffect(() => {
+    api.fetchSchools();
+  }, []);
+
+  useEffect(() => {
+    api.fetchAdoptedBooks(selectedSchool);
+  }, [selectedSchool]);
 
   // Functions
   const handlePersonalInfoChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -138,6 +179,7 @@ const BookSubmissionForm: React.FC = () => {
   const handleSubmit = (e: FormEvent): void => {
     e.preventDefault();
     const allFieldsFilled =
+      personalInfo.Istituto !== "-1" &&
       Object.values(personalInfo).every((value) => value !== "") &&
       books.every((book) =>
         Object.entries(book).every(
@@ -199,14 +241,39 @@ const BookSubmissionForm: React.FC = () => {
                     <label className="block text-sm font-medium mb-1">
                       {key.charAt(0).toUpperCase() + key.slice(1)}
                     </label>
-                    <input
-                      type={key === "email" ? "email" : "text"}
-                      name={key}
-                      value={value}
-                      onChange={handlePersonalInfoChange}
-                      // className="w-full p-2 border rounded"
-                      required
-                    />
+                    {key === "Istituto" ? (
+                      <select
+                        name={key}
+                        value={value}
+                        onChange={(e) => {
+                          setPersonalInfo({
+                            ...personalInfo,
+                            [key]: e.target.value,
+                          });
+                          setSelectedSchool(Number(e.target.value));
+                        }}
+                        required
+                      >
+                        <option value="-1">Seleziona istituto</option>
+                        {schools.map((school) => (
+                          <option
+                            key={school.School_Id}
+                            value={school.School_Id}
+                          >
+                            {school.Name}
+                          </option>
+                        ))}
+                        <option value="-2">Altro</option>
+                      </select>
+                    ) : (
+                      <input
+                        type={key === "Email" ? "email" : "text"}
+                        name={key}
+                        value={value}
+                        onChange={handlePersonalInfoChange}
+                        required
+                      />
+                    )}
                   </div>
                 )
             )}
@@ -220,8 +287,9 @@ const BookSubmissionForm: React.FC = () => {
               key={index}
               book={book}
               index={index}
-              showComment={false} // Can be configurable
-              disabledFields={false} // Can specify fields to disable
+              showComment={false}
+              disabledFields={selectedSchool === -1}
+              secondDisabledFields={true}
               onBookChange={handleBookChange}
               onRemove={books.length > 1 ? removeBook : undefined}
               isSearchingISBN={isSearchingISBN}
@@ -230,11 +298,16 @@ const BookSubmissionForm: React.FC = () => {
               titleResults={titleResults}
               activeISBNIndex={activeISBNIndex}
               activeTitleIndex={activeTitleIndex}
+              booksToSearchAmong={adoptedBooks}
             />
           ))}
-          <button type="button" onClick={addBook} className="add-book-button">
-            Aggiungi un altro libro
-          </button>
+          {selectedSchool === -1 ? (
+            <p>Seleziona il tuo istituto per proseguire</p>
+          ) : (
+            <button type="button" onClick={addBook} className="add-book-button">
+              Aggiungi un libro
+            </button>
+          )}
         </div>
 
         {/* Accept Terms + subscribe to newsletter (two flags) */}

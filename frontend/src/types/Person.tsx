@@ -7,4 +7,3 @@ export default interface Person {
     School: string;
     Mail_list: boolean;
 }
-

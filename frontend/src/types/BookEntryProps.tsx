@@ -7,6 +7,7 @@ export default interface BookEntryProps {
   showComment?: boolean;
   showConditions?: boolean;
   disabledFields?: boolean;
+  secondDisabledFields?: boolean;
   onBookChange: (book: BookEntry, index: number) => void;
   onRemove?: (index: number) => void;
   isSearchingISBN?: boolean;
@@ -15,4 +16,5 @@ export default interface BookEntryProps {
   titleResults?: Book[];
   activeISBNIndex?: number | null;
   activeTitleIndex?: number | null;
+  booksToSearchAmong?: Book[];
 }

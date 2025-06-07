@@ -43,12 +43,7 @@ const BackOffice: React.FC = () => {
   };
 
   const options = [
-    {
-      choice: "Inserimento nuovo libro nel sistema",
-      url: "/insertBooks",
-      icon: <CgInsertAfterO />,
-      status: "OK",
-    },
+  
     {
       choice: "Vendita libri",
       url: "/sell",
@@ -74,7 +69,7 @@ const BackOffice: React.FC = () => {
       status: "OK",
     },
     {
-      choice: "admin: insert books as cool kids ",
+      choice: "admin: inserisci listone di libri",
       url: "/admin",
       icon: <FaUserShield />,
       status: "not yet started",

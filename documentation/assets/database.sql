@@ -18,6 +18,22 @@ CREATE TABLE Book (
     Price_new DECIMAL(10, 2) NOT NULL
 );
 
+-- Table: School
+CREATE TABLE School (
+    School_Id SERIAL PRIMARY KEY,
+    Name VARCHAR(200) NOT NULL,
+    Is_HighSchool BOOLEAN NOT NULL
+);
+
+-- Table: Adoptation (Linking Table)
+CREATE TABLE Adoptation (
+    A_Id SERIAL PRIMARY KEY,
+    ISBN CHAR(13) NOT NULL,
+    School_Id INT NOT NULL,
+    FOREIGN KEY (ISBN) REFERENCES Book(ISBN),
+    FOREIGN KEY (School_Id) REFERENCES School(School_Id)
+);    
+
 -- Table: Provider_Book (Linking Table)
 CREATE TABLE Provider_Book (
     PB_Id SERIAL PRIMARY KEY,

@@ -9,9 +9,11 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
   index,
   showComment = false,
   disabledFields = false,
+  secondDisabledFields = false,
   showConditions = true,
   onBookChange,
   onRemove,
+  booksToSearchAmong = []
 }) => {
   const [isSearchingISBN, setIsSearchingISBN] = useState(false);
   const [isSearchingTitle, setIsSearchingTitle] = useState(false);
@@ -29,6 +31,13 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
         return [];
       }
 
+      if (booksToSearchAmong.length > 0) {
+        // Filter booksToSearchAmong for ISBNs that match the search term
+        return booksToSearchAmong.filter((book) =>
+          book.ISBN.toLowerCase().includes(isbn.toLowerCase())
+        );
+      }
+
       try {
         const response = await fetch(
           `${this.baseUrl}/getExistingBooks.php?ISBN=${isbn}`
@@ -44,6 +53,13 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
     async searchTitle(title: string): Promise<Book[]> {
       if (title.length < 2) {
         return [];
+      }
+
+      if (booksToSearchAmong.length > 0) {
+        // Filter booksToSearchAmong for titles that include the search term
+        return booksToSearchAmong.filter((book) =>
+          book.Title.toLowerCase().includes(title.toLowerCase())
+        );
       }
 
       try {
@@ -195,7 +211,7 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
             onChange={(e) => handleFieldChange("Author", e.target.value)}
             className="w-full p-2 border rounded"
             required
-            disabled={disabledFields}
+            disabled={disabledFields || secondDisabledFields}
           />
         </div>
 
@@ -207,7 +223,7 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
             onChange={(e) => handleFieldChange("Editor", e.target.value)}
             className="w-full p-2 border rounded"
             required
-            disabled={disabledFields}
+            disabled={disabledFields || secondDisabledFields}
           />
         </div>
 
@@ -222,7 +238,7 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
             className="w-full p-2 border rounded"
             required
             step="0.01"
-            disabled={disabledFields}
+            disabled={disabledFields || secondDisabledFields}
           />
         </div>
 
