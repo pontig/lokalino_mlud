@@ -1,6 +1,6 @@
 <?php
 
-require_once ("db_connection.php");
+require_once("db_connection.php");
 
 function getAllSchools()
 {
@@ -17,24 +17,15 @@ function getAllSchools()
     return $schools;
 }
 
-function getAdoptedBooksBySchool($school_id)
+function getAllBooksAdopted()
 {
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
 
-    $sql = "SELECT Book.* FROM Book
-            JOIN Adoptation ON Book.ISBN = Adoptation.ISBN
-            WHERE Adoptation.School_Id = ?";
+    $sql = "SELECT * FROM Book";
 
-    $stmt = $conn->prepare($sql);
-    if (!$stmt) {
-        die("Statement preparation failed: " . $conn->error . "\n");
-    }
-
-    $stmt->bind_param("i", $school_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $result = $conn->query($sql) or die($conn->error);
     $adoptedBooks = $result->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
+
     $conn->close();
 
     $adoptedBooks = json_encode($adoptedBooks);

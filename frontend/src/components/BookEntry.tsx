@@ -13,7 +13,7 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
   showConditions = true,
   onBookChange,
   onRemove,
-  booksToSearchAmong = []
+  booksToSearchAmong = [],
 }) => {
   const [isSearchingISBN, setIsSearchingISBN] = useState(false);
   const [isSearchingTitle, setIsSearchingTitle] = useState(false);
@@ -203,6 +203,29 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
           />
         </div>
 
+        {showConditions && (
+          <div className="form-field">
+            <label>Condizioni</label>
+            <select
+              value={book.Dec_conditions}
+              onChange={(e) =>
+                handleFieldChange(
+                  "Dec_conditions",
+                  e.target.value as BookEntry["Dec_conditions"]
+                )
+              }
+              className="w-full p-2 border rounded"
+              required
+            >
+              <option value="">--</option>
+              <option value="new">Nuovo</option>
+              <option value="optimal">Ottimo</option>
+              <option value="good">Buono</option>
+              <option value="bad">Usurato</option>
+            </select>
+          </div>
+        )}
+
         <div className="form-field">
           <label>Autore</label>
           <input
@@ -241,29 +264,6 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
             disabled={disabledFields || secondDisabledFields}
           />
         </div>
-
-        {showConditions && (
-          <div className="form-field">
-            <label>Condizioni</label>
-            <select
-              value={book.Dec_conditions}
-              onChange={(e) =>
-                handleFieldChange(
-                  "Dec_conditions",
-                  e.target.value as BookEntry["Dec_conditions"]
-                )
-              }
-              className="w-full p-2 border rounded"
-              required
-            >
-              <option value="">--</option>
-              <option value="new">Nuovo</option>
-              <option value="optimal">Ottimo</option>
-              <option value="good">Buono</option>
-              <option value="bad">Usurato</option>
-            </select>
-          </div>
-        )}
 
         {showComment && (
           <div className="form-field" style={{ gridColumn: "span 2" }}>

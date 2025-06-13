@@ -23,6 +23,8 @@ const InsertBooksBatch: React.FC = () => {
       .then((data) => {
         console.log("Response from server:", data);
         alert("Import completato con successo!");
+        // reload the page
+        window.location.reload();
       })
       .catch((error) => {
         console.error("Error:", error);

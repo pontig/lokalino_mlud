@@ -280,6 +280,10 @@ ty-p, ty-h1 {
   width: 90%;
 }
 
+.form-field select {
+  background-color: white;
+}
+
 .form-field input:focus,
 .password-field-input:focus,
 .form-field select:focus {

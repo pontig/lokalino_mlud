@@ -28,43 +28,6 @@ const BookSubmissionForm: React.FC = () => {
   const api = {
     baseUrl: "/be",
 
-    // // Search for a book by ISBN
-    // async searchISBN(isbn: string, index: number): Promise<[Book[], number]> {
-    //   if (isbn.length < 2) {
-    //     return [[], index];
-    //   }
-
-    //   try {
-    //     const response = await fetch(
-    //       `${this.baseUrl}/getExistingBooks.php?ISBN=${isbn}`
-    //     );
-    //     const data = await response.json();
-    //     return [data, index];
-    //   } catch (error) {
-    //     console.error("Error searching ISBN:", error);
-    //     return [[], index];
-    //   }
-    // },
-
-    // async searchTitle(title: string, index: number): Promise<[Book[], number]> {
-    //   if (title.length < 2) {
-    //     return [[], index];
-    //   }
-
-    //   try {
-    //     const response = await fetch(
-    //       `${this.baseUrl}/getExistingBooks.php?title=${encodeURIComponent(
-    //         title
-    //       )}`
-    //     );
-    //     const data = await response.json();
-    //     return [data, index];
-    //   } catch (error) {
-    //     console.error("Error searching title:", error);
-    //     return [[], index];
-    //   }
-    // },
-
     async fetchSchools(): Promise<School[]> {
       const response = await fetch(`${this.baseUrl}/getSchools.php`);
       if (!response.ok) throw new Error("Failed to fetch schools");
@@ -73,22 +36,11 @@ const BookSubmissionForm: React.FC = () => {
       return data;
     },
 
-    async fetchAdoptedBooks(schoolId: number): Promise<Book[]> {
+    async fetchAdoptedBooks(): Promise<Book[]> {
       let data: Book[] = [];
-      if (schoolId === -2) {
-        data = [];
-      } else {
-        const response = await fetch(
-          `${this.baseUrl}/getAdoptedBooks.php?School_Id=${schoolId}`
-        );
-        if (!response.ok) throw new Error("Failed to fetch adopted books");
-        data = (await response.json()) as Book[];
-        setBooks((prevBooks) =>
-          prevBooks.filter((book) =>
-            data.some((adopted) => adopted.ISBN === book.ISBN)
-          )
-        );
-      }
+      const response = await fetch(`${this.baseUrl}/getAdoptedBooks.php`);
+      if (!response.ok) throw new Error("Failed to fetch adopted books");
+      data = (await response.json()) as Book[];
       setAdoptedBooks(data);
       return data;
     },
@@ -137,6 +89,7 @@ const BookSubmissionForm: React.FC = () => {
         }
         const pm = new URLSearchParams({
           name: personalInfo.Nome + " " + personalInfo.Cognome,
+          period: selectedPeriod,
         });
         navigate("/thank-you?" + pm.toString());
       } catch (error) {
@@ -180,16 +133,14 @@ const BookSubmissionForm: React.FC = () => {
   const [selectedSchool, setSelectedSchool] = useState<number>(-1);
   const [adoptedBooks, setAdoptedBooks] = useState<Book[]>([]);
   const [periods, setPeriods] = useState<Period[]>([]);
+  const [selectedPeriod, setSelectedPeriod] = useState<string>("");
 
   // Effects
   useEffect(() => {
     api.fetchSchools();
     api.fetchPeriods();
+    api.fetchAdoptedBooks();
   }, []);
-
-  useEffect(() => {
-    api.fetchAdoptedBooks(selectedSchool);
-  }, [selectedSchool]);
 
   // Functions
   const handlePersonalInfoChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -199,25 +150,27 @@ const BookSubmissionForm: React.FC = () => {
     });
   };
 
-const handleSubmit = (e: FormEvent): void => {
-  e.preventDefault();
-  const allFieldsFilled =
-    personalInfo.Istituto !== "-1" &&
-    personalInfo.Periodo !== -1 &&
-    Object.values(personalInfo).every((value) => value !== "") &&
-    books.every((book) =>
-      Object.entries(book).every(
-        ([key, value]) => key === "Comment" || (value !== "" && value !== 0)
-      )
-    );
+  const handleSubmit = (e: FormEvent): void => {
+    e.preventDefault();
+    const allFieldsFilled =
+      personalInfo.Istituto !== "-1" &&
+      personalInfo.Periodo !== -1 &&
+      Object.values(personalInfo).every((value) => value !== "") &&
+      books.every((book) =>
+        Object.entries(book).every(
+          ([key, value]) => key === "Comment" || (value !== "" && value !== 0)
+        )
+      );
 
-  console.log({ personalInfo, books });
-  if (!allFieldsFilled || !acceptTerms || !acceptRules) {
-    alert("Inserisci tutte le informazioni necessarie e accetta i termini e l'informativa sulla privacy.");
-    return;
-  }
-  api.submitForm(personalInfo, books);
-};
+    console.log({ personalInfo, books });
+    if (!allFieldsFilled || !acceptTerms || !acceptRules) {
+      alert(
+        "Inserisci tutte le informazioni necessarie e accetta i termini e l'informativa sulla privacy."
+      );
+      return;
+    }
+    api.submitForm(personalInfo, books);
+  };
 
   const handleBookChange = (updatedBook: BookEntry, index: number) => {
     const newBooks = [...books];
@@ -313,7 +266,7 @@ const handleSubmit = (e: FormEvent): void => {
               book={book}
               index={index}
               showComment={false}
-              disabledFields={selectedSchool === -1}
+              disabledFields={false}
               secondDisabledFields={true}
               onBookChange={handleBookChange}
               onRemove={books.length > 1 ? removeBook : undefined}
@@ -326,27 +279,18 @@ const handleSubmit = (e: FormEvent): void => {
               booksToSearchAmong={adoptedBooks}
             />
           ))}
-          {selectedSchool === -1 ? (
-            <p>Seleziona il tuo istituto per proseguire</p>
-          ) : (
-            <>
-              {books.length > 0 && (
-                <p style={{ color: "red" }}>
-                  <strong>Non trovi il tuo libro nella lista?</strong>
-                  <br />
-                  Potrebbe essere un nostro errore. Porta comunque il libro al
-                  lokalino e analizzeremo la situazione insieme.
-                </p>
-              )}
-              <button
-                type="button"
-                onClick={addBook}
-                className="add-book-button"
-              >
-                Aggiungi un libro
-              </button>
-            </>
+
+          {books.length > 0 && (
+            <p style={{ color: "red" }}>
+              <strong>Non trovi il tuo libro nella lista?</strong>
+              <br />
+              Potrebbe essere un nostro errore. Porta comunque il libro al
+              lokalino e analizzeremo la situazione insieme.
+            </p>
           )}
+          <button type="button" onClick={addBook} className="add-book-button">
+            Aggiungi un libro
+          </button>
         </div>
 
         {/* Accept Terms + subscribe to newsletter (two flags) */}
@@ -565,7 +509,7 @@ const handleSubmit = (e: FormEvent): void => {
             <button
               type="button"
               onClick={() => {
-          setShowRules(true);
+                setShowRules(true);
               }}
               className="link-button term-link"
             >
@@ -576,22 +520,22 @@ const handleSubmit = (e: FormEvent): void => {
             <div className="terms-and-conditions">
               <h2>Regole del Lokalino</h2>
               <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          Maecenas fermentum ex diam, vel tincidunt elit vulputate vel.
-          Phasellus ornare accumsan neque vitae scelerisque. Duis erat
-          diam, dapibus ac accumsan at, tincidunt eu sem. Proin pharetra
-          elit semper venenatis tincidunt. Quisque elementum, nulla quis
-          posuere varius, massa purus vulputate ligula, eu ultrices elit
-          dui sed mi.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Maecenas fermentum ex diam, vel tincidunt elit vulputate vel.
+                Phasellus ornare accumsan neque vitae scelerisque. Duis erat
+                diam, dapibus ac accumsan at, tincidunt eu sem. Proin pharetra
+                elit semper venenatis tincidunt. Quisque elementum, nulla quis
+                posuere varius, massa purus vulputate ligula, eu ultrices elit
+                dui sed mi.
               </p>
               <button
-          className="remove-book-button"
-          onClick={(e) => {
-            e.preventDefault();
-            setShowRules(false);
-          }}
+                className="remove-book-button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowRules(false);
+                }}
               >
-          Chiudi
+                Chiudi
               </button>
             </div>
           )}
@@ -618,22 +562,25 @@ const handleSubmit = (e: FormEvent): void => {
 
         {/* Period Section */}
         <div className="form-field">
-          <br /><br />
+          <br />
+          <br />
           <label className="block text-sm font-medium mb-1">
             Verrò a consegnare questi libri indicativamente nel periodo (non è
-            una scelta vincolante, ma ci aiuta a organizzare meglio il personale che si occuperà
-            della raccolta dei libri):
+            una scelta vincolante, ma ci aiuta a organizzare meglio il personale
+            che si occuperà della raccolta dei libri):
           </label>
           <select
             name="period"
             className="period-select"
             value={personalInfo.Periodo}
-            onChange={(e) =>
+            onChange={(e) => {
               setPersonalInfo({
                 ...personalInfo,
                 Periodo: Number(e.target.value),
-              })
-            }
+              });
+                const selectedOption = e.target.options[e.target.selectedIndex];
+                setSelectedPeriod(selectedOption.text);
+            }}
             required
           >
             <option value="-1">Seleziona periodo</option>
