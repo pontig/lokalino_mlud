@@ -387,7 +387,7 @@ const PickUp: React.FC = () => {
                 setManuallyAddedBooks(newBooks);
               }}
               onRemove={(index) => removeManBook(index)}
-              secondDisabledFields = {true}
+              secondDisabledFields = {false}
             />
           ))}
 

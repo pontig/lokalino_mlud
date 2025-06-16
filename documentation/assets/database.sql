@@ -32,9 +32,9 @@ CREATE TABLE School (
 CREATE TABLE Adoptation (
     A_Id SERIAL PRIMARY KEY,
     ISBN CHAR(13) NOT NULL,
-    School_Id INT NOT NULL,
+    School_Id VARCHAR(100) NOT NULL,
     FOREIGN KEY (ISBN) REFERENCES Book(ISBN),
-    FOREIGN KEY (School_Id) REFERENCES School(School_Id)
+    -- FOREIGN KEY (School_Id) REFERENCES School(School_Id)
 );    
 
 -- Table: Provider_Book (Linking Table)

@@ -5,6 +5,7 @@ function processBookData($inputString)
 {
 
     echo "Processing book data...\n";
+    echo "Input String:\n$inputString\n";
     $conn = getConnection();
     if (!$conn) {
         die("Connection failed: " . $conn->connect_error);
@@ -20,7 +21,7 @@ function processBookData($inputString)
         $line = trim($line);
         if ($line === '') continue;
 
-        if (preg_match('/\("([^"]*)","([^"]*)","([^"]*)","([^"]*)","[^"]*([\d]+\.[\d]{2})","([^"]*)",\s*([01])\)/', $line, $matches)) {
+        if (preg_match('/\("([^"]*)","([^"]*)","([^"]*)","([^"]*)","([\d]+\.[\d]{2})","([^"]*)",\s*([01])\)/', $line, $matches)) {
             list(, $isbn, $title, $author, $editor, $price, $schoolName, $isHighSchool) = $matches;
 
             $isbn         = $conn->real_escape_string(trim($isbn));
@@ -42,16 +43,16 @@ function processBookData($inputString)
                 $school = $result->fetch_assoc();
                 $stmt->close();
 
-                if (!$school) {
-                    $stmt = $conn->prepare("INSERT INTO School (Name, Is_HighSchool) VALUES (?, ?)");
-                    $stmt->bind_param("si", $schoolName, $isHighSchool);
-                    $stmt->execute();
-                    $schoolId = $stmt->insert_id;
-                    echo ("Line $lineNo: Inserted new school '$schoolName'\n");
-                    $stmt->close();
-                } else {
-                    $schoolId = $school['School_Id'];
-                }
+                // if (!$school) {
+                //     $stmt = $conn->prepare("INSERT INTO School (Name, Is_HighSchool) VALUES (?, ?)");
+                //     $stmt->bind_param("si", $schoolName, $isHighSchool);
+                //     $stmt->execute();
+                //     $schoolId = $stmt->insert_id;
+                //     echo ("Line $lineNo: Inserted new school '$schoolName'\n");
+                //     $stmt->close();
+                // } else {
+                //     $schoolId = $school['School_Id'];
+                // }
 
                 // BOOK
                 $stmt = $conn->prepare("SELECT ISBN FROM Book WHERE ISBN = ?");
@@ -70,8 +71,9 @@ function processBookData($inputString)
                 }
 
                 // ADOPTATION
+                $schoolId = $schoolName;
                 $stmt = $conn->prepare("SELECT A_Id FROM Adoptation WHERE ISBN = ? AND School_Id = ?");
-                $stmt->bind_param("si", $isbn, $schoolId);
+                $stmt->bind_param("ss", $isbn, $schoolId);
                 $stmt->execute();
                 $result = $stmt->get_result();
                 $adoptation = $result->fetch_assoc();
@@ -79,7 +81,7 @@ function processBookData($inputString)
 
                 if (!$adoptation) {
                     $stmt = $conn->prepare("INSERT INTO Adoptation (ISBN, School_Id) VALUES (?, ?)");
-                    $stmt->bind_param("si", $isbn, $schoolId);
+                    $stmt->bind_param("ss", $isbn, $schoolId);
                     $stmt->execute();
                     echo ("Line $lineNo: Linked book '$isbn' to school '$schoolName'\n");
                     $stmt->close();
