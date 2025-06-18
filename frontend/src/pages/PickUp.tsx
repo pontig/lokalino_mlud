@@ -51,34 +51,6 @@ const PickUp: React.FC = () => {
       return res;
     },
 
-    // Search for a book by ISBN
-    async searchISBN(isbn: string, index: number): Promise<void> {
-      if (isbn.length < 2) {
-        setIsbnResults([]);
-        return;
-      }
-
-      setActiveISBNIndex(index);
-      setIsSearching(true);
-
-      try {
-        const response = await fetch(
-          `${this.baseUrl}/getExistingBooks.php?ISBN=${isbn}`
-        );
-        if (response.status === 401) {
-          navigate("/login");
-          return;
-        }
-        const data: Book[] = await response.json();
-        setIsbnResults(data);
-      } catch (error) {
-        console.error("Error searching ISBN:", error);
-        setIsbnResults([]);
-      } finally {
-        setIsSearching(false);
-      }
-    },
-
     async submitForm(form: SubmissionType | null): Promise<void> {
       console.log("Submitting form:", form);
 

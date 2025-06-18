@@ -12,13 +12,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit;
 }
 
-if (isset($_GET['search_key'])) {
-    $search_key = $_GET['search_key'];
-    $books = getAvailableBooksBySearch($search_key);
-    echo $books;
-} else {
+// if (isset($_GET['search_key'])) {
+//     $search_key = $_GET['search_key'];
+//     $books = getAvailableBooksBySearch($search_key);
+//     echo $books;
+// } else {
     $books = getAllAvailableBooks();
     echo $books;
-}
+// }
 
 http_response_code(200);

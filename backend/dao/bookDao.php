@@ -148,7 +148,6 @@ function getBooksByTitle($title, $debug = false)
     }
 }
 
-
 function getAvailableBooksBySearch($search)
 {
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
@@ -196,7 +195,8 @@ function getAllAvailableBooks()
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
 
     try {
-        $sql = "SELECT Book.*, Provider.Name AS ProviderName, Provider.Surname AS ProviderSurname, Provider_Book.*
+        $sql = "SELECT Book.ISBN, Book.Title, Book.Author, Book.Editor, Provider_Book.Price_new, Provider.Name AS ProviderName, Provider.Surname AS ProviderSurname, 
+                Provider_Book.PB_Id, Provider_Book.ISBN, Provider_Book.Provider_Id, Provider_Book.Dec_conditions, Provider_Book.Comment, Provider_Book.Consign_date, Provider_Book.Sold_date, Provider_Book.Liquidation_date
                 FROM Book
                 JOIN Provider_Book ON Book.ISBN = Provider_Book.ISBN
                 JOIN Provider ON Provider_Book.Provider_Id = Provider.Provider_Id
@@ -224,7 +224,7 @@ function getBooksByProvider($providerId)
     $stmt = null;
 
     try {
-        $sql = "SELECT PB_Id, Book.ISBN, Title, Author, Editor, Price_new, Dec_conditions, Sold_date
+        $sql = "SELECT PB_Id, Book.ISBN, Title, Author, Editor, Provider_Book.Price_new, Dec_conditions, Sold_date
                 FROM Book
                 JOIN Provider_Book ON Book.ISBN = Provider_Book.ISBN
                 WHERE Provider_Id = ?";
@@ -347,8 +347,6 @@ function insertNewBooksInDatabase($books, $debug = false)
     }
 }
 
-
-
 function recordDelivery($bookstoedit)
 {
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
@@ -429,21 +427,19 @@ function addBooksToDelivery($providerId, $books, $doneByOperator)
         foreach ($books as $book) {
 
             if (!$doneByOperator) {
-                $stmt = $conn->prepare("INSERT INTO Provider_Book (Provider_Id, ISBN, Dec_conditions) VALUES (?, ?, ?)");
+                $stmt = $conn->prepare("INSERT INTO Provider_Book (Provider_Id, ISBN, Dec_conditions, Price_new) VALUES (?, ?, ?, ?)");
                 if (!$stmt) echo $conn->error;
-                $stmt->bind_param("iss", $providerId, $book["ISBN"], $book["Dec_conditions"]);
+                $stmt->bind_param("issd", $providerId, $book["ISBN"], $book["Dec_conditions"], $book["Price_new"]);
                 $stmt->execute();
             } else if (isset($book["Comment"]) && !empty($book["Comment"])) {
 
-                $stmt = $conn->prepare("INSERT INTO Provider_Book (Provider_Id, ISBN, Dec_conditions, Consign_date, Comment) VALUES (?, ?, ?, ?, ?)");
-
-                $stmt->bind_param("issss", $providerId, $book["ISBN"], $book["Dec_conditions"], date("Y-m-d H:i:s"), $book["Comment"]);
+                $stmt = $conn->prepare("INSERT INTO Provider_Book (Provider_Id, ISBN, Dec_conditions, Consign_date, Comment, Price_new) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmt->bind_param("issssd", $providerId, $book["ISBN"], $book["Dec_conditions"], date("Y-m-d H:i:s"), $book["Comment"], $book["Price_new"]);
                 $stmt->execute();
             } else {
 
-                $stmt = $conn->prepare("INSERT INTO Provider_Book (Provider_Id, ISBN, Dec_conditions, Consign_date) VALUES (?, ?, ?, ?)");
-
-                $stmt->bind_param("isss", $providerId, $book["ISBN"], $book["Dec_conditions"], date("Y-m-d H:i:s"));
+                $stmt = $conn->prepare("INSERT INTO Provider_Book (Provider_Id, ISBN, Dec_conditions, Consign_date, Price_new) VALUES (?, ?, ?, ?, ?)");
+                $stmt->bind_param("isssd", $providerId, $book["ISBN"], $book["Dec_conditions"], date("Y-m-d H:i:s"), $book["Price_new"]);
                 $stmt->execute();
             }
         }

@@ -150,7 +150,7 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
         Title: selectedBook.Title,
         Author: selectedBook.Author,
         Editor: selectedBook.Editor,
-        Price_new: selectedBook.Price_new,
+        Price_new: 0.0,
       },
       index
     );
@@ -203,6 +203,21 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
           />
         </div>
 
+        <div className="form-field">
+          <label>Prezzo di copertina (xx,xx)</label>
+          <input
+            type="number"
+            value={book.Price_new}
+            onChange={(e) =>
+              handleFieldChange("Price_new", Number(e.target.value))
+            }
+            className="w-full p-2 border rounded"
+            required
+            step="0.01"
+            disabled={disabledFields}
+          />
+        </div>
+
         {showConditions && (
           <div className="form-field">
             <label>Condizioni</label>
@@ -246,21 +261,6 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
             onChange={(e) => handleFieldChange("Editor", e.target.value)}
             className="w-full p-2 border rounded"
             required
-            disabled={disabledFields || secondDisabledFields}
-          />
-        </div>
-
-        <div className="form-field">
-          <label>Prezzo di copertina (xx,xx)</label>
-          <input
-            type="number"
-            value={book.Price_new}
-            onChange={(e) =>
-              handleFieldChange("Price_new", Number(e.target.value))
-            }
-            className="w-full p-2 border rounded"
-            required
-            step="0.01"
             disabled={disabledFields || secondDisabledFields}
           />
         </div>

@@ -157,16 +157,16 @@ const BookSubmissionForm: React.FC = () => {
       personalInfo.Periodo !== -1 &&
       Object.values(personalInfo).every((value) => value !== "") &&
       books.every((book) =>
-        Object.entries(book).every(
-          ([key, value]) => key === "Comment" || (value !== "" && value !== 0)
-        )
+        Object.entries(book).every(([key, value]) => {
+          if (key === "Comment") return true;
+          if (key === "Price_new") return value !== 0.0;
+          return value !== "" && value !== 0;
+        })
       );
 
     console.log({ personalInfo, books });
     if (!allFieldsFilled || !acceptTerms || !acceptRules) {
-      alert(
-        "Inserisci tutte le informazioni necessarie"
-      );
+      alert("Inserisci tutte le informazioni necessarie");
       return;
     }
     api.submitForm(personalInfo, books);
@@ -578,8 +578,8 @@ const BookSubmissionForm: React.FC = () => {
                 ...personalInfo,
                 Periodo: Number(e.target.value),
               });
-                const selectedOption = e.target.options[e.target.selectedIndex];
-                setSelectedPeriod(selectedOption.text);
+              const selectedOption = e.target.options[e.target.selectedIndex];
+              setSelectedPeriod(selectedOption.text);
             }}
             required
           >
