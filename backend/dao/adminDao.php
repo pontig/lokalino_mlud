@@ -5,7 +5,7 @@ function processBookData($inputString)
 {
 
     echo "Processing book data...\n";
-    echo "Input String:\n$inputString\n";
+    echo "Lines of input string: " . substr_count($inputString, "\n") . "\n";
     $conn = getConnection();
     if (!$conn) {
         die("Connection failed: " . $conn->connect_error);
@@ -36,12 +36,12 @@ function processBookData($inputString)
 
             try {
                 // SCHOOL
-                $stmt = $conn->prepare("SELECT School_Id FROM School WHERE Name = ?");
-                $stmt->bind_param("s", $schoolName);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                $school = $result->fetch_assoc();
-                $stmt->close();
+                // $stmt = $conn->prepare("SELECT School_Id FROM School WHERE Name = ?");
+                // $stmt->bind_param("s", $schoolName);
+                // $stmt->execute();
+                // $result = $stmt->get_result();
+                // $school = $result->fetch_assoc();
+                // $stmt->close();
 
                 // if (!$school) {
                 //     $stmt = $conn->prepare("INSERT INTO School (Name, Is_HighSchool) VALUES (?, ?)");
@@ -68,6 +68,8 @@ function processBookData($inputString)
                     $stmt->execute();
                     echo ("Line $lineNo: Inserted book '$title'\n");
                     $stmt->close();
+                } else {
+                    echo ("Line $lineNo: Book '$title' already exists, skipping insert.\n");
                 }
 
                 // ADOPTATION
@@ -85,6 +87,8 @@ function processBookData($inputString)
                     $stmt->execute();
                     echo ("Line $lineNo: Linked book '$isbn' to school '$schoolName'\n");
                     $stmt->close();
+                } else {
+                    echo ("Line $lineNo: Book '$isbn' already linked to school '$schoolName', skipping link.\n");
                 }
 
                 $conn->commit();

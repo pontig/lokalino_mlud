@@ -45,3 +45,18 @@ INSERT INTO School VALUES (NULL, 'APF, Sondalo', 1);
 INSERT INTO School VALUES (NULL, 'Istituto di Istruzione Superiore Leonardo da Vinci, Chiavenna', 1);
 INSERT INTO School VALUES (NULL, 'Istituto Professionale Alberghiero Crotto Caurga, Chiavenna', 1);
 INSERT INTO School VALUES (NULL, 'Istituto di Istruzione Superiore Balilla Pinchetti, Tirano', 1);
+
+INSERT INTO Period VALUES (NULL, '1 Luglio dalle 9.30 alle 12.00');
+INSERT INTO Period VALUES (NULL, '2 Luglio dalle 14.30 alle 17.30');
+INSERT INTO Period VALUES (NULL, '3 Luglio dalle 9.30 alle 12.00');
+INSERT INTO Period VALUES (NULL, '4 Luglio dalle 14.30 alle 17.30');
+INSERT INTO Period VALUES (NULL, '7 Luglio dalle 14.30 alle 17.30');
+INSERT INTO Period VALUES (NULL, '8 Luglio dalle 9.30 alle 12.00');
+INSERT INTO Period VALUES (NULL, '9 Luglio dalle 14.30 alle 17.30');
+INSERT INTO Period VALUES (NULL, '10 Luglio dalle 9.30 alle 12.00');
+INSERT INTO Period VALUES (NULL, '11 Luglio dalle 14.30 alle 17.30');
+INSERT INTO Period VALUES (NULL, '14 Luglio dalle 14.30 alle 17.30');
+INSERT INTO Period VALUES (NULL, '15 Luglio dalle 9.30 alle 12.00');
+INSERT INTO Period VALUES (NULL, '16 Luglio dalle 14.30 alle 17.30');
+INSERT INTO Period VALUES (NULL, '17 Luglio dalle 9.30 alle 12.00');
+INSERT INTO Period VALUES (NULL, '18 Luglio dalle 14.30 alle 17.30');

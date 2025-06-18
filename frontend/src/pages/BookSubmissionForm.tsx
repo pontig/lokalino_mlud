@@ -165,7 +165,7 @@ const BookSubmissionForm: React.FC = () => {
     console.log({ personalInfo, books });
     if (!allFieldsFilled || !acceptTerms || !acceptRules) {
       alert(
-        "Inserisci tutte le informazioni necessarie e accetta i termini e l'informativa sulla privacy."
+        "Inserisci tutte le informazioni necessarie"
       );
       return;
     }

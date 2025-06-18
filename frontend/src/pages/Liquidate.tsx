@@ -311,7 +311,7 @@ const Liquidate: React.FC = () => {
                 className="cart-button cart-button-add confirm-button"
                 onClick={handleSubmit}
               >
-                Vai uomo
+                Sicuro è il mio secondo nome
               </button>
             </div>
           </div>
