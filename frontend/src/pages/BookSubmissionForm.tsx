@@ -128,6 +128,7 @@ const BookSubmissionForm: React.FC = () => {
   const [activeTitleIndex, setActiveTitleIndex] = useState<number | null>(null);
   const [showTerms, setShowTerms] = useState<boolean>(false);
   const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
+  const [showNotFound, setShowNotFound] = useState<boolean>(false);
   const [showRules, setShowRules] = useState<boolean>(false);
   const [acceptRules, setAcceptRules] = useState<boolean>(false);
   const [schools, setSchools] = useState<School[]>([]);
@@ -219,6 +220,7 @@ const BookSubmissionForm: React.FC = () => {
                   <div key={key} className="form-field">
                     <label className="block text-sm font-medium mb-1">
                       {key.charAt(0).toUpperCase() + key.slice(1)}
+                      {key === "Istituto" && "*"}
                     </label>
                     {key === "Istituto" ? (
                       <select
@@ -256,9 +258,9 @@ const BookSubmissionForm: React.FC = () => {
                   </div>
                 )
             )}
-            <span>
+            <span style={{ fontSize: "0.8rem" }}>
               <br />
-              Se i libri provengono da più istituti, seleziona quello da cui
+              *Se i libri provengono da più istituti, seleziona quello da cui
               proviene il maggior numero di libri
             </span>
           </div>
@@ -292,23 +294,54 @@ const BookSubmissionForm: React.FC = () => {
             />
           ))}
 
-          <button type="button" onClick={addBook} className="add-book-button" style={{ backgroundColor: "rgba(214, 240, 255, 0.5)", color: "black", fontWeight: "bold" }}>
+          <button type="button" onClick={addBook} className="add-book-button">
             Aggiungi un libro
           </button>
-          {books.length > 0 && (
-            <p style={{ color: "red" }}>
-              <strong>Non trovi il tuo libro nella lista?</strong>
-              <br />
-              Potrebbe essere un nostro errore. Porta comunque il libro al
-              lokalino e analizzeremo la situazione insieme.
-            </p>
+        </div>
+        <div className="form-field">
+          <p
+            style={{ color: "red" , paddingLeft: 0}}
+            className="custom-checkbox"
+            onClick={() => setShowNotFound(true)}
+          >
+            <u>Non trovi il tuo libro nella lista?</u>
+          </p>
+          {showNotFound && (
+            <div className="terms-and-conditions">
+              <h2>Non trovi il tuo libro nella lista?</h2>
+              <p>
+                Probabilmente non è più in adozione per il prossimo anno e,
+                quindi, non possiamo acquistarlo.
+                <br />
+                🔍 Controlla la lista dei libri del tuo istituto: Se pensi che
+                si tratti di un errore, porta comunque il libro al Lokalino. Lo
+                verificheremo insieme e valuteremo la situazione.
+              </p>
+              <button
+                className="remove-book-button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowNotFound(false);
+                }}
+              >
+                Chiudi
+              </button>
+            </div>
+          )}
+          {showNotFound && (
+            <div
+              className="screen"
+              onClick={() => setShowNotFound(false)}
+            ></div>
           )}
         </div>
 
         {/* Period Section */}
         <div className="form-field">
           <label className="block text-sm font-medium mb-1">
-            Scegli il giorno in cui consegnerai i libri al lokalino. Per ridurre l'attesa, scegli un giorno con meno affluenza prevista
+            Scegli il giorno in cui consegnerai i libri al lokalino. Per ridurre
+            l'attesa, scegli un giorno con meno affluenza prevista. La scelta
+            del periodo non è vincolante.
           </label>
           <select
             name="period"
@@ -334,26 +367,27 @@ const BookSubmissionForm: React.FC = () => {
           {/* Conditional info about selected period */}
           {personalInfo.Periodo !== -1 &&
             (() => {
+              const thresh1 = 10;
+              const thresh2 = 20;
               const selected = periods[personalInfo.Periodo - 1];
               if (!selected) return null;
               let color = "";
-              if (selected.Num_Providers < 10) color = "green";
-              else if (selected.Num_Providers < 20) color = "orange";
+              if (selected.Num_Providers < thresh1) color = "green";
+              else if (selected.Num_Providers < thresh2) color = "orange";
               else color = "red";
-              console.log("Selected period:", personalInfo.Periodo);
               return (
                 <div style={{ margin: "1rem", textAlign: "center" }}>
                   <span style={{ color }}>
-                    {selected.Num_Providers < 10 &&
+                    {selected.Num_Providers < thresh1 &&
                       "Giorno poco affollato (previste " +
                         selected.Num_Providers +
                         " persone), ottima scelta!"}
-                    {selected.Num_Providers >= 10 &&
-                      selected.Num_Providers < 20 &&
+                    {selected.Num_Providers >= thresh1 &&
+                      selected.Num_Providers < thresh2 &&
                       "Giorno mediamente affollato (previste " +
                         selected.Num_Providers +
                         " persone)."}
-                    {selected.Num_Providers >= 20 &&
+                    {selected.Num_Providers >= thresh2 &&
                       "Giorno molto affollato (previste " +
                         selected.Num_Providers +
                         " persone), valuta se puoi scegliere un altro periodo."}
@@ -630,7 +664,12 @@ const BookSubmissionForm: React.FC = () => {
           </label>
         </div>
 
-        <button type="submit" className="submit-button" onClick={handleSubmit} style={{ marginTop: "1rem" }}>
+        <button
+          type="submit"
+          className="submit-button"
+          onClick={handleSubmit}
+          style={{ marginTop: "1rem" }}
+        >
           Invia
         </button>
       </form>

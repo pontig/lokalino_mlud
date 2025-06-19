@@ -34,7 +34,7 @@ const InsertBooksBatch: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <h1 style={{ textAlign: "center" }}>Iscritti alla mailing list</h1>
+      <h1 style={{ textAlign: "center" }}>Inserisci qui tutti i libri come ti ho detto</h1>
       <div className="search-container">
         <Link to="/backOffice" className="back-button">
           ← Torna alla Dashboard

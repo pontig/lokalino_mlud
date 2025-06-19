@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   FaDollarSign,
   FaMoneyCheckAlt,
+  FaDatabase,
   FaBookOpen,
   FaUserShield,
 } from "react-icons/fa";
@@ -42,123 +43,130 @@ const BackOffice: React.FC = () => {
     return brightness > 125 ? "black" : "white";
   };
 
-    const options: {
-      choice: string;
-      url: string | null;
-      icon: React.ReactNode;
-      status: string;
-      permission: 0 | 1;
-    }[] = [
-      {
-        choice: "Previsione consegne",
-        url: "/schedule",
-        icon: <AiFillSchedule />,
-        status: "OK",
-        permission: 1,
-      },
-      {
-        choice: "Vendita libri",
-        url: "/sell",
-        icon: <FaDollarSign />,
-        status: "OK",
-        permission: 1,
-      },
-      {
-        choice: "Ritiro libri da vendere",
-        url: "/pickUp",
-        icon: <GiReceiveMoney />,
-        status: "OK",
-        permission: 1,
-      },
-      {
-        choice: "Liquidazione libri invenduti",
-        url: "/liquidate",
-        icon: <FaMoneyCheckAlt />,
-        status: "OK",
-        permission: 1,
-      },
-      {
-        choice: "Registrazione venditori",
-        url: "/",
-        icon: <FaBookOpen />,
-        status: "OK",
-        permission: 1,
-      },
-      {
-        choice: "admin: inserisci listone di libri",
-        url: "/admin",
-        icon: <FaUserShield />,
-        status: "OK",
-        permission: 0,
-      },
-      {
-        choice: "Mailing list",
-        url: "/mailingList",
-        icon: <IoMailOutline />,
-        status: "OK",
-        permission: 1,
-      },
-      {
-        choice: "Statistiche",
-        url: "/statistics",
-        icon: <MdQueryStats />,
-        status: "not yet started",
-        permission: 0,
-      },
-      {
-        choice: "Logout",
-        url: null,
-        icon: <IoIosLogOut />,
-        status: "OK",
-        permission: 1,
-      },
-    ];
+  const options: {
+    choice: string;
+    url: string | null;
+    icon: React.ReactNode;
+    status: string;
+    permission: 0 | 1;
+  }[] = [
+    {
+      choice: "Previsione consegne",
+      url: "/schedule",
+      icon: <AiFillSchedule />,
+      status: "OK",
+      permission: 1,
+    },
+    {
+      choice: "Vendita libri",
+      url: "/sell",
+      icon: <FaDollarSign />,
+      status: "OK",
+      permission: 1,
+    },
+    {
+      choice: "Ritiro libri da vendere",
+      url: "/pickUp",
+      icon: <GiReceiveMoney />,
+      status: "OK",
+      permission: 1,
+    },
+    {
+      choice: "Liquidazione libri invenduti",
+      url: "/liquidate",
+      icon: <FaMoneyCheckAlt />,
+      status: "OK",
+      permission: 1,
+    },
+    {
+      choice: "Registrazione venditori",
+      url: "/",
+      icon: <FaBookOpen />,
+      status: "OK",
+      permission: 1,
+    },
+    {
+      choice: "admin: inserisci listone di libri",
+      url: "/admin",
+      icon: <FaUserShield />,
+      status: "OK",
+      permission: 0,
+    },
+    {
+      choice: "Mailing list",
+      url: "/mailingList",
+      icon: <IoMailOutline />,
+      status: "OK",
+      permission: 1,
+    },
+    {
+      choice: "Statistiche",
+      url: "/statistics",
+      icon: <MdQueryStats />,
+      status: "not yet started",
+      permission: 0,
+    },
+    {
+      choice: "admin: backup database",
+      url: "/backupDatabase",
+      icon: <FaDatabase />,
+      status: "OK",
+      permission: 1,
+    },
+    {
+      choice: "Logout",
+      url: null,
+      icon: <IoIosLogOut />,
+      status: "OK",
+      permission: 1,
+    },
+  ];
 
-    return (
-      <div className="bookstore-container">
-        <h1 style={{ textAlign: "center" }}>MLUD dashboard</h1>
-        <div className="content">
-          {options.map((option, index) => {
-            const isDisabled = option.permission === 0;
-            const backgroundColor = isDisabled
-              ? "#ccc"
-              : getGradientColor(index, options.length);
-            const color = isDisabled ? "#666" : getFontColor(backgroundColor);
-            return (
-              <div
-                key={index}
-                style={{
-                  backgroundColor,
-                  color,
-                  cursor: isDisabled ? "not-allowed" : "pointer",
-                  opacity: isDisabled ? 0.6 : 1,
-                  pointerEvents: isDisabled ? "none" : "auto",
-                }}
-                className="choice"
-                onClick={() => {
-                  if (!isDisabled) {
-                    if (option.url) {
-                      navigate(option.url);
-                    } else {
-                      fetch("/be/utils/session.php?logout=true").then(
-                        (response) => {
-                          if (response.status === 401) {
-                            navigate("/login");
-                          }
+  return (
+    <div className="bookstore-container">
+      <h1 style={{ textAlign: "center" }}>MLUD dashboard</h1>
+      <div className="content">
+        {options.map((option, index) => {
+          const isDisabled = option.permission === 0;
+          const backgroundColor = isDisabled
+            ? "#ccc"
+            : getGradientColor(index, options.length);
+          const color = isDisabled ? "#666" : getFontColor(backgroundColor);
+          return (
+            <div
+              key={index}
+              style={{
+                backgroundColor,
+                color,
+                cursor: isDisabled ? "not-allowed" : "pointer",
+                opacity: isDisabled ? 0.6 : 1,
+                pointerEvents: isDisabled ? "none" : "auto",
+              }}
+              className="choice"
+              onClick={() => {
+                if (!isDisabled) {
+                  if (option.url) {
+                    navigate(option.url);
+                  } else {
+                    fetch("/be/utils/session.php?logout=true").then(
+                      (response) => {
+                        if (response.status === 401) {
+                          navigate("/login");
                         }
-                      );
-                    }
+                      }
+                    );
                   }
-                }}
-              >
-                <div style={{ fontSize: "2em" }}>{option.icon}</div>
-                {option.choice}
-                {/* <i style={{ fontSize: "small" }}>{option.status}</i> */}
-              </div>
-            );
-          })}
-        </div>
+                }
+              }}
+            >
+              <div style={{ fontSize: "2em" }}>{option.icon}</div>
+              {option.choice}
+              {/* <i style={{ fontSize: "small" }}>{option.status}</i> */}
+            </div>
+          );
+        })}
       </div>
-    );
+    </div>
+  );
 };
 export default BackOffice;
