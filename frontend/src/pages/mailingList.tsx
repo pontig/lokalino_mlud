@@ -35,13 +35,6 @@ const MailingList: React.FC = () => {
         <Link to="/backOffice" className="back-button">
           ← Torna alla Dashboard
         </Link>
-        {/* <input
-          type="text"
-          placeholder="Search books..."
-          className="search-input"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        /> */}
       </div>
       <div className="content content-ml">
         {providers.map((provider) => (

@@ -206,14 +206,17 @@ const BookEntryComponent: React.FC<BookEntryProps> = ({
         <div className="form-field">
           <label>Prezzo di copertina (xx,xx)</label>
           <input
-            type="number"
-            value={book.Price_new}
-            onChange={(e) =>
-              handleFieldChange("Price_new", Number(e.target.value))
-            }
+            type="text"
+            value={book.Price_new === 0.0 ? "" : book.Price_new}
+            onChange={(e) => {
+              const input = e.target.value.replace(",", ".");
+              // Allow only numbers and one decimal separator
+              if (/^\d*\.?\d*$/.test(input)) {
+          handleFieldChange("Price_new", input);
+              }
+            }}
             className="w-full p-2 border rounded"
             required
-            step="0.01"
             disabled={disabledFields}
           />
         </div>

@@ -11,9 +11,9 @@ import BookEntryComponent from "../components/BookEntry";
 interface PersonalInfo {
   Nome: string;
   Cognome: string;
-  Istituto: string;
   Email: string;
   N_telefono: string;
+  Istituto: string;
   Mail_list: boolean;
   Periodo: number;
 }
@@ -21,6 +21,7 @@ interface PersonalInfo {
 interface Period {
   P_id: number;
   Description: string;
+  Num_Providers: number;
 }
 
 const BookSubmissionForm: React.FC = () => {
@@ -82,7 +83,7 @@ const BookSubmissionForm: React.FC = () => {
             Istituto: "",
             Email: "",
             N_telefono: "",
-            Mail_list: false,
+            Mail_list: true,
             Periodo: -1,
           });
           setBooks([]);
@@ -103,10 +104,10 @@ const BookSubmissionForm: React.FC = () => {
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     Nome: "",
     Cognome: "",
-    Istituto: "",
     Email: "",
     N_telefono: "",
-    Mail_list: false,
+    Istituto: "",
+    Mail_list: true,
     Periodo: -1,
   });
   const [books, setBooks] = useState<BookEntry[]>([
@@ -159,7 +160,7 @@ const BookSubmissionForm: React.FC = () => {
       books.every((book) =>
         Object.entries(book).every(([key, value]) => {
           if (key === "Comment") return true;
-          if (key === "Price_new") return value !== 0.0;
+          if (key === "Price_new") return value > 0.0;
           return value !== "" && value !== 0;
         })
       );
@@ -255,8 +256,19 @@ const BookSubmissionForm: React.FC = () => {
                   </div>
                 )
             )}
+            <span>
+              <br />
+              Se i libri provengono da più istituti, seleziona quello da cui
+              proviene il maggior numero di libri
+            </span>
           </div>
         </div>
+
+        <p>
+          Cerca i libri tramite codice ISBN o titolo, inserisci il prezzo di
+          copertina e le condizioni, poi clicca su "Aggiungi libro" per
+          inserirne un altro
+        </p>
 
         {/* Books Section */}
         <div className="books-section">
@@ -280,6 +292,9 @@ const BookSubmissionForm: React.FC = () => {
             />
           ))}
 
+          <button type="button" onClick={addBook} className="add-book-button" style={{ backgroundColor: "rgba(214, 240, 255, 0.5)", color: "black", fontWeight: "bold" }}>
+            Aggiungi un libro
+          </button>
           {books.length > 0 && (
             <p style={{ color: "red" }}>
               <strong>Non trovi il tuo libro nella lista?</strong>
@@ -288,9 +303,64 @@ const BookSubmissionForm: React.FC = () => {
               lokalino e analizzeremo la situazione insieme.
             </p>
           )}
-          <button type="button" onClick={addBook} className="add-book-button">
-            Aggiungi un libro
-          </button>
+        </div>
+
+        {/* Period Section */}
+        <div className="form-field">
+          <label className="block text-sm font-medium mb-1">
+            Scegli il giorno in cui consegnerai i libri al lokalino. Per ridurre l'attesa, scegli un giorno con meno affluenza prevista
+          </label>
+          <select
+            name="period"
+            className="period-select"
+            value={personalInfo.Periodo}
+            onChange={(e) => {
+              setPersonalInfo({
+                ...personalInfo,
+                Periodo: Number(e.target.value),
+              });
+              const selectedOption = e.target.options[e.target.selectedIndex];
+              setSelectedPeriod(selectedOption.text);
+            }}
+            required
+          >
+            <option value="-1">Seleziona periodo</option>
+            {periods.map((period) => (
+              <option key={period.P_id} value={period.P_id}>
+                {period.Description} ({period.Num_Providers} persone previste)
+              </option>
+            ))}
+          </select>
+          {/* Conditional info about selected period */}
+          {personalInfo.Periodo !== -1 &&
+            (() => {
+              const selected = periods[personalInfo.Periodo - 1];
+              if (!selected) return null;
+              let color = "";
+              if (selected.Num_Providers < 10) color = "green";
+              else if (selected.Num_Providers < 20) color = "orange";
+              else color = "red";
+              console.log("Selected period:", personalInfo.Periodo);
+              return (
+                <div style={{ margin: "1rem", textAlign: "center" }}>
+                  <span style={{ color }}>
+                    {selected.Num_Providers < 10 &&
+                      "Giorno poco affollato (previste " +
+                        selected.Num_Providers +
+                        " persone), ottima scelta!"}
+                    {selected.Num_Providers >= 10 &&
+                      selected.Num_Providers < 20 &&
+                      "Giorno mediamente affollato (previste " +
+                        selected.Num_Providers +
+                        " persone)."}
+                    {selected.Num_Providers >= 20 &&
+                      "Giorno molto affollato (previste " +
+                        selected.Num_Providers +
+                        " persone), valuta se puoi scegliere un altro periodo."}
+                  </span>
+                </div>
+              );
+            })()}
         </div>
 
         {/* Accept Terms + subscribe to newsletter (two flags) */}
@@ -551,48 +621,16 @@ const BookSubmissionForm: React.FC = () => {
               onChange={(e) =>
                 setPersonalInfo({
                   ...personalInfo,
-                  Mail_list: e.target.checked,
+                  Mail_list: !e.target.checked,
                 })
               }
             />
             <span className="checkbox-style"></span>
-            Voglio rimanere aggiornato sulle novità del Lokalino
+            NON voglio ricevere email con le novità del Lokalino
           </label>
         </div>
 
-        {/* Period Section */}
-        <div className="form-field">
-          <br />
-          <br />
-          <label className="block text-sm font-medium mb-1">
-            Verrò a consegnare questi libri indicativamente nel periodo (non è
-            una scelta vincolante, ma ci aiuta a organizzare meglio il personale
-            che si occuperà della raccolta dei libri):
-          </label>
-          <select
-            name="period"
-            className="period-select"
-            value={personalInfo.Periodo}
-            onChange={(e) => {
-              setPersonalInfo({
-                ...personalInfo,
-                Periodo: Number(e.target.value),
-              });
-              const selectedOption = e.target.options[e.target.selectedIndex];
-              setSelectedPeriod(selectedOption.text);
-            }}
-            required
-          >
-            <option value="-1">Seleziona periodo</option>
-            {periods.map((period) => (
-              <option key={period.P_id} value={period.P_id}>
-                {period.Description}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <button type="submit" className="submit-button" onClick={handleSubmit}>
+        <button type="submit" className="submit-button" onClick={handleSubmit} style={{ marginTop: "1rem" }}>
           Invia
         </button>
       </form>

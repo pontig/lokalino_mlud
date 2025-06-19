@@ -5,7 +5,8 @@ import { useSearchParams } from "react-router-dom";
 const ThankYouPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const name = searchParams.get("name");
-  const period = searchParams.get("period");
+  let period = searchParams.get("period") || "";
+  period = period.replace(/\(.*?\)/g, "").trim();
 
   return (
     <div className="thank-you">
