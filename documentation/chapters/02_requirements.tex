@@ -38,8 +38,9 @@ The use cases are illustrated in the diagram in Figure \ref{fig:use_cases}.
               \item Preference for subscription to the mailing list.
               \item Approximate period of delivery of the books.
           \end{itemize}
-          The system will allow the PR to fill out the book information after the school of origin, so that the suggestion of the book's information can be generated based on the schools that adopted the books.
-    \item The PR submits the form, it is redirected to a confirmation page and receives a confirmation email.
+          When a period of delivery is selected, the system will show the number od PR that have already submitted the form for that period, so that the PR can choose a period with a reasonable number of PRs.\\
+          When entering the ISBN or the title of the book, the system will suggest books that are already in the system (that are books that have been adopted by the schools in the area), so that the PR can select them and avoid entering the same book multiple times. If the book is not in the system, the PR cannot enter it manually, because most likely it is not adopted anymore, but the PR can still bring it to Lokalino and the OP will be able to verify it and add it to the system if it is correct.
+    \item The PR submits the form, it is redirected to a confirmation page.
 \end{enumerate}
 
 \subsection{Use Case 2: Book delivery}
@@ -78,6 +79,7 @@ The use cases are illustrated in the diagram in Figure \ref{fig:use_cases}.
     \item In order to generate the list of books that can be suggested to the PR, the system will provide the possibility to the OP to insert the list of books that have been adopted by the schools in the area. The OP will be able to insert the list of books in a facilitated way, to be defined directly with the OP a short time before the delivery.
     \item The system will keep the data of the PRs and the books for 1 year after the event, and after that, it will be deleted. The only data that will be kept indefinitely is the list of persons who have subscribed to the mailing list.
     \item Every time an OP handles information about a PR, the system will also show the unique ID of the PR, so that the OP can easily label and identify the books.
+    \item Since the prices of the books are different from year to year, the system will not compile automatically the price of the books when the PR fills out the form, as it does for the Author and Editor. The PR will have to fill out the price of the book manually, and the OP will have to verify it when the books are delivered. If the price is not correct, the OP will have to delete the book from the system and re-enter it with the correct price.
 \end{itemize}
 
 \section{Assumptions}

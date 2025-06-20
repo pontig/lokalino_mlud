@@ -320,3 +320,19 @@ When a PR fills the "school of origin" field, the system suggests the books adop
     ...
 ]
 \end{lstlisting}
+
+\subsection{Get periods of delivery and number of PRs}
+When a PR fills the "period of delivery" field, the system suggests the periods of delivery and the number of PRs that have already submitted the form for that period.\\
+\textbf{Method} : GET \\
+\textbf{EndPoint} : /getPeriodsAndAffluences.php \\
+\textbf{Response} :
+\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+[
+    {
+        "P_Id": Number,
+        "Description": String,
+        "Num_Providers": Number
+    },
+    ...
+]
+\end{lstlisting}
