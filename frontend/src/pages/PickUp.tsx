@@ -1,6 +1,7 @@
 // BookSubmissionForm.tsx
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { IoTrashBinSharp } from "react-icons/io5";
 
 import "../styles/SubmissionForm.css";
 import Book from "../types/Book";
@@ -153,6 +154,7 @@ const PickUp: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [submitObj, setSubmitObj] = useState<SubmissionType | null>(null);
   const [showConfirm, setShowConfirm] = useState<number>(-1);
+  const [checkedBooks, setCheckedBooks] = useState<number>(0);
 
   // Effects
   useEffect(() => {
@@ -212,7 +214,8 @@ const PickUp: React.FC = () => {
                 onClick={() => api.getBooksByProvider(provider)}
                 className="choice"
               >
-                <b>(ID#{provider.Provider_Id})</b> {provider.Name} {provider.Surname}
+                <b>(ID#{provider.Provider_Id})</b> {provider.Name}{" "}
+                {provider.Surname}
               </button>
             ))
           )}
@@ -307,8 +310,8 @@ const PickUp: React.FC = () => {
           ← Seleziona un altro venditore
         </span>
         <h1 className="form-title">
-          Controlla libri portati da <b>(ID#{selectedProvider.Provider_Id})</b> {selectedProvider.Name}{" "}
-          {selectedProvider.Surname}
+          Controlla libri portati da <b>(ID#{selectedProvider.Provider_Id})</b>{" "}
+          {selectedProvider.Name} {selectedProvider.Surname}
         </h1>
       </div>
 
@@ -319,27 +322,93 @@ const PickUp: React.FC = () => {
           {booksInseredByPr.length === 0 && (
             <div className="empty-message">Hai rimosso un po' troppo...</div>
           )}
-          {booksInseredByPr.map((book, index) => (
-            <BookEntryComponent
-              key={index}
-              book={book}
-              index={index}
-              showComment
-              showConditions
-              onBookChange={(book, index) => {
-                const newBooks = [...booksInseredByPr];
-                newBooks[index] = {
-                  ...book,
-                  Comment: book.Comment || "",
-                  Dec_conditions: book.Dec_conditions || "good",
-                  PB_Id: book.PB_Id || 0,
-                };
-                setBooksInseredByPr(newBooks);
-              }}
-              onRemove={(index) => removePrBook(index, book.PB_Id)}
-              disabledFields
-            />
-          ))}
+
+          {booksInseredByPr.length > 0 && (
+            <div className="books-table-container">
+              <table className="books-table">
+                <thead>
+                  <tr>
+                    <th>ISBN</th>
+                    <th>Titolo</th>
+                    <th>Autore</th>
+                    <th>Editore</th>
+                    <th>Prezzo</th>
+                    <th>Condizioni</th>
+                    <th>Commento</th>
+                    <th>Rimuovi</th>
+                    <th>Trovato</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {booksInseredByPr.map((book, index) => (
+                    <tr key={index}>
+                      <td>{book.ISBN}</td>
+                      <td>{book.Title}</td>
+                      <td>{book.Author}</td>
+                      <td>{book.Editor}</td>
+                      <td>€{Number(book.Price_new).toFixed(2) || "0.00"}</td>
+                      <td>
+                        <select
+                          value={book.Dec_conditions || "good"}
+                          onChange={(e) => {
+                            const newBooks = [...booksInseredByPr];
+                            newBooks[index] = {
+                              ...book,
+                              Dec_conditions: e.target.value,
+                            };
+                            setBooksInseredByPr(newBooks);
+                          }}
+                          className="condition-select"
+                        >
+                          <option value="new">Nuovo</option>
+                          <option value="optimal">Ottimo</option>
+                          <option value="good">Buono</option>
+                          <option value="bad">Usurato</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          value={book.Comment || ""}
+                          onChange={(e) => {
+                            const newBooks = [...booksInseredByPr];
+                            newBooks[index] = {
+                              ...book,
+                              Comment: e.target.value,
+                            };
+                            setBooksInseredByPr(newBooks);
+                          }}
+                          placeholder="Aggiungi commento..."
+                          className="comment-input"
+                        />
+                      </td>
+                      <td>
+                        <button
+                          type="button"
+                          onClick={() => removePrBook(index, book.PB_Id)}
+                          className="remove-book-button"
+                        >
+                          <IoTrashBinSharp />
+                        </button>
+                      </td>
+                      <td>
+                        <input
+                          type="checkbox"
+                          className="fancy-checkbox"
+                          onChange={(e) => {
+                            const newCheckedBooks = e.target.checked
+                              ? checkedBooks + 1
+                              : checkedBooks - 1;
+                            setCheckedBooks(newCheckedBooks);
+                          }}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
           {manuallyAddedBooks.map((book, index) => (
             <BookEntryComponent
@@ -359,7 +428,7 @@ const PickUp: React.FC = () => {
                 setManuallyAddedBooks(newBooks);
               }}
               onRemove={(index) => removeManBook(index)}
-              secondDisabledFields = {false}
+              secondDisabledFields={false}
             />
           ))}
 
@@ -367,6 +436,17 @@ const PickUp: React.FC = () => {
             Aggiungi manualmente un libro
           </button>
         </div>
+
+        {checkedBooks !== booksInseredByPr.length && (
+          <div className="confirmation-message">
+            <p className="custom-checkbox" style={{ color: "red" }}>
+              ATTENZIONE: Non hai segnato tutti i libri come ritirati, se non li
+              rimuovi con il bottone rosso, verranno comunque considerati come
+              ritirati.
+            </p>
+          </div>
+        )}
+
         <button type="submit" className="submit-button" onClick={handleSubmit}>
           Segna come ritirato
         </button>

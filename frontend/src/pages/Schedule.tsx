@@ -17,6 +17,10 @@ const getGradientColor = (
   mid: RGB = [234, 190, 0],  // default: yellow
   high: RGB = [0, 102, 0]    // default: green
 ) => {
+  console.log(value)
+  if (Number(value) === 0) {
+    return `rgb(200,200,200)`; // Gray for zero
+  }
   // Clamp value
   value = Math.max(min, Math.min(max, value));
   // Normalize to 0-1
