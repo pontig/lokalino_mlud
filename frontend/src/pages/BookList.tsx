@@ -135,6 +135,7 @@ const BookList: React.FC<BookListProps> = ({ cart, removeFromCart, addToCart }) 
             <div className="book-content">
               <h3 className="book-title">{book.Title}</h3>
               <p className="book-author">di {book.Author}</p>
+              <p className="book-author">isbn {book.ISBN}</p>
               <p className="book-description">Editore: {book.Editor}</p>
               <p className="book-description">
                 Venduto da <b>(ID#{book.Provider_Id})</b> {book.ProviderName} {book.ProviderSurname}, stato{" "}

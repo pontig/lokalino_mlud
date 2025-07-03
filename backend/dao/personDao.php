@@ -177,6 +177,35 @@ function getPeriods()
     $periods = $result->fetch_all(MYSQLI_ASSOC);
     $conn->close();
     $periods = json_encode($periods);
-    // TODO: color code based on person count
     return $periods;
+}
+
+function getPersonsForEachPeriod() 
+{
+    $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
+
+    $sql = "SELECT pe.Description AS period_description, pr.Email AS email
+            FROM Period pe
+            JOIN Provider pr ON pr.Delivery_period = pe.P_id
+            ORDER BY pe.P_id;";
+    $result = $conn->query($sql) or die($conn->error);
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+    $conn->close();
+
+    $groupedData = [];
+    foreach ($rows as $row) {
+        $description = $row['period_description'];
+        $email = $row['email'];
+
+        if (!isset($groupedData[$description])) {
+            $groupedData[$description] = ['period_description' => $description, 'emails' => []];
+        }
+
+        if ($email) {
+            $groupedData[$description]['emails'][] = $email;
+        }
+    }
+
+    $resultArray = array_values($groupedData);
+    return json_encode($resultArray);
 }

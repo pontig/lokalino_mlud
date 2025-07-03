@@ -51,9 +51,7 @@ const MailingList: React.FC = () => {
       </div>
       <div className="content content-ml no-gap">
         <h2>Lista più comoda per il copia-incolla</h2>
-        {providers.map((provider) => (
-          <p>{provider.Email}</p>
-        ))}
+        {providers.map((provider) => provider.Email).join(", ")}
       </div>
     </div>
   );

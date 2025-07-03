@@ -154,7 +154,7 @@ const PickUp: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [submitObj, setSubmitObj] = useState<SubmissionType | null>(null);
   const [showConfirm, setShowConfirm] = useState<number>(-1);
-  const [checkedBooks, setCheckedBooks] = useState<number>(0);
+  const [checkedBooks, setCheckedBooks] = useState<number[]>([]);
 
   // Effects
   useEffect(() => {
@@ -395,11 +395,19 @@ const PickUp: React.FC = () => {
                         <input
                           type="checkbox"
                           className="fancy-checkbox"
+                          id ={`book-${book.PB_Id}`}
+                          checked ={checkedBooks.includes(book.PB_Id)}
                           onChange={(e) => {
-                            const newCheckedBooks = e.target.checked
-                              ? checkedBooks + 1
-                              : checkedBooks - 1;
-                            setCheckedBooks(newCheckedBooks);
+                            if (e.target.checked) {
+                              setCheckedBooks([
+                                ...checkedBooks,
+                                book.PB_Id,
+                              ]);
+                            } else {
+                              setCheckedBooks(
+                                checkedBooks.filter((id) => id !== book.PB_Id)
+                              );
+                            }
                           }}
                         />
                       </td>
@@ -437,7 +445,7 @@ const PickUp: React.FC = () => {
           </button>
         </div>
 
-        {checkedBooks !== booksInseredByPr.length && (
+        {checkedBooks.length !== booksInseredByPr.length && (
           <div className="confirmation-message">
             <p className="custom-checkbox" style={{ color: "red" }}>
               ATTENZIONE: Non hai segnato tutti i libri come ritirati, se non li

@@ -336,3 +336,21 @@ When a PR fills the "period of delivery" field, the system suggests the periods 
     ...
 ]
 \end{lstlisting}
+
+\subsection{Get Emails subscribed grouped by period}
+When an OP wants to send an email to the PRs, it can select a period and the system returns the emails of the PRs that subscribed to the mailing list for that period.\\
+\textbf{Method} : GET \\
+\textbf{EndPoint} : /getPersonsByPeriod.php \\
+\textbf{Response} :
+\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+[
+    {
+        "period_Description": String,
+        "emails": [
+            String,
+            ...
+        ]
+    },
+    ...
+]
+\end{lstlisting}

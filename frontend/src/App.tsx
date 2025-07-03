@@ -15,6 +15,7 @@ import Login from "./pages/Login";
 import Schedule from "./pages/Schedule";
 import InsertBooksBatch from "./pages/InsertBooksBatch";
 import BackupDatabase from "./pages/backupDatabase";
+import PeriodEmails from "./pages/PeriodEmails";
 
 const App = () => {
   const [cart, setCart] = useState<AvailableBook[]>([]);
@@ -55,6 +56,7 @@ const App = () => {
         <Route path="/schedule" element={<Schedule />} />
         <Route path="/admin" element={<InsertBooksBatch />} />
         <Route path="/backupDatabase" element={<BackupDatabase />} />
+        <Route path="/periodemail" element={<PeriodEmails />} />
       </Routes>
     </Router>
   );

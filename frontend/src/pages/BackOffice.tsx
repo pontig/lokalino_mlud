@@ -6,6 +6,7 @@ import {
   FaDatabase,
   FaBookOpen,
   FaUserShield,
+  FaListUl
 } from "react-icons/fa";
 import { GiReceiveMoney } from "react-icons/gi";
 import { IoMailOutline } from "react-icons/io5";
@@ -82,6 +83,13 @@ const BackOffice: React.FC = () => {
       choice: "Registrazione venditori",
       url: "/",
       icon: <FaBookOpen />,
+      status: "OK",
+      permission: 1,
+    },
+    {
+      choice: "Visualizza affluenze nominali",
+      url: "/periodemail",
+      icon: <FaListUl />,
       status: "OK",
       permission: 1,
     },
