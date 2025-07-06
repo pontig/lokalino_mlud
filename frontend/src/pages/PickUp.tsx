@@ -395,14 +395,11 @@ const PickUp: React.FC = () => {
                         <input
                           type="checkbox"
                           className="fancy-checkbox"
-                          id ={`book-${book.PB_Id}`}
-                          checked ={checkedBooks.includes(book.PB_Id)}
+                          id={`book-${book.PB_Id}`}
+                          checked={checkedBooks.includes(book.PB_Id)}
                           onChange={(e) => {
                             if (e.target.checked) {
-                              setCheckedBooks([
-                                ...checkedBooks,
-                                book.PB_Id,
-                              ]);
+                              setCheckedBooks([...checkedBooks, book.PB_Id]);
                             } else {
                               setCheckedBooks(
                                 checkedBooks.filter((id) => id !== book.PB_Id)
@@ -443,6 +440,14 @@ const PickUp: React.FC = () => {
           <button type="button" onClick={addBook} className="add-book-button">
             Aggiungi manualmente un libro
           </button>
+        </div>
+
+        <div className="confirmation-message">
+          <p className="custom-checkbox">
+            Numero totale di libri che hai segnato come ritirati:{" "}
+            {checkedBooks.length} su {booksInseredByPr.length} libri dichiarati
+            <br />
+          </p>
         </div>
 
         {checkedBooks.length !== booksInseredByPr.length && (

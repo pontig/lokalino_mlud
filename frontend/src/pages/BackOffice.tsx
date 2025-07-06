@@ -109,10 +109,10 @@ const BackOffice: React.FC = () => {
     },
     {
       choice: "Statistiche",
-      url: "/statistics",
+      url: "/stats",
       icon: <MdQueryStats />,
-      status: "not yet started",
-      permission: 0,
+      status: "Work in Progress",
+      permission: 1,
     },
     {
       choice: "admin: backup database",

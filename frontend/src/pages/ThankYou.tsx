@@ -17,8 +17,8 @@ const ThankYouPage: React.FC = () => {
         <li><b>Lunedì:</b> 14.30-17.30</li>
         <li><b>Martedì:</b> 9.30-12.00</li>
         <li><b>Mercoledì:</b> 14.30-17.30</li>
-        <li><b>Giovedì:</b> 9.30-12.00</li>
-        <li><b>Venerdì:</b> 14.30-17.30</li>
+        <li><b>Giovedì:</b> 14.30-17.30</li>
+        <li><b>Venerdì:</b> 9.30-12</li>
         </ul>
     </div>
   );
