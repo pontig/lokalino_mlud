@@ -12,7 +12,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit;
 }
 
-$body = getHighSchoolRatio();
+$body = getNumberOfSalesByDay();
 echo $body;
-
-http_response_code(200);
