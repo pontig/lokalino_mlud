@@ -1,0 +1,43 @@
+name: Build & Upload Frontend
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force upload all files'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+          cache-dependency-path: frontend/yarn.lock
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+        working-directory: frontend
+
+      - name: Build
+        run: yarn build
+        working-directory: frontend
+
+      - name: Upload to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: frontend/build/
+          server-dir: /
+          dangerous-clean-slate: ${{ inputs.force }}
