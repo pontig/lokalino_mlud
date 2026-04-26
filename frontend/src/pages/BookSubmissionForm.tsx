@@ -201,6 +201,17 @@ const BookSubmissionForm: React.FC = () => {
     }
   };
 
+    return (
+    <div className="bookstore-container">
+      <h1 style={{ textAlign: "center" }}>⛄❄︎༄</h1>
+      
+      <div className="content">
+        Niente da vedere qui, per ora.<br/>
+        Ci vediamo durante le vacanze estive 2026!
+      </div>
+    </div>
+  );
+
   return (
     <div className="form-container">
       <div className="form-header">

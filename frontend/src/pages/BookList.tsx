@@ -93,17 +93,6 @@ const BookList: React.FC<BookListProps> = ({ cart, removeFromCart, addToCart }) 
 
   return (
     <div className="bookstore-container">
-      <h1 style={{ textAlign: "center" }}>⛄❄︎༄</h1>
-      
-      <div className="content">
-        Niente da vedere qui, ora.<br/>
-        Ci vediamo durante le vacanze 2026!
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="bookstore-container">
       <h1 style={{ textAlign: "center" }}>Seleziona libri</h1>
       <div className="search-container">
         <Link to="/backOffice" className="back-button">
