@@ -31,6 +31,8 @@ jobs:
       - name: Build
         run: yarn build
         working-directory: frontend
+        env:
+          CI: false
 
       - name: Upload to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
