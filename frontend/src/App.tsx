@@ -17,6 +17,7 @@ import InsertBooksBatch from "./pages/InsertBooksBatch";
 import BackupDatabase from "./pages/backupDatabase";
 import PeriodEmails from "./pages/PeriodEmails";
 import Stats from "./pages/Stats";
+import BookListAudience from "./pages/BookListAudience";
 
 const App = () => {
   const [cart, setCart] = useState<AvailableBook[]>([]);
@@ -58,7 +59,8 @@ const App = () => {
         <Route path="/admin" element={<InsertBooksBatch />} />
         <Route path="/backupDatabase" element={<BackupDatabase />} />
         <Route path="/periodemail" element={<PeriodEmails />} />
-        <Route path="/stats" element= {<Stats />} />           
+        <Route path="/stats" element={<Stats />} />
+        <Route path="/booklist-audience" element={<BookListAudience />} />
       </Routes>
     </Router>
   );

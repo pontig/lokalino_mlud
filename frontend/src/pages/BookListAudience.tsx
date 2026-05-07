@@ -3,12 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 import AvailableBook from "../types/AvailableBook";
 
-interface BookListProps {
-  cart: AvailableBook[];
-  addToCart: (book: AvailableBook) => void;
-  removeFromCart: (bookId: number) => void;
-}
-const BookList: React.FC<BookListProps> = ({ cart, removeFromCart, addToCart }) => {
+
+const BookListAudience: React.FC= () => {
   // API service
   const api = {
     baseUrl: "/be",
@@ -18,7 +14,7 @@ const BookList: React.FC<BookListProps> = ({ cart, removeFromCart, addToCart }) 
       try {
         setIsLoading(true);
         setError(null);
-        const response = await fetch(`${this.baseUrl}/getAvailableBooks.php`);
+        const response = await fetch(`${this.baseUrl}/getAvailableBooksAudience.php`);
         if (response.status === 401) {
           navigate("/login");
         }
@@ -55,16 +51,6 @@ const BookList: React.FC<BookListProps> = ({ cart, removeFromCart, addToCart }) 
     );
     setFilteredBooks(filtered);
   }, [searchTerm, books]);
-
-  // Functions
-  const addToCartAndClearSearch = (book: AvailableBook) => {
-    addToCart(book);
-    setSearchTerm("");
-  };
-
-  const isInCart = (bookId: number) => {
-    return cart.some((book) => book.PB_Id === bookId);
-  };
 
   if (isLoading) {
     return (
@@ -104,28 +90,6 @@ const BookList: React.FC<BookListProps> = ({ cart, removeFromCart, addToCart }) 
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        {cart.length > 0 && (
-          <Link to="/cart" className="cart-icon">
-            <div className="cart-badge">
-              <span className="abso</div>lute -top-2 -right-2 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                {cart.length}
-              </span>
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                />
-              </svg>
-            </div>
-          </Link>
-        )}
       </div>
 
       <div className="content">
@@ -137,7 +101,7 @@ const BookList: React.FC<BookListProps> = ({ cart, removeFromCart, addToCart }) 
               <p className="book-author">isbn {book.ISBN}</p>
               <p className="book-description">Editore: {book.Editor}</p>
               <p className="book-description">
-                Venduto da <b>(ID#{book.Provider_Id})</b> {book.ProviderName} {book.ProviderSurname}, stato{" "}
+                Stato del libro {" "}
                 {book.Dec_conditions}
               </p>
               {book.Comment && (
@@ -147,20 +111,6 @@ const BookList: React.FC<BookListProps> = ({ cart, removeFromCart, addToCart }) 
                 <span className="book-price">
                   €{Number(book.Price_new).toFixed(2)}
                 </span>
-                <button
-                  className={`cart-button ${
-                    isInCart(book.PB_Id)
-                      ? "cart-button-remove"
-                      : "cart-button-add"
-                  }`}
-                  onClick={() =>
-                    isInCart(book.PB_Id)
-                      ? removeFromCart(book.PB_Id)
-                      : addToCartAndClearSearch(book)
-                  }
-                >
-                  {isInCart(book.PB_Id) ? "Rimuovi" : "Nel carrello"}
-                </button>
               </div>
             </div>
           </div>
@@ -176,4 +126,4 @@ const BookList: React.FC<BookListProps> = ({ cart, removeFromCart, addToCart }) 
   );
 };
 
-export default BookList;
+export default BookListAudience;
