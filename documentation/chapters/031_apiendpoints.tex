@@ -1,22 +1,24 @@
 \section{API endpoints}
 
-The API will expose the endpoints in a structure coherent with the compoenent diagram \ref{fig:component}. It follows a list of the endpoints:
+The API exposes endpoints in a structure coherent with the component diagram \ref{fig:component}. The following sections describe the available endpoints.
 
 \subsection{Login}
-\textbf{Method} : POST \\
-\textbf{EndPoint} : /login.php \\
-\textbf{Body parameters} :
-\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+\textbf{Method}: POST \\
+\textbf{EndPoint}: /login.php \\
+\textbf{Body parameters}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
 { "Password": String }
 \end{lstlisting}
-\textbf{Response} : \texttt{200} if the login is successful, \texttt{401} if the password is wrong.
+
+\textbf{Response}: \texttt{200} if the login is successful, \texttt{401} if the password is wrong.
 
 \subsection{Submit Books}
-A PR submits its books to the system, and gives its personal information.\\
-\textbf{Method} : POST \\
-\textbf{EndPoint} : /submitBooks.php \\
-\textbf{Body parameters} :
-\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+A PR submits its books to the system together with personal information.\\
+
+\textbf{Method}: POST \\
+\textbf{EndPoint}: /submitBooks.php \\
+\textbf{Body parameters}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
 {
     "personalInfo": {
         "Name": String,
@@ -34,24 +36,26 @@ A PR submits its books to the system, and gives its personal information.\\
             "Editor": String,
             "Price_new": Number,
             "Dec_conditions": String
-        },
-        ...
+        }
     ]
 }
 \end{lstlisting}
-\textbf{Response} : \texttt{200} if the submission is successful, \texttt{400} if the request is malformed.
+
+\textbf{Response}: \texttt{200} if the submission is successful, \texttt{400} if the request is malformed.
 
 \subsection{Get Existing Books}
-The system returns the information of the books already in the system, searching by ISBN or Title, depending on the parameters.\\
-\textbf{Method} : GET \\
-\textbf{EndPoint} : /getExistingBooks.php \\
-\textbf{URL parameters} :
+Returns information about books already present in the system, searched by ISBN or Title.\\
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /getExistingBooks.php \\
+\textbf{URL parameters}:
 \begin{itemize}
     \item \texttt{ISBN}: String
     \item \texttt{Title}: String
 \end{itemize}
-\textbf{Response} :
-\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
 [
     {
         "ISBN": String,
@@ -59,17 +63,18 @@ The system returns the information of the books already in the system, searching
         "Author": String,
         "Editor": String,
         "Price_new": Number
-    },
-    ...
+    }
 ]
 \end{lstlisting}
 
 \subsection{Get Books in Stock}
-The system returns all the books in stock, i.e. the books both submitted and actually delivered by the PRs.\\
-\textbf{Method} : GET \\
-\textbf{EndPoint} : /getAvailableBooks.php \\
-\textbf{Response} :
-\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+Returns all books currently in stock, i.e. books submitted and physically delivered by PRs.\\
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /getAvailableBooks.php \\
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
 [
     {
         "ISBN": String,
@@ -82,22 +87,21 @@ The system returns all the books in stock, i.e. the books both submitted and act
         "PB_Id": Number,
         "Provider_Id": Number,
         "Dec_conditions": String,
-        "Comment"? : String,
+        "Comment": String,
         "Consign_date": String,
-        "Sold_date": null, 
+        "Sold_date": null,
         "Liquidation_date": null
-
-    },
-    ...
+    }
 ]
 \end{lstlisting}
 
-\subsection{Enter book}
-An OP enters a book in the system, associating it to a ISBN. No strong need for this, it's just to make simpler the PR submission.\\
-\textbf{Method} : POST \\
-\textbf{EndPoint} : /enterBook.php \\
-\textbf{Body parameters} :
-\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+\subsection{Enter Book}
+An OP manually inserts a new book in the system to simplify PR submissions.\\
+
+\textbf{Method}: POST \\
+\textbf{EndPoint}: /enterBook.php \\
+\textbf{Body parameters}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
 {
     "ISBN": String,
     "Title": String,
@@ -106,41 +110,47 @@ An OP enters a book in the system, associating it to a ISBN. No strong need for 
     "Price_new": Number
 }
 \end{lstlisting}
-\textbf{Response} : \texttt{200} if the submission is successful, \texttt{400} if the request is malformed.
+
+\textbf{Response}: \texttt{200} if successful, \texttt{400} if malformed.
 
 \subsection{Get PRs}
-The system returns the list of PRs.
-\textbf{Method} : GET \\
-\textbf{EndPoint} : /getProviders.php \\
-\textbf{Response} :
-\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+Returns the list of PRs.\\
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /getProviders.php \\
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
 [
     {
         "Provider_Id": Number,
         "Name": String,
         "Surname": String,
         "State": String
-    },
-    ...
+    }
 ]
 \end{lstlisting}
-The possible states are:
+
+Possible states:
 \begin{itemize}
-    \item \texttt{0} - waiting for delivery
-    \item \texttt{1} - waiting for liquidation
-    \item \texttt{2} - liquidated
+    \item \texttt{0}: waiting for delivery
+    \item \texttt{1}: waiting for liquidation
+    \item \texttt{2}: liquidated
 \end{itemize}
 
-\subsection{Get Books submitted by a PR}
-The system returns the books submitted by a PR. Useful for book delivery\\
-\textbf{Method} : GET \\
-\textbf{EndPoint} : /getBooksByProvider.php \\
-\textbf{URL parameters} :
+\subsection{Get Books Submitted by a PR}
+Returns all books submitted by a specific PR.\\
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /getBooksByProvider.php \\
+
+\textbf{URL parameters}:
 \begin{itemize}
     \item \texttt{Provider\_Id}: Number
 \end{itemize}
-\textbf{Response} :
-\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
 {
     "books": [
         {
@@ -152,8 +162,7 @@ The system returns the books submitted by a PR. Useful for book delivery\\
             "Price_new": Number,
             "Dec_conditions": String,
             "Sold_date": Timestamp
-        },
-        ...
+        }
     ],
     "provider": [
         {
@@ -165,20 +174,21 @@ The system returns the books submitted by a PR. Useful for book delivery\\
 \end{lstlisting}
 
 \subsection{Deliver Books}
-A PR delivers the books to the OP.\\
-\textbf{Method} : POST \\
-\textbf{EndPoint} : /storeBooks.php \\
-\textbf{Body parameters} :
-\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+A PR delivers books to the OP.\\
+
+\textbf{Method}: POST \\
+\textbf{EndPoint}: /storeBooks.php \\
+
+\textbf{Body parameters}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
 {
     "Provider_Id": Number,
     "Books_to_edit": [
         {
             "PB_Id": Number,
             "Dec_conditions": String,
-            "Comment"?: String
-        },
-        ...
+            "Comment": String
+        }
     ],
     "Books_to_add": [
         {
@@ -188,76 +198,55 @@ A PR delivers the books to the OP.\\
             "Editor": String,
             "Price_new": Number,
             "Dec_conditions": String,
-            "Comment"?: String
-        },
-        ...
+            "Comment": String
+        }
     ],
     "Books_to_remove": [
-        { "PB_Id": Number },
-        ...
+        {
+            "PB_Id": Number
+        }
     ]
 }
 \end{lstlisting}
-\textbf{Response} : \texttt{200} if the submission is successful, \texttt{400} if the request is malformed.
+
+\textbf{Response}: \texttt{200} if successful, \texttt{400} if malformed.
 
 \subsection{Sell Books}
-An OP sells the books to a BY.\\
-\textbf{Method} : POST \\
-\textbf{EndPoint} : /checkout.php \\
-\textbf{Body parameters} :
-\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+An OP sells books to a buyer.\\
+
+\textbf{Method}: POST \\
+\textbf{EndPoint}: /checkout.php \\
+
+\textbf{Body parameters}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
 [
-    { "PB_Id": Number },
-    ...
+    { "PB_Id": Number }
 ]
 \end{lstlisting}
-\textbf{Response} : \texttt{200} if the submission is successful, \texttt{400} if the request is malformed.
 
-\subsection{Get Situation for a PR after delivery}
-The system returns the situation of a PR after the delivery: unsold books and how much money the PR has to receive.\\
-\textbf{Method} : GET \\
-\textbf{EndPoint} : /getSituation.php \\
-\textbf{URL parameters} :
-\begin{itemize}
-    \item \texttt{Provider\_Id}: Number
-\end{itemize}
-\textbf{Response} :
-\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
-{
-    "Name": String,
-    "Surname": String,
-    "Unsold_books": [
-        {
-            "PB_Id": Number,
-            "ISBN": String,
-            "Title": String,
-            "Author": String,
-            "Editor": String,
-            "Price_new": Number,
-            "Dec_conditions": String
-        },
-        ...
-    ],
-    "Money": Number
-}
+\textbf{Response}: \texttt{200} if successful, \texttt{400} if malformed.
+
+\subsection{Liquidate PR and Return Unsold Books}
+An OP liquidates a PR by returning unsold books and issuing payment.\\
+
+\textbf{Method}: POST \\
+\textbf{EndPoint}: /liquidateProvider.php \\
+
+\textbf{Body parameters}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
+{ "Provider_Id": Number }
 \end{lstlisting}
 
-\subsection{Liquidate PR and return unsold books}
-An OP liquidates the PR, returning the unsold books and the money.\\
-\textbf{Method} : POST \\
-\textbf{EndPoint} : /liquidateProvider.php \\
-\textbf{Body parameters} :
-\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
-{ "Provider_Id": Number, }
-\end{lstlisting}
-\textbf{Response} : \texttt{200} if the submission is successful, \texttt{400} if the request is malformed.
+\textbf{Response}: \texttt{200} if successful, \texttt{400} if malformed.
 
-\subsection{Mailing list}
-Show the list of PRs that accepted to be in the mailing list.\\
-\textbf{Method} : GET \\
-\textbf{EndPoint} : /mailingList.php \\
-\textbf{Response} :
-\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+\subsection{Mailing List}
+Returns the list of PRs subscribed to the mailing list.\\
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /mailingList.php \\
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
 [
     {
         "Name": String,
@@ -266,49 +255,48 @@ Show the list of PRs that accepted to be in the mailing list.\\
         "Email": String,
         "School": String,
         "Mail_list": Boolean
-    },
-    ...
+    }
 ]
 \end{lstlisting}
 
-\subsection{Session check}
-Check if the session is still valid.\\
-\textbf{Method} : GET \\
-\textbf{EndPoint} : /utils/session.php \\
-\textbf{Response} : \texttt{200} if the session is still valid, \texttt{401} if the session is expired.
+\subsection{Session Check}
+Checks whether the current session is still valid.\\
 
-\subsection{Logout}
-Logout the OP.\\
-\textbf{Method} : GET \\
-\textbf{EndPoint} : /logout.php \\
-\textbf{Response} : \texttt{200} if the logout is successful.
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /utils/session.php \\
+
+\textbf{Response}: \texttt{200} if valid, \texttt{401} if expired.
 
 \subsection{Get Schools}
-When a PR starts to fill the form, it has to select its school of origin. The system returns the list of schools.\\
-\textbf{Method} : GET \\
-\textbf{EndPoint} : /getSchools.php \\
-\textbf{Response} :
-\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+Returns the list of schools available in the system.\\
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /getSchools.php \\
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
 [
     {
         "School_Id": Number,
         "Name": String,
         "Is_HighSchool": Boolean
-    },
-    ...
+    }
 ]
 \end{lstlisting}
 
-\subsection{Get Book Adopted by a School}
-When a PR fills the "school of origin" field, the system suggests the books adopted by that school.\\
-\textbf{Method} : GET \\
-\textbf{EndPoint} : /getAdoptedBooks.php \\
-\textbf{URL parameters} :
+\subsection{Get Books Adopted by a School}
+Returns books adopted by a specific school.\\
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /getAdoptedBooks.php \\
+
+\textbf{URL parameters}:
 \begin{itemize}
     \item \texttt{School\_Id}: Number
 \end{itemize}
-\textbf{Response} :
-\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
 [
     {
         "ISBN": String,
@@ -316,41 +304,111 @@ When a PR fills the "school of origin" field, the system suggests the books adop
         "Author": String,
         "Editor": String,
         "Price_new": Number
-    },
-    ...
+    }
 ]
 \end{lstlisting}
 
-\subsection{Get periods of delivery and number of PRs}
-When a PR fills the "period of delivery" field, the system suggests the periods of delivery and the number of PRs that have already submitted the form for that period.\\
-\textbf{Method} : GET \\
-\textbf{EndPoint} : /getPeriodsAndAffluences.php \\
-\textbf{Response} :
-\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+\subsection{Get Delivery Periods and Affluence}
+Returns delivery periods and the number of PRs associated with each period.\\
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /getPeriodsAndAffluences.php \\
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
 [
     {
         "P_Id": Number,
         "Description": String,
         "Num_Providers": Number
-    },
-    ...
+    }
 ]
 \end{lstlisting}
 
-\subsection{Get Emails subscribed grouped by period}
-When an OP wants to send an email to the PRs, it can select a period and the system returns the emails of the PRs that subscribed to the mailing list for that period.\\
-\textbf{Method} : GET \\
-\textbf{EndPoint} : /getPersonsByPeriod.php \\
-\textbf{Response} :
-\begin{lstlisting}[language=JavaScript, label={lst:jscode}, basicstyle=\ttfamily]
+\subsection{Get Emails Grouped by Period}
+Returns mailing-list emails grouped by delivery period.\\
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /getPersonsByPeriod.php \\
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
 [
     {
         "period_Description": String,
         "emails": [
-            String,
-            ...
+            String
         ]
-    },
-    ...
+    }
 ]
+\end{lstlisting}
+
+\section{Stats endpoints}
+
+The following endpoints provide aggregated statistics for operators. All endpoints are accessed via \textbf{GET} under the \texttt{/stats/} path and require a valid session.
+
+\subsection{Get Books per School}
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /stats/getBooksPerSchool.php \\
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
+[
+    {
+        "Name": String,
+        "books_cnt": Number
+    }
+]
+\end{lstlisting}
+
+\subsection{Get High-School Ratio}
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /stats/getHighSchoolRatio.php \\
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
+[
+    {
+        "Is_HighSchool": Number,
+        "persons_cnt": Number
+    }
+]
+\end{lstlisting}
+
+\subsection{Get Number of New Mailing Subscribers}
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /stats/getNumNewMailSubscribers.php \\
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
+123
+\end{lstlisting}
+
+\subsection{Get Sales per Day}
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /stats/getSalesPerDay.php \\
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
+[
+    {
+        "date_sale": String,
+        "day_money": Number,
+        "num_buyers": Number
+    }
+]
+\end{lstlisting}
+
+\subsection{Get Total Money Movement}
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /stats/getTotalMoneyMovement.php \\
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
+12345.67
 \end{lstlisting}
