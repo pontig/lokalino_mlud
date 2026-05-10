@@ -26,6 +26,7 @@ body parameters:
         "Email": String,
         "Phone_no": String
         "Mail_list": Boolean
+        "Donor": Boolean
     },
     "books": [
         {
@@ -74,6 +75,7 @@ $personalInfoFields = [
     'Email' => 'string',
     'N_telefono' => 'string',
     'Mail_list' => 'boolean',
+    'Donor' => 'boolean'
 ];
 
 foreach ($personalInfoFields as $field => $type) {
@@ -104,6 +106,7 @@ $providerId = insertNewProvider(
     $body['personalInfo']['Email'],
     $body['personalInfo']['N_telefono'],
     $body['personalInfo']['Mail_list'],
+    $body['personalInfo']['Donor'],
     $body['personalInfo']['Periodo'] 
 );
 

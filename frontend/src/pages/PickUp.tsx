@@ -8,6 +8,7 @@ import Book from "../types/Book";
 import BookEntry from "../types/BookEntry";
 import BookEntryComponent from "../components/BookEntry";
 import Header from "../components/Header";
+import ProviderMicroLogo from "../components/Provider_MicroLogo";
 
 interface PersonalInfo {
   name: string;
@@ -205,8 +206,7 @@ const PickUp: React.FC = () => {
                 onClick={() => api.getBooksByProvider(provider)}
                 className="choice"
               >
-                <b>(ID#{provider.Provider_Id})</b> {provider.Name}{" "}
-                {provider.Surname}
+                <ProviderMicroLogo providerId={provider.Provider_Id} name={provider.Name} surname={provider.Surname} />
               </button>
             ))
           )}

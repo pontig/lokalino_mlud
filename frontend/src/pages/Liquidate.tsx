@@ -4,16 +4,20 @@ import { Link, useNavigate } from "react-router-dom";
 import Book from "../types/Book";
 import BookEntry from "../types/BookEntry";
 import Header from "../components/Header";
+import ProviderMicroLogo from "../components/Provider_MicroLogo";
+import BookCard from "../components/BookCard";
 
 interface PersonalInfo {
   name: string;
   surname: string;
+  donor: boolean
 }
 
 interface Provider {
   Provider_Id: number;
   Name: string;
   Surname: string;
+  Donor: string; // "1" or "0"
 }
 
 interface BookEntry_commented extends BookEntry {
@@ -77,7 +81,7 @@ const Liquidate: React.FC = () => {
       if (response.status === 401) {
         navigate("/login");
         return {
-          personalInfo: { name: "", surname: "" },
+          personalInfo: { name: "", surname: "", donor: false },
           books: [],
           liquidation: 0,
         };
@@ -89,6 +93,7 @@ const Liquidate: React.FC = () => {
         personalInfo: {
           name: data.provider[0].Name || "",
           surname: data.provider[0].Surname || "",
+          donor: data.provider[0].Donor == "1",
         },
         books:
           data.books
@@ -124,6 +129,7 @@ const Liquidate: React.FC = () => {
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     name: "",
     surname: "",
+    donor: false
   });
   const [books, setBooks] = useState<BookEntry_commented[]>([
     {
@@ -180,7 +186,7 @@ const Liquidate: React.FC = () => {
           onLinkClick={async () => await navigate("/backOffice")}
         />
         <div className="content">
-          
+
           {
           filteredProviders.length === 0 ? (
             <div className="empty-message">
@@ -218,28 +224,31 @@ const Liquidate: React.FC = () => {
 
       <div className="search-container">
         <h2 style={{ textAlign: "center" }} className="form-title">
-          Soldi da restituire: €{liquidation.toFixed(2)}
+          Soldi ricavati dai suoi libri: €{liquidation.toFixed(2)}
         </h2>
+        {selectedProvider && selectedProvider.Donor && (
+          <>
+            <p>{selectedProvider.Donor}</p>
+            <p><b>Attenzione:</b> ha deciso di ✨donare✨ parte del suo ricavato</p>
+            quindi il totale dovutogli è €{(liquidation * .85).toFixed(2)}.
+            Preparare modulo per la donazione di €{(liquidation * .15).toFixed(2)}
+          </>
+        )}
       </div>
 
       <div className="content">
         <h2>Libri invenduti</h2>
         {books.map((book) => (
-          <div key={book.PB_Id} className="book-card">
-            <div className="book-content">
-              <h3 className="book-title">{book.Title}</h3>
-              <p className="book-author">di {book.Author}</p>
-              <p className="book-description">Stato {book.Dec_conditions}</p>
-              {book.Comment && (
-                <p className="book-description">{book.Comment}</p>
-              )}
-              <div className="book-footer">
-                <span className="book-price">
-                  €{Number(book.Price_new).toFixed(2)}
-                </span>
-              </div>
-            </div>
-          </div>
+          <BookCard
+            PB_Id={book.PB_Id}
+            Title={book.Title}
+            Author={book.Author}
+            ISBN={book.ISBN}
+            Editor={book.Editor}
+            Dec_conditions={book.Dec_conditions}
+            Comment={book.Comment}
+            Price_new={book.Price_new}
+          />
         ))}
 
         {books.length === 0 && (

@@ -15,6 +15,7 @@ interface PersonalInfo {
   N_telefono: string;
   Istituto: string;
   Mail_list: boolean;
+  Donor: boolean;
   Periodo: number;
 }
 
@@ -84,6 +85,7 @@ const BookSubmissionForm: React.FC = () => {
             Email: "",
             N_telefono: "",
             Mail_list: true,
+            Donor: false,
             Periodo: -1,
           });
           setBooks([]);
@@ -108,6 +110,7 @@ const BookSubmissionForm: React.FC = () => {
     N_telefono: "",
     Istituto: "",
     Mail_list: true,
+    Donor: false,
     Periodo: -1,
   });
   const [books, setBooks] = useState<BookEntry[]>([
@@ -201,16 +204,16 @@ const BookSubmissionForm: React.FC = () => {
     }
   };
 
-  return (
-    <div className="bookstore-container">
-      <h1 style={{ textAlign: "center" }}>⛄❄︎༄</h1>
+  // return (
+  //   <div className="bookstore-container">
+  //     <h1 style={{ textAlign: "center" }}>⛄❄︎༄</h1>
 
-      <div className="content">
-        Niente da vedere qui, per ora.<br />
-        Ci vediamo durante le vacanze estive 2026!
-      </div>
-    </div>
-  );
+  //     <div className="content">
+  //       Niente da vedere qui, per ora.<br />
+  //       Ci vediamo durante le vacanze estive 2026!
+  //     </div>
+  //   </div>
+  // );
 
   return (
     <div className="form-container">
@@ -770,6 +773,22 @@ const BookSubmissionForm: React.FC = () => {
             />
             <span className="checkbox-style"></span>
             NON voglio ricevere email con le novità del Lokalino
+          </label>
+        </div>
+
+        <div className="form-field">
+          <label className="custom-checkbox">
+            <input
+              type="checkbox"
+              onChange={(e) =>
+                setPersonalInfo({
+                  ...personalInfo,
+                  Donor: !e.target.checked,
+                })
+              }
+            />
+            <span className="checkbox-style"></span>
+            Voglio donare il 15% del ricavato delle mie vendite per supportare le attività del Lokalino
           </label>
         </div>
 

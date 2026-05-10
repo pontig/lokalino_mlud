@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import AvailableBook from "../types/AvailableBook";
 import Header from "../components/Header";
+import ProviderMicroLogo from "../components/Provider_MicroLogo";
 
 interface BookListProps {
   cart: AvailableBook[];
@@ -133,7 +134,7 @@ const BookList: React.FC<BookListProps> = ({ cart, removeFromCart, addToCart }) 
               <p className="book-author">isbn {book.ISBN}</p>
               <p className="book-description">Editore: {book.Editor}</p>
               <p className="book-description">
-                Venduto da <b>(ID#{book.Provider_Id})</b> {book.ProviderName} {book.ProviderSurname}, stato{" "}
+                Venduto da <ProviderMicroLogo providerId={book.Provider_Id} name={book.ProviderName} surname={book.ProviderSurname} />, stato{" "}
                 {book.Dec_conditions}
               </p>
               {book.Comment && (
@@ -145,8 +146,8 @@ const BookList: React.FC<BookListProps> = ({ cart, removeFromCart, addToCart }) 
                 </span>
                 <button
                   className={`cart-button ${isInCart(book.PB_Id)
-                      ? "cart-button-remove"
-                      : "cart-button-add"
+                    ? "cart-button-remove"
+                    : "cart-button-add"
                     }`}
                   onClick={() =>
                     isInCart(book.PB_Id)

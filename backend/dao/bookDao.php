@@ -244,7 +244,7 @@ function getBooksByProvider($providerId)
 
         // Get provider details
         $stmt->close();
-        $stmt = $conn->prepare("SELECT Name, Surname FROM Provider WHERE Provider_Id = ?");
+        $stmt = $conn->prepare("SELECT Name, Surname, Donor FROM Provider WHERE Provider_Id = ?");
         if (!$stmt) {
             throw new Exception("Failed to prepare provider statement: " . $conn->error);
         }

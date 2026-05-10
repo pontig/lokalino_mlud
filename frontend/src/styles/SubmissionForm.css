@@ -1,5 +1,5 @@
 html {
-  background-color: rgb(215, 240, 255);
+  background-color: #d7f0ff;
   /* padding: .25rem 4rem; */
   transition: all .3s ease;
 }
@@ -24,7 +24,7 @@ html {
 
 .choice {
   /* width: 20vw; */
-  min-height: 20vh;
+  min-height: 12vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -44,6 +44,7 @@ html {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   background-color: #2563eb;
+  min-height: 13vh;
 }
 
 /* ================================= */
@@ -161,6 +162,8 @@ ty-p, ty-h1 {
   font-weight: 600;
   color: #1a202c;
   margin-bottom: 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .book-author {

@@ -31,14 +31,14 @@ function getAllProviders()
     return $providers;
 }
 
-function insertNewProvider($name, $surname, $school, $email, $phone, $mail_list, $period)
+function insertNewProvider($name, $surname, $school, $email, $phone, $mail_list, $donor, $period)
 {
     print("Starting insertNewProvider function...\n");
 
     $mail_list = $mail_list ? 1 : 0;
-
+    $donor = $donor ? 1 : 0;
     // Debugging: Print function inputs
-    print("Inputs - Name: $name, Surname: $surname, School: $school, Email: $email, Phone: $phone, Mail List: $mail_list, Period: $period\n");
+    print("Inputs - Name: $name, Surname: $surname, School: $school, Email: $email, Phone: $phone, Mail List: $mail_list, Donor: $donor, Period: $period\n");
 
     $conn = getConnection();
     if (!$conn) {
@@ -71,12 +71,12 @@ function insertNewProvider($name, $surname, $school, $email, $phone, $mail_list,
     print("Provider does not exist, proceeding with insertion.\n");
 
     // Insert new provider
-    $insertStmt = $conn->prepare("INSERT INTO Provider (Name, Surname, School, Email, Phone_no, Mail_list, Delivery_period) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $insertStmt = $conn->prepare("INSERT INTO Provider (Name, Surname, School, Email, Phone_no, Mail_list, Donor, Delivery_period) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     if (!$insertStmt) {
         die("Insert statement preparation failed: " . $conn->error . "\n");
     }
 
-    $insertStmt->bind_param("ssssssi", $name, $surname, $school, $email, $phone, $mail_list, $period);
+    $insertStmt->bind_param("sssssssi", $name, $surname, $school, $email, $phone, $mail_list, $donor, $period);
 
     if (!$insertStmt->execute()) {
         print("Error executing insert statement: " . $insertStmt->error . "\n");

@@ -15,7 +15,7 @@ const Header: React.FC<headerProps> = ({ title, hasSearchBox, value = "", onPass
         <div className="search-container">
 
         <p onClick={onLinkClick} className="back-button">
-            ← Pannello di controllo
+            ← Indietro
         </p>
         {hasSearchBox && (
             <input

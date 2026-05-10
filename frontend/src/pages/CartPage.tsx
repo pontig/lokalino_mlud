@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import AvailableBook from "../types/AvailableBook";
 import Header from "../components/Header";
+import ProviderMicroLogo from "../components/Provider_MicroLogo";
 
 interface CartPageProps {
   cart: AvailableBook[];
@@ -96,8 +97,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
                 <div className="cart-item-details">
                   <h3 className="cart-item-title">{book.Title}</h3>
                   <p className="cart-item-author">
-                    di {book.Author}, venduto da <b>(ID#{book.Provider_Id})</b>{" "}{book.ProviderName}{" "}
-                    {book.ProviderSurname}
+                    di {book.Author}, venduto da <ProviderMicroLogo providerId={book.Provider_Id} name={book.ProviderName} surname={book.ProviderSurname} />
                   </p>
                   <p className="cart-item-price">
                     €{Number(book.Price_new).toFixed(2)}

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import AvailableBook from "../types/AvailableBook";
 import Header from "../components/Header";
+import BookCard from "../components/BookCard";
 
 
 const BookListAudience: React.FC = () => {
@@ -88,26 +89,16 @@ const BookListAudience: React.FC = () => {
 
       <div className="content">
         {filteredBooks.map((book) => (
-          <div key={book.PB_Id} className="book-card">
-            <div className="book-content">
-              <h3 className="book-title">{book.Title}</h3>
-              <p className="book-author">di {book.Author}</p>
-              <p className="book-author">isbn {book.ISBN}</p>
-              <p className="book-description">Editore: {book.Editor}</p>
-              <p className="book-description">
-                Stato del libro {" "}
-                {book.Dec_conditions}
-              </p>
-              {book.Comment && (
-                <p className="book-description">{book.Comment}</p>
-              )}
-              <div className="book-footer">
-                <span className="book-price">
-                  €{Number(book.Price_new).toFixed(2)}
-                </span>
-              </div>
-            </div>
-          </div>
+          <BookCard
+            PB_Id={book.PB_Id}
+            Title={book.Title}
+            Author={book.Author}
+            ISBN={book.ISBN}
+            Editor={book.Editor}
+            Dec_conditions={String(book.Dec_conditions)}
+            Comment={String(book.Comment)}
+            Price_new={book.Price_new}
+          />
         ))}
 
         {filteredBooks.length === 0 && (
