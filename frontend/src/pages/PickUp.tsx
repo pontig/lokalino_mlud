@@ -7,6 +7,7 @@ import "../styles/SubmissionForm.css";
 import Book from "../types/Book";
 import BookEntry from "../types/BookEntry";
 import BookEntryComponent from "../components/BookEntry";
+import Header from "../components/Header";
 
 interface PersonalInfo {
   name: string;
@@ -143,9 +144,7 @@ const PickUp: React.FC = () => {
       PB_Id: 0,
     },
   ]);
-  const [isbnResults, setIsbnResults] = useState<Book[]>([]);
-  const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [activeISBNIndex, setActiveISBNIndex] = useState<number | null>(null);
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [booksToRemove, setBooksToRemove] = useState<number[]>([]);
   const [manuallyAddedBooks, setManuallyAddedBooks] = useState<
@@ -153,7 +152,6 @@ const PickUp: React.FC = () => {
   >([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [submitObj, setSubmitObj] = useState<SubmissionType | null>(null);
-  const [showConfirm, setShowConfirm] = useState<number>(-1);
   const [checkedBooks, setCheckedBooks] = useState<number[]>([]);
 
   // Effects
@@ -189,19 +187,12 @@ const PickUp: React.FC = () => {
   if (!selectedProvider) {
     return (
       <div className="bokstore-container form-container">
-        <h1 style={{ textAlign: "center" }}>Seleziona un venditore</h1>
-        <div className="search-container">
-          <Link to="/backOffice" className="back-button">
-            ← Torna alla Dashboard
-          </Link>
-          <input
-            type="text"
-            placeholder="🔍 Cerca venditore..."
-            className="search-input"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+        <Header title={"Seleziona un venditore"}
+          hasSearchBox={true}
+          value={searchQuery}
+          onPassedChange={setSearchQuery}
+          onLinkClick={async () => await navigate("/backOffice")}
+        />
         <div className="content">
           {filteredProviders.length === 0 ? (
             <div className="empty-message">
@@ -249,14 +240,6 @@ const PickUp: React.FC = () => {
     setManuallyAddedBooks(manuallyAddedBooks.filter((_, i) => i !== index));
   };
 
-  const sureToRemove = (PB_Id: number) => {
-    setShowConfirm(PB_Id);
-  };
-
-  const cancelDelete = () => {
-    setShowConfirm(-1);
-  };
-
   const handleSubmit = (e: FormEvent): void => {
     e.preventDefault();
 
@@ -301,19 +284,11 @@ const PickUp: React.FC = () => {
 
   return (
     <div className="form-container">
-      <div className="form-header">
-        <span
-          className="back-link"
-          style={{ cursor: "pointer" }}
-          onClick={() => setSelectedProvider(null)}
-        >
-          ← Seleziona un altro venditore
-        </span>
-        <h1 className="form-title">
-          Controlla libri portati da <b>(ID#{selectedProvider.Provider_Id})</b>{" "}
-          {selectedProvider.Name} {selectedProvider.Surname}
-        </h1>
-      </div>
+      <Header
+        title={`Controlla libri portati da (ID#${selectedProvider.Provider_Id}) ${selectedProvider.Name} ${selectedProvider.Surname}`}
+        hasSearchBox={false}
+        onLinkClick={() => setSelectedProvider(null)}
+      />
 
       <form onSubmit={handleSubmit} className="submission-form">
         {/* Books Section */}

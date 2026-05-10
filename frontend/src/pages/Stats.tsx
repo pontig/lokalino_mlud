@@ -5,6 +5,7 @@ import { PieChart } from "@mui/x-charts/PieChart";
 import "../styles/stats.css";
 import { BarChart } from "@mui/x-charts";
 import { FaBook, FaTruckMoving } from "react-icons/fa";
+import Header from "../components/Header";
 
 interface HighSchoolRatio {
   Is_HighSchool: string;
@@ -186,17 +187,11 @@ const Stats: React.FC = () => {
 
   return (
     <div>
-      <h1 style={{ textAlign: "center", marginTop: "50px" }}>
-        Statistiche interessanti
-      </h1>
-      <div
-        className="search-container"
-        style={{ maxWidth: "1200px", margin: "40px auto" }}
-      >
-        <Link to="/backOffice" className="back-button">
-          ← Torna alla Dashboard
-        </Link>
-      </div>
+      <Header
+        title={"Statistiche interessanti"}
+        hasSearchBox={false}
+        onLinkClick={async () => navigate("/backOffice")}
+      />
       <div className="stats-container">
         <p>E' stato ritirato un numero di libri pari a</p>
         <p className="big-number">{animatedTotalNumberOfBooks}</p>

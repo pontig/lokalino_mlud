@@ -1,6 +1,6 @@
 <?php
 
-require_once "utils/session.php";
+// require_once "utils/session.php";
 require_once "dao/bookDao.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -19,7 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // } else {
 $books = getAllAvailableBooks();
 
-$books = json_decode($books);
+// $books is a json_encode, transform it into an iterable of objects
+$books = json_decode($books, true);
+
 
 foreach ($books as $book) {
     // Remove each key that contains Provider in the key
@@ -30,7 +32,7 @@ foreach ($books as $book) {
     }
 }
 
-echo $books;
+echo json_encode($books);
 // }
 
 http_response_code(200);

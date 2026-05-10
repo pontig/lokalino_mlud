@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Header from "../components/Header";
 
 interface Period {
   P_id: number;
@@ -74,12 +75,11 @@ const Schedule: React.FC = () => {
 
   return (
     <div className="bokstore-container form-container">
-      <h1 style={{ textAlign: "center" }}>Previsioni affluenze</h1>
-      <div className="search-container">
-        <Link to="/backOffice" className="back-button">
-          ← Torna alla Dashboard
-        </Link>
-      </div>
+      <Header
+        title={"Previsione affluenze"}
+        hasSearchBox={false}
+        onLinkClick={async () => navigate("/backOffice")}
+      />
       <div className="content content-ml">
         {periods.map((period) => (
           <div

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Person from "../types/Person";
 import { Link, useNavigate } from "react-router-dom";
+import Header from "../components/Header";
 
 const MailingList: React.FC = () => {
   // API service
@@ -30,12 +31,11 @@ const MailingList: React.FC = () => {
 
   return (
     <div className="bokstore-container form-container">
-      <h1 style={{ textAlign: "center" }}>Iscritti alla mailing list</h1>
-      <div className="search-container">
-        <Link to="/backOffice" className="back-button">
-          ← Torna alla Dashboard
-        </Link>
-      </div>
+            <Header
+        title={"Iscritti alla mailing list"}
+        hasSearchBox={false}
+        onLinkClick={async () => navigate("/backOffice")}
+      />
       <div className="content content-ml">
         {providers.map((provider) => (
           <button

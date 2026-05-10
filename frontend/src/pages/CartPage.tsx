@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import AvailableBook from "../types/AvailableBook";
+import Header from "../components/Header";
 
 interface CartPageProps {
   cart: AvailableBook[];
@@ -74,12 +75,11 @@ const CartPage: React.FC<CartPageProps> = ({ cart, removeFromCart }) => {
 
   return (
     <div className="bookstore-container">
-      <div className="cart-header">
-        <Link to="/sell" className="back-button">
-          ← Torna ai libri
-        </Link>
-        <h1 className="cart-title">Carrello ({cart.length} libri)</h1>
-      </div>
+      <Header
+        title={`Carrello (${cart.length} libri)`}
+        hasSearchBox={false}
+        onLinkClick={() => navigate("/sell")}
+      />
 
       {cart.length === 0 ? (
         <div className="empty-cart">

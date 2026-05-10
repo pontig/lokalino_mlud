@@ -1,7 +1,8 @@
 import React from "react";
 
 import "../styles/SubmissionForm.css";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Header from "../components/Header";
 
 const InsertBooksBatch: React.FC = () => {
   const handleSubmit = (event: React.FormEvent) => {
@@ -32,14 +33,15 @@ const InsertBooksBatch: React.FC = () => {
       });
   };
 
+  const navigator = useNavigate()
+
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 style={{ textAlign: "center" }}>Inserisci qui tutti i libri come ti ho detto</h1>
-      <div className="search-container">
-        <Link to="/backOffice" className="back-button">
-          ← Torna alla Dashboard
-        </Link>
-      </div>
+    <div className="form-container flex flex-col items-center justify-center h-screen">
+      <Header
+        title={"Inserisci qui i libri nel formato corretto"}
+        hasSearchBox={false}
+        onLinkClick={async () => navigator("/backOffice")}
+      />
       <form onSubmit={handleSubmit} className="w-full max-w-lg">
         <textarea
           name="books"

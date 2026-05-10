@@ -201,12 +201,12 @@ const BookSubmissionForm: React.FC = () => {
     }
   };
 
-    return (
+  return (
     <div className="bookstore-container">
       <h1 style={{ textAlign: "center" }}>⛄❄︎༄</h1>
-      
+
       <div className="content">
-        Niente da vedere qui, per ora.<br/>
+        Niente da vedere qui, per ora.<br />
         Ci vediamo durante le vacanze estive 2026!
       </div>
     </div>
@@ -391,17 +391,17 @@ const BookSubmissionForm: React.FC = () => {
                   <span style={{ color }}>
                     {selected.Num_Providers < thresh1 &&
                       "Giorno poco affollato (previste " +
-                        selected.Num_Providers +
-                        " persone), ottima scelta!"}
+                      selected.Num_Providers +
+                      " persone), ottima scelta!"}
                     {selected.Num_Providers >= thresh1 &&
                       selected.Num_Providers < thresh2 &&
                       "Giorno mediamente affollato (previste " +
-                        selected.Num_Providers +
-                        " persone)."}
+                      selected.Num_Providers +
+                      " persone)."}
                     {selected.Num_Providers >= thresh2 &&
                       "Giorno molto affollato (previste " +
-                        selected.Num_Providers +
-                        " persone), valuta se puoi scegliere un altro periodo."}
+                      selected.Num_Providers +
+                      " persone), valuta se puoi scegliere un altro periodo."}
                   </span>
                 </div>
               );
@@ -737,8 +737,8 @@ const BookSubmissionForm: React.FC = () => {
                   Gli utenti del servizio dovranno ritirare l'eventuale l'incasso e i libri rimasti
                   invenduti TASSATIVAMENTE nei giorni che vanno da Lunedì 8 a venerdì 12
                   settembre 2025. <strong>OLTRE QUESTA DATA L'INTERO INCASSO SARA'
-                  TRATTENUTO E UTILIZZATO PER GLI SCOPI SOCIALI VALUTATI ED
-                  INDIVIDUATI COI SOGGETTI SOVVENTORI</strong>
+                    TRATTENUTO E UTILIZZATO PER GLI SCOPI SOCIALI VALUTATI ED
+                    INDIVIDUATI COI SOGGETTI SOVVENTORI</strong>
                 </li>
               </ol>
               <button

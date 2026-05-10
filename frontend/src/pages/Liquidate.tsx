@@ -3,6 +3,7 @@ import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Book from "../types/Book";
 import BookEntry from "../types/BookEntry";
+import Header from "../components/Header";
 
 interface PersonalInfo {
   name: string;
@@ -35,7 +36,7 @@ const Liquidate: React.FC = () => {
       const data = await response.json();
       const res = data.filter((provider: any) => provider.State === "1");
       setProviders(res);
-      return 
+      return
     },
 
     async submitForm(): Promise<void> {
@@ -137,12 +138,10 @@ const Liquidate: React.FC = () => {
       PB_Id: -1,
     },
   ]);
-  const [isbnResults, setIsbnResults] = useState<Book[]>([]);
-  const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [activeISBNIndex, setActiveISBNIndex] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [liquidation, setLiquidation] = useState<number>(0);
   const [confirming, setConfirming] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Effects
   useEffect(() => {
@@ -165,67 +164,40 @@ const Liquidate: React.FC = () => {
     }
   };
 
+  const filteredProviders = providers.filter((provider) =>
+    `${provider.Name} ${provider.Surname}`
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
+  );
+
   if (!selectedProvider) {
     return (
       <div className="bokstore-container form-container">
-        <div className="form-header">
-          <Link to="/backOffice" className="back-button">
-            ← Torna alla Dashboard
-          </Link>
-          <h1 className="form-title">Seleziona un venditore</h1>
-        </div>
+        <Header title={"Seleziona un venditore"}
+          hasSearchBox={true}
+          value={searchQuery}
+          onPassedChange={setSearchQuery}
+          onLinkClick={async () => await navigate("/backOffice")}
+        />
         <div className="content">
-          {providers.map((provider) => (
-            <button
-              key={provider.Provider_Id}
-              onClick={() => handleProviderSelect(provider)}
-              className="choice"
-            >
-              <b>(ID#{provider.Provider_Id})</b> {provider.Name} {provider.Surname}
-            </button>
-          ))}
+          
+          {
+          filteredProviders.length === 0 ? (
+            <div className="empty-message">
+              Nessun venditore trovato
+            </div>) : (filteredProviders.map((provider) => (
+              <button
+                key={provider.Provider_Id}
+                onClick={() => handleProviderSelect(provider)}
+                className="choice"
+              >
+                <b>(ID#{provider.Provider_Id})</b> {provider.Name} {provider.Surname}
+              </button>
+            )))}
         </div>
       </div>
     );
   }
-
-  const handleBookSelect = (result: Book, index: number): void => {
-    const newBooks = [...books];
-    newBooks[index] = {
-      ...newBooks[index],
-      ISBN: result.ISBN,
-      Title: result.Title,
-      Author: result.Author,
-      Editor: result.Editor,
-      Price_new: result.Price_new,
-    };
-    setBooks(newBooks);
-    setIsbnResults([]);
-    setActiveISBNIndex(null);
-  };
-
-  const addBook = (): void => {
-    setBooks([
-      ...books,
-      {
-        ISBN: "",
-        Title: "",
-        Author: "",
-        Editor: "",
-        Price_new: 0.0,
-        Dec_conditions: "good",
-        Comment: "",
-        Sold_date: undefined,
-        PB_Id: -1,
-      },
-    ]);
-  };
-
-  const removeBook = (index: number): void => {
-    if (books.length > 1) {
-      setBooks(books.filter((_, i) => i !== index));
-    }
-  };
 
   const handleSubmit = (e: FormEvent): void => {
     e.preventDefault();
@@ -238,19 +210,11 @@ const Liquidate: React.FC = () => {
 
   return (
     <div className="form-container">
-      <div className="form-header">
-        <span
-          className="back-link"
-          style={{ cursor: "pointer" }}
-          onClick={() => setSelectedProvider(null)}
-        >
-          ← Seleziona un altro venditore
-        </span>
-        <h1 className="form-title">
-          Riepilogo per <b>(ID#{selectedProvider.Provider_Id})</b> {selectedProvider.Name}{" "}
-          {selectedProvider.Surname}
-        </h1>
-      </div>
+      <Header
+        title={`Riepilogo per (ID#${selectedProvider.Provider_Id}) ${selectedProvider.Name} ${selectedProvider.Surname}`}
+        hasSearchBox={false}
+        onLinkClick={() => setSelectedProvider(null)}
+      />
 
       <div className="search-container">
         <h2 style={{ textAlign: "center" }} className="form-title">

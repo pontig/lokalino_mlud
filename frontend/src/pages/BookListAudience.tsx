@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import AvailableBook from "../types/AvailableBook";
+import Header from "../components/Header";
 
 
-const BookListAudience: React.FC= () => {
+const BookListAudience: React.FC = () => {
   // API service
   const api = {
     baseUrl: "/be",
@@ -78,19 +79,12 @@ const BookListAudience: React.FC= () => {
 
   return (
     <div className="bookstore-container">
-      <h1 style={{ textAlign: "center" }}>Seleziona libri</h1>
-      <div className="search-container">
-        <Link to="/backOffice" className="back-button">
-          ← Pannello di controllo
-        </Link>
-        <input
-          type="text"
-          placeholder="🔍 Cerca libri..."
-          className="search-input"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
+      <Header title={"Seleziona libri"}
+        hasSearchBox={true}
+        value={searchTerm}
+        onPassedChange={setSearchTerm}
+        onLinkClick={async () => await navigate("/backOffice")}
+      />
 
       <div className="content">
         {filteredBooks.map((book) => (

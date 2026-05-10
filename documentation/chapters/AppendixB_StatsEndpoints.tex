@@ -1,0 +1,69 @@
+\chapter{Stats endpoints}
+
+The following endpoints provide aggregated statistics for operators. All endpoints are accessed via \textbf{GET} under the \texttt{/stats/} path and require a valid session.
+
+\subsection*{Get Books per School}
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /stats/getBooksPerSchool.php \\
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
+[
+    {
+        "Name": String,
+        "books_cnt": Number
+    }
+]
+\end{lstlisting}
+
+\subsection*{Get High-School Ratio}
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /stats/getHighSchoolRatio.php \\
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
+[
+    {
+        "Is_HighSchool": Number,
+        "persons_cnt": Number
+    }
+]
+\end{lstlisting}
+
+\subsection*{Get Number of New Mailing Subscribers}
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /stats/getNumNewMailSubscribers.php \\
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
+123
+\end{lstlisting}
+
+\subsection*{Get Sales per Day}
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /stats/getSalesPerDay.php \\
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
+[
+    {
+        "date_sale": String,
+        "day_money": Number,
+        "num_buyers": Number
+    }
+]
+\end{lstlisting}
+
+\subsection*{Get Total Money Movement}
+
+\textbf{Method}: GET \\
+\textbf{EndPoint}: /stats/getTotalMoneyMovement.php \\
+
+\textbf{Response}:
+\begin{lstlisting}[language=JavaScript, basicstyle=\ttfamily]
+12345.67
+\end{lstlisting}

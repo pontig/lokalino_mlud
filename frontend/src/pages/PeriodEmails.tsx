@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Header from "../components/Header";
 
 interface PeriodWithEmails {
   period_description: string;
@@ -27,12 +28,11 @@ const PeriodEmails: React.FC = () => {
 
   return (
     <div className="bokstore-container form-container">
-      <h1 style={{ textAlign: "center" }}>Affluenze nominali</h1>
-      <div className="search-container">
-        <Link to="/backOffice" className="back-button">
-          ← Torna alla Dashboard
-        </Link>
-      </div>
+      <Header
+        title={"Visualizza affluenze nominali"}
+        hasSearchBox={false}
+        onLinkClick={async () => navigate("/backOffice")}
+      />
       <div className="content content-ml">
         <div>
           <table className="books-table">

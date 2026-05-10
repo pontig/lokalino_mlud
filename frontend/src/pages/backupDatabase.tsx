@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import "../styles/SubmissionForm.css";
 import { Link } from "react-router-dom";
+import Header from "../components/Header";
 
 const BackupDatabase: React.FC = () => {
   const api = {
@@ -33,14 +34,18 @@ const BackupDatabase: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 style={{ textAlign: "center" }}>Iscritti alla mailing list</h1>
-      <div className="search-container">
-        <Link to="/backOffice" className="back-button">
-          ← Torna alla Dashboard
-        </Link>
-      </div>
+    <div className="form-container flex flex-col items-center justify-center h-screen">
+      <Header
+        title={"Scarica intero database"}
+        hasSearchBox={false}
+        onLinkClick={async () => navigator("/backOffice")}
+      />
       <div className="content content-ml">
+        <span style={{ color: "red" }}>ATTENZIONE: fare il backup del
+          database, seppur operazione fondamentale, significa che il database
+          verrà scaricato sul tuo computer, per cui dati estremamente sensibili
+          potrebbero essere esposti. Assicurati di avere un luogo sicuro dove
+          conservarlo.</span>
         <textarea
           value={dump}
           readOnly
@@ -53,7 +58,7 @@ const BackupDatabase: React.FC = () => {
             const now = new Date();
             const datetime = now.toISOString().replace(/[:.]/g, '-').slice(0, -5);
             const filename = `mlud_${datetime}.sql`;
-            
+
             const blob = new Blob([dump], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
