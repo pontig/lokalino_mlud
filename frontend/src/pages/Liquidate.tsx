@@ -10,15 +10,22 @@ import BookCard from "../components/BookCard";
 interface PersonalInfo {
   name: string;
   surname: string;
-  donor: boolean
+  donor: number; // Percentage
 }
 
 interface Provider {
   Provider_Id: number;
   Name: string;
   Surname: string;
-  Donor: string; // "1" or "0"
+  Donor: number; // Percentage
 }
+
+// Mock providers for local development. Uncomment the `setProviders` call
+// in the `useEffect` below to use these instead of calling the backend.
+const MOCK_PROVIDERS: Provider[] = [
+  { Provider_Id: 9101, Name: "Anna", Surname: "Verdi", Donor: 0 },
+  { Provider_Id: 9102, Name: "Paolo", Surname: "Neri", Donor: .15 },
+];
 
 interface BookEntry_commented extends BookEntry {
   Comment: string;
@@ -81,7 +88,7 @@ const Liquidate: React.FC = () => {
       if (response.status === 401) {
         navigate("/login");
         return {
-          personalInfo: { name: "", surname: "", donor: false },
+          personalInfo: { name: "", surname: "", donor: 0.0 },
           books: [],
           liquidation: 0,
         };
@@ -93,7 +100,7 @@ const Liquidate: React.FC = () => {
         personalInfo: {
           name: data.provider[0].Name || "",
           surname: data.provider[0].Surname || "",
-          donor: data.provider[0].Donor == "1",
+          donor: data.provider[0].Donor || 0.0,
         },
         books:
           data.books
@@ -129,7 +136,7 @@ const Liquidate: React.FC = () => {
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     name: "",
     surname: "",
-    donor: false
+    donor: 0.0
   });
   const [books, setBooks] = useState<BookEntry_commented[]>([
     {
@@ -152,6 +159,9 @@ const Liquidate: React.FC = () => {
   // Effects
   useEffect(() => {
     api.fetchProviders();
+    // For local mock during development: uncomment the following line
+    // to use hardcoded providers instead of the backend fetch.
+    setProviders(MOCK_PROVIDERS);
   }, []);
 
   // Functions
@@ -188,18 +198,18 @@ const Liquidate: React.FC = () => {
         <div className="content">
 
           {
-          filteredProviders.length === 0 ? (
-            <div className="empty-message">
-              Nessun venditore trovato
-            </div>) : (filteredProviders.map((provider) => (
-              <button
-                key={provider.Provider_Id}
-                onClick={() => handleProviderSelect(provider)}
-                className="choice"
-              >
-                <b>(ID#{provider.Provider_Id})</b> {provider.Name} {provider.Surname}
-              </button>
-            )))}
+            filteredProviders.length === 0 ? (
+              <div className="empty-message">
+                Nessun venditore trovato
+              </div>) : (filteredProviders.map((provider) => (
+                <button
+                  key={provider.Provider_Id}
+                  onClick={() => handleProviderSelect(provider)}
+                  className="choice-with-logo"
+                >
+                  <ProviderMicroLogo providerId={provider.Provider_Id} name={provider.Name} surname={provider.Surname} />
+                </button>
+              )))}
         </div>
       </div>
     );
@@ -226,14 +236,14 @@ const Liquidate: React.FC = () => {
         <h2 style={{ textAlign: "center" }} className="form-title">
           Soldi ricavati dai suoi libri: €{liquidation.toFixed(2)}
         </h2>
-        {selectedProvider && selectedProvider.Donor && (
+        {(selectedProvider && selectedProvider.Donor !== 0) ? (
           <>
-            <p>{selectedProvider.Donor}</p>
-            <p><b>Attenzione:</b> ha deciso di ✨donare✨ parte del suo ricavato</p>
-            quindi il totale dovutogli è €{(liquidation * .85).toFixed(2)}.
-            Preparare modulo per la donazione di €{(liquidation * .15).toFixed(2)}
+            {/* <p>{selectedProvider.Donor}</p> */}
+            <p>ha deciso di ✨donare✨ il {selectedProvider.Donor * 100}% del suo ricavato
+            quindi il totale dovutogli è €{(liquidation * (1 - selectedProvider.Donor)).toFixed(2)}.<br />
+            Preparare modulo per la donazione di €{(liquidation * selectedProvider.Donor).toFixed(2)}</p>
           </>
-        )}
+        ) : <></>}
       </div>
 
       <div className="content">

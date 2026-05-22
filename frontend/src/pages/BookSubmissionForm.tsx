@@ -15,7 +15,7 @@ interface PersonalInfo {
   N_telefono: string;
   Istituto: string;
   Mail_list: boolean;
-  Donor: boolean;
+  Donor: number;
   Periodo: number;
 }
 
@@ -85,7 +85,7 @@ const BookSubmissionForm: React.FC = () => {
             Email: "",
             N_telefono: "",
             Mail_list: true,
-            Donor: false,
+            Donor: 0,
             Periodo: -1,
           });
           setBooks([]);
@@ -110,7 +110,7 @@ const BookSubmissionForm: React.FC = () => {
     N_telefono: "",
     Istituto: "",
     Mail_list: true,
-    Donor: false,
+    Donor: 0,
     Periodo: -1,
   });
   const [books, setBooks] = useState<BookEntry[]>([
@@ -139,6 +139,7 @@ const BookSubmissionForm: React.FC = () => {
   const [adoptedBooks, setAdoptedBooks] = useState<Book[]>([]);
   const [periods, setPeriods] = useState<Period[]>([]);
   const [selectedPeriod, setSelectedPeriod] = useState<string>("");
+  const [customPercentageChecked, setCustomPercentageChecked] = useState<boolean>(false);
 
   // Effects
   useEffect(() => {
@@ -350,8 +351,116 @@ const BookSubmissionForm: React.FC = () => {
           )}
         </div>
 
+        <div className="form-field donation">
+          <p className="block text-sm font-medium mb-1">
+            Vuoi che una parte del tuo ricavato vada a sostenere le attività del Lokalino? (cineforum, corsi e workshop, concerti)
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <label className="custom-checkbox">
+              <input
+                type="checkbox"
+                name="Donor"
+                value={0}
+                checked={personalInfo.Donor === 0/100}
+                onChange={(e) => {
+                  setCustomPercentageChecked(false)
+                  setPersonalInfo({
+                    ...personalInfo,
+                    Donor: Number(e.target.value) / 100,
+                  });
+                }}
+              />
+              <span className="checkbox-style"></span>Nessuna donazione
+            </label>
+            <label className="custom-checkbox">
+              <input
+                type="checkbox"
+                name="Donor"
+                value={10}
+                checked={personalInfo.Donor === 10/100}
+                onChange={(e) => {
+                  setCustomPercentageChecked(false)
+                  setPersonalInfo({
+                    ...personalInfo,
+                    Donor: Number(e.target.value) / 100,
+                  });
+                }}
+              />
+              <span className="checkbox-style"></span>10%
+            </label>
+            <label className="custom-checkbox">
+              <input
+                type="checkbox"
+                name="Donor"
+                value={15}
+                checked={personalInfo.Donor === 15/100}
+                onChange={(e) => {
+                  setCustomPercentageChecked(false)
+                  setPersonalInfo({
+                    ...personalInfo,
+                    Donor: Number(e.target.value) / 100,
+                  });
+                }}
+              />
+              <span className="checkbox-style"></span>15%
+            </label>
+            <label className="custom-checkbox">
+              <input
+                type="checkbox"
+                name="Donor"
+                value={20}
+                checked={personalInfo.Donor === 20/100}
+                onChange={(e) => {
+                  setCustomPercentageChecked(false)
+                  setPersonalInfo({
+                    ...personalInfo,
+                    Donor: Number(e.target.value) / 100,
+                  });
+                }}
+              />
+              <span className="checkbox-style"></span>20%
+            </label>
+            <label className="custom-checkbox">
+              <input
+                type="checkbox"
+                name="Donor"
+                value={-1}
+                checked={customPercentageChecked}
+                onChange={(e) => {
+                  setCustomPercentageChecked(true)
+                  setPersonalInfo({
+                    ...personalInfo,
+                    Donor: Number(e.target.value) / 100,
+                  });
+                }}
+              />
+              <span className="checkbox-style"></span>Valore personalizzato (%)
+            </label>
+          </div>
+          {customPercentageChecked && (
+            <>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="1"
+                placeholder="Inserisci percentuale personalizzata"
+                onChange={(e) => {
+                  setPersonalInfo({
+                    ...personalInfo,
+                    Donor: Number(e.target.value) / 100,
+                  });
+                }}
+                style={{ marginTop: "0.5rem", width: "10%", display: "inline" }}
+              />
+            </>
+          )}
+          <p><i>Le attività per i ragazzi al Lokalino sono sempre gratuite — una tua donazione ci aiuta a mantenerle così.</i></p>
+        </div>
+
         {/* Period Section */}
         <div className="form-field">
+          <br /><br />
           <label className="block text-sm font-medium mb-1">
             Scegli il giorno in cui consegnerai i libri al lokalino. Per ridurre
             l'attesa, scegli un giorno con meno affluenza prevista. La scelta
@@ -773,22 +882,6 @@ const BookSubmissionForm: React.FC = () => {
             />
             <span className="checkbox-style"></span>
             NON voglio ricevere email con le novità del Lokalino
-          </label>
-        </div>
-
-        <div className="form-field">
-          <label className="custom-checkbox">
-            <input
-              type="checkbox"
-              onChange={(e) =>
-                setPersonalInfo({
-                  ...personalInfo,
-                  Donor: !e.target.checked,
-                })
-              }
-            />
-            <span className="checkbox-style"></span>
-            Voglio donare il 15% del ricavato delle mie vendite per supportare le attività del Lokalino
           </label>
         </div>
 

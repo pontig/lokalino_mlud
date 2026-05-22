@@ -21,6 +21,13 @@ interface Provider {
   Surname: string;
 }
 
+// Mock providers for local development. Uncomment the `setProviders` call
+// in the `useEffect` below to use these instead of calling the backend.
+const MOCK_PROVIDERS: Provider[] = [
+  { Provider_Id: 9001, Name: "Mario", Surname: "Rossi" },
+  { Provider_Id: 9002, Name: "Luigi", Surname: "Bianchi" },
+];
+
 interface BookEntry_commented extends BookEntry {
   Comment: string;
   PB_Id: number;
@@ -158,6 +165,9 @@ const PickUp: React.FC = () => {
   // Effects
   useEffect(() => {
     api.fetchProviders();
+    // For local mock during development: uncomment the following line
+    // to use hardcoded providers instead of the backend fetch.
+    setProviders(MOCK_PROVIDERS);
   }, []);
 
   useEffect(() => {
@@ -204,7 +214,7 @@ const PickUp: React.FC = () => {
               <button
                 key={provider.Provider_Id}
                 onClick={() => api.getBooksByProvider(provider)}
-                className="choice"
+                className="choice-with-logo"
               >
                 <ProviderMicroLogo providerId={provider.Provider_Id} name={provider.Name} surname={provider.Surname} />
               </button>

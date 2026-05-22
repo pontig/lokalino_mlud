@@ -26,7 +26,7 @@ body parameters:
         "Email": String,
         "Phone_no": String
         "Mail_list": Boolean
-        "Donor": Boolean
+        "Donor": Number
     },
     "books": [
         {
@@ -75,7 +75,7 @@ $personalInfoFields = [
     'Email' => 'string',
     'N_telefono' => 'string',
     'Mail_list' => 'boolean',
-    'Donor' => 'boolean'
+    'Donor' => 'number'
 ];
 
 foreach ($personalInfoFields as $field => $type) {

@@ -72,7 +72,7 @@ CREATE TABLE `Provider` (
   `Email` varchar(100) NOT NULL,
   `School` int NOT NULL,
   `Mail_list` tinyint(1) NOT NULL,
-  `Donor` tinyint(1) NOT NULL,
+  `Donor` decimal(5,2) NOT NULL,
   `Delivery_period` int NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

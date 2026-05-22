@@ -33,8 +33,8 @@ const BookCard: React.FC<bookEntry> = ({ ISBN, Title, Author, Editor, Price_new,
             {Dec_conditions && Dec_conditions != null && (
                 <p className="book-description">Stato: {Dec_conditions}</p>
             )}
-            {Comment && Comment != null && (
-                <p className="book-description">{Comment}</p>
+            {Comment && Comment != null && Comment !== "null" && (
+                <p className="book-description">Commento: {Comment}</p>
             )}
             <div className="book-footer">
                 <span className="book-price">

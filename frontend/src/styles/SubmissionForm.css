@@ -39,6 +39,27 @@ html {
   color: white;
 }
 
+.choice-with-logo {
+  height: 5rem;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+
+.bigger-provider:hover {
+  background-color: #3b82f6 !important;
+}
+
+.bigger-provider {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  justify-content: space-around;
+  font-size: 1.25rem;
+  transition: all .3s ease;
+  cursor: pointer;
+}
+
 .choice:hover {
   transform: translateY(-.5rem);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -117,7 +138,7 @@ ty-p, ty-h1 {
   background-color: #2563eb;
   font-size: 1.25rem;
   width: 10rem;
-  
+
 }
 
 .cart-icon:hover {
@@ -270,6 +291,10 @@ ty-p, ty-h1 {
   font-weight: 500;
   color: #4a5568;
   margin-bottom: 0.5rem;
+}
+
+.donation label {
+  margin: 0
 }
 
 .form-field input,

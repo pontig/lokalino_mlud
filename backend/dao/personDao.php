@@ -36,7 +36,6 @@ function insertNewProvider($name, $surname, $school, $email, $phone, $mail_list,
     print("Starting insertNewProvider function...\n");
 
     $mail_list = $mail_list ? 1 : 0;
-    $donor = $donor ? 1 : 0;
     // Debugging: Print function inputs
     print("Inputs - Name: $name, Surname: $surname, School: $school, Email: $email, Phone: $phone, Mail List: $mail_list, Donor: $donor, Period: $period\n");
 
@@ -76,7 +75,7 @@ function insertNewProvider($name, $surname, $school, $email, $phone, $mail_list,
         die("Insert statement preparation failed: " . $conn->error . "\n");
     }
 
-    $insertStmt->bind_param("sssssssi", $name, $surname, $school, $email, $phone, $mail_list, $donor, $period);
+    $insertStmt->bind_param("ssssssdi", $name, $surname, $school, $email, $phone, $mail_list, $donor, $period);
 
     if (!$insertStmt->execute()) {
         print("Error executing insert statement: " . $insertStmt->error . "\n");
