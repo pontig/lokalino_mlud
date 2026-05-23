@@ -53,7 +53,7 @@ const Liquidate: React.FC = () => {
     async submitForm(): Promise<void> {
       const requestBody = {
         Provider_Id: selectedProvider,
-      };
+      };api
 
       const response = await fetch(`${this.baseUrl}/liquidateProvider.php`, {
         method: "POST",
@@ -241,7 +241,7 @@ const Liquidate: React.FC = () => {
             {/* <p>{Number(selectedProvider.Donor)} {selectedProvider.Donor}</p> */}
             <p>ha deciso di ✨donare✨ il {Number(selectedProvider.Donor) * 100}% del suo ricavato
             quindi il totale dovutogli è €{(liquidation * (1 - Number(selectedProvider.Donor))).toFixed(2)}.<br />
-            Preparare modulo per la donazione di <b>€{(liquidation * Number(selectedProvider.Donor)).toFixed(2)}</b></p>
+            Preparare modulo per la donazione di €{(liquidation * Number(selectedProvider.Donor)).toFixed(2)}</p>
           </>
         ) : <></>}
       </div>

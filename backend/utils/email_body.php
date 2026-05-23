@@ -37,7 +37,7 @@ function generateBooksEmailTable(array $booksInsertedByPr): string
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($booksInsertedByPr['books'] as $book): 
+                <?php foreach ($booksInsertedByPr as $book): 
                     // Safely cast to object so it works regardless of array or object inputs
                     $book = (object)$book; 
                     

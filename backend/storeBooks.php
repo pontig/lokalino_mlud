@@ -128,7 +128,7 @@ try {
     // Send confirmation of the books being caught
     $final_books_list = decodeDaoResult(getBooksByProvider($providerId));
 
-    $book_table = generateBooksEmailTable($final_books_list);
+    $book_table = generateBooksEmailTable($final_books_list['books']);
     $full_provider_info = decodeDaoResult(getProviderById($providerId));
 
     if (is_array($full_provider_info) && isset($full_provider_info['Name']) && isset($full_provider_info['Email'])) {
