@@ -7,17 +7,17 @@ function getAllProviders()
 
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
 
-    $sql = "SELECT Provider.Provider_Id, Name, Surname, 0 as 'State'
+    $sql = "SELECT Provider.Provider_Id, Name, Surname, 0 as 'State', Donor
     FROM Provider
     JOIN Provider_Book ON Provider_Book.Provider_Id = Provider.Provider_Id
     WHERE Consign_date IS NULL
     UNION
-    SELECT Provider.Provider_Id, Name, Surname, 1 as 'State'
+    SELECT Provider.Provider_Id, Name, Surname, 1 as 'State', Donor
     FROM Provider
     JOIN Provider_Book ON Provider_Book.Provider_Id = Provider.Provider_Id
     WHERE Consign_date IS NOT NULL AND Liquidation_date IS NULL
     UNION
-    SELECT Provider.Provider_Id, Name, Surname, 2 as 'State'
+    SELECT Provider.Provider_Id, Name, Surname, 2 as 'State', Donor
     FROM Provider
     JOIN Provider_Book ON Provider_Book.Provider_Id = Provider.Provider_Id
     WHERE Liquidation_date IS NOT NULL;";
@@ -29,6 +29,22 @@ function getAllProviders()
 
     $providers = json_encode($providers);
     return $providers;
+}
+
+function getProviderById($provider_id) {
+
+    $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
+
+    $sql = "SELECT * FROM Provider WHERE Provider_Id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $provider_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $provider = $result->fetch_assoc();
+    $stmt->close();
+    $conn->close();
+
+    return json_encode($provider);
 }
 
 function insertNewProvider($name, $surname, $school, $email, $phone, $mail_list, $donor, $period)

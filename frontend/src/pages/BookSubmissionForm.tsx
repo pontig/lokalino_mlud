@@ -231,7 +231,8 @@ const BookSubmissionForm: React.FC = () => {
             {Object.entries(personalInfo).map(
               ([key, value]) =>
                 key !== "Mail_list" &&
-                key !== "Periodo" && (
+                key !== "Periodo" && 
+                key !== "Donor" && (
                   <div key={key} className="form-field">
                     <label className="block text-sm font-medium mb-1">
                       {key.charAt(0).toUpperCase() + key.slice(1)}

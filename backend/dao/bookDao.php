@@ -287,6 +287,9 @@ function insertNewBooksInDatabase($books, $debug = false)
         echo "Database connection established.\n";
     }
 
+    $stmtCheck = null;
+    $stmtInsert = null;
+
     $conn->begin_transaction();
     try {
         $stmtCheck = $conn->prepare("SELECT COUNT(*) FROM Book WHERE ISBN = ?");
@@ -338,8 +341,12 @@ function insertNewBooksInDatabase($books, $debug = false)
         }
         return json_encode(array("status" => "error", "message" => $e->getMessage()));
     } finally {
-        $stmtCheck->close();
-        $stmtInsert->close();
+        if ($stmtCheck) {
+            $stmtCheck->close();
+        }
+        if ($stmtInsert) {
+            $stmtInsert->close();
+        }
         $conn->close();
         if ($debug) {
             echo "Database connection closed.\n";
@@ -351,31 +358,40 @@ function recordDelivery($bookstoedit)
 {
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
     $conn->begin_transaction();
+    $stmt = null;
 
     try {
 
         foreach ($bookstoedit as $book) {
+            $consignDate = date("Y-m-d H:i:s");
             if (isset($book["Comment"]) && !empty($book["Comment"])) {
                 $stmt = $conn->prepare("UPDATE Provider_Book SET
                 Dec_conditions = ?, 
                 Consign_date = ?, 
                 Comment = ?
                 WHERE PB_Id = ?");
-                $stmt->bind_param("sssi", $book["Dec_conditions"], date("Y-m-d H:i:s"), $book["Comment"], $book["PB_Id"]);
+                if (!$stmt) {
+                    throw new Exception("Failed to prepare statement: " . $conn->error);
+                }
+                $stmt->bind_param("sssi", $book["Dec_conditions"], $consignDate, $book["Comment"], $book["PB_Id"]);
             } else {
                 $stmt = $conn->prepare("UPDATE Provider_Book SET
                 Dec_conditions = ?, 
                 Consign_date = ? 
                 WHERE PB_Id = ?");
-                if (!$stmt) echo $conn->error;
-                $stmt->bind_param("ssi", $book["Dec_conditions"], date("Y-m-d H:i:s"), $book["PB_Id"]);
+                if (!$stmt) {
+                    throw new Exception("Failed to prepare statement: " . $conn->error);
+                }
+                $stmt->bind_param("ssi", $book["Dec_conditions"], $consignDate, $book["PB_Id"]);
             }
 
             $stmt->execute();
         }
 
         $conn->commit();
-        $stmt->close();
+        if ($stmt) {
+            $stmt->close();
+        }
 
         return json_encode(array("status" => "success"));
     } catch (Exception $e) {
@@ -421,6 +437,7 @@ function addBooksToDelivery($providerId, $books, $doneByOperator)
 
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
     $conn->begin_transaction();
+    $stmt = null;
 
     try {
 
@@ -428,24 +445,36 @@ function addBooksToDelivery($providerId, $books, $doneByOperator)
 
             if (!$doneByOperator) {
                 $stmt = $conn->prepare("INSERT INTO Provider_Book (Provider_Id, ISBN, Dec_conditions, Price_new) VALUES (?, ?, ?, ?)");
-                if (!$stmt) echo $conn->error;
+                if (!$stmt) {
+                    throw new Exception("Failed to prepare statement: " . $conn->error);
+                }
                 $stmt->bind_param("issd", $providerId, $book["ISBN"], $book["Dec_conditions"], $book["Price_new"]);
                 $stmt->execute();
             } else if (isset($book["Comment"]) && !empty($book["Comment"])) {
 
                 $stmt = $conn->prepare("INSERT INTO Provider_Book (Provider_Id, ISBN, Dec_conditions, Consign_date, Comment, Price_new) VALUES (?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param("issssd", $providerId, $book["ISBN"], $book["Dec_conditions"], date("Y-m-d H:i:s"), $book["Comment"], $book["Price_new"]);
+                if (!$stmt) {
+                    throw new Exception("Failed to prepare statement: " . $conn->error);
+                }
+                $consignDate = date("Y-m-d H:i:s");
+                $stmt->bind_param("issssd", $providerId, $book["ISBN"], $book["Dec_conditions"], $consignDate, $book["Comment"], $book["Price_new"]);
                 $stmt->execute();
             } else {
 
                 $stmt = $conn->prepare("INSERT INTO Provider_Book (Provider_Id, ISBN, Dec_conditions, Consign_date, Price_new) VALUES (?, ?, ?, ?, ?)");
-                $stmt->bind_param("isssd", $providerId, $book["ISBN"], $book["Dec_conditions"], date("Y-m-d H:i:s"), $book["Price_new"]);
+                if (!$stmt) {
+                    throw new Exception("Failed to prepare statement: " . $conn->error);
+                }
+                $consignDate = date("Y-m-d H:i:s");
+                $stmt->bind_param("isssd", $providerId, $book["ISBN"], $book["Dec_conditions"], $consignDate, $book["Price_new"]);
                 $stmt->execute();
             }
         }
 
         $conn->commit();
-        $stmt->close();
+        if ($stmt) {
+            $stmt->close();
+        }
 
         return json_encode(array("status" => "success"));
     } catch (Exception $e) {
@@ -468,7 +497,8 @@ function doCheckout($pb_ids)
         }
 
         foreach ($pb_ids as $pb_id) {
-            $stmt->bind_param("si", date("Y-m-d H:i:s"), $pb_id);
+            $soldDate = date("Y-m-d H:i:s");
+            $stmt->bind_param("si", $soldDate, $pb_id);
             if (!$stmt->execute()) {
                 throw new Exception("Failed to execute query: " . $stmt->error);
             }

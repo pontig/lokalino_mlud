@@ -2,9 +2,9 @@ import React from "react";
 import { FaUser } from "react-icons/fa";
 
 
-const ProviderMicroLogo: React.FC<{ providerId: number | String; name: String; surname: String, inline?: boolean }> = ({ providerId, name, surname, inline = false }) => {
+const ProviderMicroLogo: React.FC<{ providerId: number | String; name: String; surname: String, inline?: boolean }> = ({ providerId, name, surname, inline = true }) => {
 
-    const className = inline ? "" : "bigger-provider"
+    const className = inline ? "inline-provider" : "bigger-provider"
 
     return (
         <span 

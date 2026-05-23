@@ -75,7 +75,7 @@ $personalInfoFields = [
     'Email' => 'string',
     'N_telefono' => 'string',
     'Mail_list' => 'boolean',
-    'Donor' => 'number'
+    'Donor' => 'double'
 ];
 
 foreach ($personalInfoFields as $field => $type) {
@@ -91,7 +91,7 @@ foreach ($personalInfoFields as $field => $type) {
         http_response_code(403);
         echo json_encode([
             'status' => 'error',
-            'message' => "Invalid type for field in personalInfo: $field, expected $type"
+            'message' => "Invalid type for field in personalInfo: $field, expected $type and got " . gettype($body['personalInfo'][$field])
         ]);
         exit;
     }

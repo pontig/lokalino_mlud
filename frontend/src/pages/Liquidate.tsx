@@ -161,7 +161,7 @@ const Liquidate: React.FC = () => {
     api.fetchProviders();
     // For local mock during development: uncomment the following line
     // to use hardcoded providers instead of the backend fetch.
-    setProviders(MOCK_PROVIDERS);
+    // setProviders(MOCK_PROVIDERS);
   }, []);
 
   // Functions
@@ -207,7 +207,7 @@ const Liquidate: React.FC = () => {
                   onClick={() => handleProviderSelect(provider)}
                   className="choice-with-logo"
                 >
-                  <ProviderMicroLogo providerId={provider.Provider_Id} name={provider.Name} surname={provider.Surname} />
+                  <ProviderMicroLogo providerId={provider.Provider_Id} name={provider.Name} surname={provider.Surname} inline={false} />
                 </button>
               )))}
         </div>
@@ -236,12 +236,12 @@ const Liquidate: React.FC = () => {
         <h2 style={{ textAlign: "center" }} className="form-title">
           Soldi ricavati dai suoi libri: €{liquidation.toFixed(2)}
         </h2>
-        {(selectedProvider && selectedProvider.Donor !== 0) ? (
+        {(selectedProvider && Number(selectedProvider.Donor) !== 0) ? (
           <>
-            {/* <p>{selectedProvider.Donor}</p> */}
-            <p>ha deciso di ✨donare✨ il {selectedProvider.Donor * 100}% del suo ricavato
-            quindi il totale dovutogli è €{(liquidation * (1 - selectedProvider.Donor)).toFixed(2)}.<br />
-            Preparare modulo per la donazione di €{(liquidation * selectedProvider.Donor).toFixed(2)}</p>
+            {/* <p>{Number(selectedProvider.Donor)} {selectedProvider.Donor}</p> */}
+            <p>ha deciso di ✨donare✨ il {Number(selectedProvider.Donor) * 100}% del suo ricavato
+            quindi il totale dovutogli è €{(liquidation * (1 - Number(selectedProvider.Donor))).toFixed(2)}.<br />
+            Preparare modulo per la donazione di <b>€{(liquidation * Number(selectedProvider.Donor)).toFixed(2)}</b></p>
           </>
         ) : <></>}
       </div>

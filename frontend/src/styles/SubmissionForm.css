@@ -50,6 +50,10 @@ html {
   background-color: #3b82f6 !important;
 }
 
+.inline-provider {
+  display: inline !important;
+}
+
 .bigger-provider {
   height: 100%;
   width: 100%;

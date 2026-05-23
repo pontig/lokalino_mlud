@@ -167,7 +167,7 @@ const PickUp: React.FC = () => {
     api.fetchProviders();
     // For local mock during development: uncomment the following line
     // to use hardcoded providers instead of the backend fetch.
-    setProviders(MOCK_PROVIDERS);
+    // setProviders(MOCK_PROVIDERS);
   }, []);
 
   useEffect(() => {
@@ -216,7 +216,7 @@ const PickUp: React.FC = () => {
                 onClick={() => api.getBooksByProvider(provider)}
                 className="choice-with-logo"
               >
-                <ProviderMicroLogo providerId={provider.Provider_Id} name={provider.Name} surname={provider.Surname} />
+                <ProviderMicroLogo providerId={provider.Provider_Id} name={provider.Name} surname={provider.Surname} inline={false}/>
               </button>
             ))
           )}
