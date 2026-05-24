@@ -53,7 +53,7 @@ const Liquidate: React.FC = () => {
     async submitForm(): Promise<void> {
       const requestBody = {
         Provider_Id: selectedProvider,
-      };api
+      };
 
       const response = await fetch(`${this.baseUrl}/liquidateProvider.php`, {
         method: "POST",

@@ -74,34 +74,34 @@ const Schedule: React.FC = () => {
   }, []);
 
   return (
-    <div className="bokstore-container form-container">
-      <Header
-        title={"Previsione affluenze"}
-        hasSearchBox={false}
-        onLinkClick={async () => navigate("/backOffice")}
-      />
       <div className="content content-ml">
-        {periods.map((period) => (
+        <div style={{ display: "flex", alignItems: "flex-end", gap: "16px", minHeight: "300px", padding: "20px" }}>
+          {periods.map((period) => (
+        <div key={period.P_id} style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1 }}>
           <div
-            key={period.P_id}
-            className="choice"
             style={{
-              background: getGradientColor(
-                period.Num_Providers,
-                minProviders,
-                maxProviders
-              ),
-              color: "#000"
+          width: "100%",
+          height: `${(period.Num_Providers / maxProviders) * 250}px`,
+          background: getGradientColor(
+            period.Num_Providers,
+            minProviders,
+            maxProviders
+          ),
+          borderRadius: "4px 4px 0 0",
+          transition: "all 0.3s ease"
             }}
-          >
-            <p>
-              <b>{period.Description}</b>
-            </p>
-            <p>Numero di persone previste: {period.Num_Providers}</p>
-          </div>
-        ))}
+          />
+          <p style={{ marginTop: "8px", fontSize: "12px", textAlign: "center" }}>
+            <b>{period.Description}</b>
+          </p>
+          <p style={{ fontSize: "11px", margin: "4px 0" }}>
+            {period.Num_Providers}
+          </p>
+        </div>
+          ))}
+        </div>
       </div>
-    </div>
+
   );
 };
 

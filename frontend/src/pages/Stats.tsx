@@ -186,7 +186,7 @@ const Stats: React.FC = () => {
   // return <div></div>
 
   return (
-    <div>
+    <div className="bookstore-container">
       <Header
         title={"Statistiche interessanti"}
         hasSearchBox={false}
@@ -196,21 +196,20 @@ const Stats: React.FC = () => {
         <p>E' stato ritirato un numero di libri pari a</p>
         <p className="big-number">{animatedTotalNumberOfBooks}</p>
         <p>
-          Sono arrivati proprio a palate, anzi, a camionate! Qui possiamo
-          osservare il tir che li ha portati che, dopo tanto lavoro, si sta
-          finalmente riposando
+          Stanno arrivando proprio a palate, anzi, a camionate! 
+          Fermati un secondo e lascia passare il tir che li sta trasportando
         </p>
         <div className="book-animation-container">
           <div className="book-animation">
             <FaTruckMoving style={{ fontSize: "80px", color: "#000" }} />
           </div>
         </div>
-        {/* <style>
+        <style>
           {`
             .book-animation-container {
               position: relative;
               width: 100%;
-              height: 50px;
+              height: 70px;
               overflow: hidden;
               margin: 20px 0;
             }
@@ -230,26 +229,10 @@ const Stats: React.FC = () => {
             }
           `}
         </style>
-        <p>
-          Per farti capire quanti effettivamente siano {totalNumberOfBooks}{" "}
-          libri, ecco qui un libro per ogni libro ritirato:
-        </p>
-        {Array.from({ length: animatedTotalNumberOfBooks }, (_, index) => {
-          return (
-            <FaBook
-              key={index}
-              style={{
-                margin: "5px",
-                fontSize: "20px",
-                color: colors[index] || "#000",
-              }}
-            />
-          );
-        })} */}
         <p>In media, ogni giorno è stato ritirato un numero di libri pari a</p>
         <p className="big-number">{animatedNumberOfBooksPerDay}</p>
         <h2>$ Money money money $</h2>
-        <p>Totale soldi che sono passati tramite il mlu:</p>
+        <p>Totale soldi che sono passati tramite il mlu (prezzo da nuovo):</p>
         <p className="big-number">{animatedTotalMoney}€</p>
         {/* <p>
           Ogni persona si stima che sia riuscita a risparmiare sull'acquisto di
@@ -269,7 +252,7 @@ const Stats: React.FC = () => {
             <tr>
               <th>Data</th>
               <th>Numero di libri venduti</th>
-              <th>Totale incassato</th>
+              <th>Totale incassato (prezzo da nuovo)</th>
             </tr>
           </thead>
           <tbody>
@@ -311,6 +294,22 @@ const Stats: React.FC = () => {
           layout="horizontal"
           height={500}
         />
+      <p>
+          Per farti capire quanti effettivamente siano {totalNumberOfBooks}{" "}
+          libri, ecco qui un libro per ogni libro ritirato:
+        </p>
+        {Array.from({ length: animatedTotalNumberOfBooks }, (_, index) => {
+          return (
+            <FaBook
+              key={index}
+              style={{
+                margin: "5px",
+                fontSize: "20px",
+                color: colors[index] || "#000",
+              }}
+            />
+          );
+        })}
       </div>
     </div>
   );

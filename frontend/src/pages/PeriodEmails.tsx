@@ -27,31 +27,24 @@ const PeriodEmails: React.FC = () => {
   }, []);
 
   return (
-    <div className="bokstore-container form-container">
-      <Header
-        title={"Visualizza affluenze nominali"}
-        hasSearchBox={false}
-        onLinkClick={async () => navigate("/backOffice")}
-      />
-      <div className="content content-ml">
-        <div>
-          <table className="books-table">
-            <thead>
-              <tr>
-                <th>Periodo</th>
-                <th>Emails</th>
+    <div className="content content-ml">
+      <div>
+        <table className="books-table">
+          <thead>
+            <tr>
+              <th>Periodo</th>
+              <th>Emails</th>
+            </tr>
+          </thead>
+          <tbody>
+            {periods.map((period, index) => (
+              <tr key={index}>
+                <td>{period.period_description}</td>
+                <td>{period.emails.join(", ")}</td>
               </tr>
-            </thead>
-            <tbody>
-              {periods.map((period, index) => (
-                <tr key={index}>
-                  <td>{period.period_description}</td>
-                  <td>{period.emails.join(", ")}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

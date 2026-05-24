@@ -789,3 +789,47 @@ td input[type="checkbox"]:checked::after {
 td input[type="checkbox"]:hover {
   border-color: #2563eb;
 }
+
+.content-new {
+  display: grid;
+  grid-template-areas:
+    "header header"
+    "menu content"
+    "footer footer";
+  grid-template-columns: 1fr 3fr;
+  gap: 3px;
+  /* background-color: dodgerblue; */
+  width: 80vw;
+  margin: 2.5rem 10vw;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 2.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all .3s ease;
+  font-size: 1.5rem;
+  box-sizing: border-box;
+}
+
+.content-new div {
+  background-color: white;
+  padding: 10px;
+  /* border: 1px solid #bbb; */
+}
+
+.content-new div.header {
+  grid-area: header;
+  text-align: center;
+}
+
+.content-new div.menu {
+  grid-area: menu;
+}
+
+.content-new div.backoffice-content {
+  grid-area: content;
+}
+
+.content-new div.footer {
+  grid-area: footer;
+  text-align: center;
+}
