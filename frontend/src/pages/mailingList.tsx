@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Person from "../types/Person";
 import { Link, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import ProviderMicroLogo from "../components/Provider_MicroLogo";
 
 const MailingList: React.FC = () => {
   // API service
@@ -36,22 +37,27 @@ const MailingList: React.FC = () => {
         hasSearchBox={false}
         onLinkClick={async () => navigate("/backOffice")}
       />
-      <div className="content content-ml">
-        {providers.map((provider) => (
-          <button
-            key={provider.Provider_Id}
-            //   onClick={() => handleProviderSelect(provider)}
-            className="choice mailing-list"
-          >
-            {provider.Name} {provider.Surname}
-            <br />
-            {provider.Email}
-          </button>
-        ))}
-      </div>
       <div className="content content-ml no-gap">
         <h2>Lista più comoda per il copia-incolla</h2>
         {providers.map((provider) => provider.Email).join(", ")}
+      </div>
+      <div className="content content-ml">
+        {providers.map((provider) => (
+          <ProviderMicroLogo 
+          providerId={provider.Provider_Id} 
+          name={provider.Name + " " + provider.Surname} 
+          surname={provider.Email} 
+          inline={false} />
+          // <button
+          //   key={provider.Provider_Id}
+          //   //   onClick={() => handleProviderSelect(provider)}
+          //   className="choice mailing-list"
+          // >
+          //   {provider.Name} {provider.Surname}
+          //   <br />
+          //   {provider.Email}
+          // </button>
+        ))}
       </div>
     </div>
   );
