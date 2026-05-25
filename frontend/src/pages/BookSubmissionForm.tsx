@@ -354,7 +354,7 @@ const BookSubmissionForm: React.FC = () => {
 
         <div className="form-field donation">
           <p className="block text-sm font-medium mb-1">
-            Vuoi che una parte del tuo ricavato vada a sostenere le attività del Lokalino? (cineforum, corsi e workshop, concerti)
+            <b>Vuoi che una parte del tuo ricavato vada a sostenere le attività del Lokalino? (cineforum, corsi e workshop, concerti)</b>
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             <label className="custom-checkbox">
@@ -377,8 +377,8 @@ const BookSubmissionForm: React.FC = () => {
               <input
                 type="checkbox"
                 name="Donor"
-                value={10}
-                checked={personalInfo.Donor === 10/100}
+                value={5}
+                checked={personalInfo.Donor === 5/100}
                 onChange={(e) => {
                   setCustomPercentageChecked(false)
                   setPersonalInfo({
@@ -393,8 +393,8 @@ const BookSubmissionForm: React.FC = () => {
               <input
                 type="checkbox"
                 name="Donor"
-                value={15}
-                checked={personalInfo.Donor === 15/100}
+                value={10}
+                checked={personalInfo.Donor === 10/100}
                 onChange={(e) => {
                   setCustomPercentageChecked(false)
                   setPersonalInfo({

@@ -72,7 +72,16 @@ $email_body = "
             " . $sold_table . "
             <p>Questi libri hanno generato un ricavo totale di " . $sold_books_money_halved . " euro.</p>
             <p>I seguenti libri non sono stati venduti:</p>
-            " . $not_sold_table . "
+            " . $not_sold_table;
+
+if ($full_provider_info['Donor'] > 0) {
+    $email_body .=
+        "<p>Hai donato al lokalino "
+        . ($full_provider_info['Donor'] * $sold_books_money_halved) .
+        " euro, grazie per il tuo contributo alle nostre attività!</p>";
+}
+
+$email_body .= "            
             <p>Speriamo di rivederti presto!</p>
             <br />
             <p>Team Lokalino</p>
