@@ -7,8 +7,8 @@ function sendEmail($to, $to_name, $subject, $htmlContent)
 
     $data = [
         "sender" => [
-            "name" => "Elia Pontiggia",
-            "email" => "pontiggiaelia02@gmail.com"
+            "name" => "Lokalino mlud",
+            "email" => "info@lokalino.it"
         ],
         "to" => [
             [

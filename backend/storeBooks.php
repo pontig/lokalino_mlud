@@ -139,8 +139,16 @@ try {
             " . $book_table . "
             <p>Ti ricordiamo i prossimi appuntamenti:</p>
             <ul>
-                <li>Vendita libri</li>
-                <li>Ritiro liquidazione e libri invenduti</li>
+                <li>Vendita libri: dal 13 al 31 luglio</li>
+                <li>Ritiro liquidazione e libri invenduti: dal 7 all'11 settembre</li>
+            </ul>
+            <p>Con i seguenti orari di apertura:</p>
+            <ul>
+                <li><b>Lunedì:</b> 14.30-17.30</li>
+                <li><b>Martedì:</b> 9.30-12.00</li>
+                <li><b>Mercoledì:</b> 14.30-17.30</li>
+                <li><b>Giovedì:</b> 14.30-17.30</li>
+                <li><b>Venerdì:</b> 9.30-12</li>
             </ul>
             <p>A presto!</p>
             <br />

@@ -12,6 +12,7 @@ import { GiReceiveMoney } from "react-icons/gi";
 import { IoMailOutline } from "react-icons/io5";
 import { MdQueryStats } from "react-icons/md";
 import { IoIosLogOut } from "react-icons/io";
+import { SiBookstack } from "react-icons/si";
 import { AiFillSchedule } from "react-icons/ai";
 import DashboardEntry from "../components/DashboardEntry";
 import Schedule from "./Schedule";
@@ -198,6 +199,7 @@ const BackOffice: React.FC = () => {
           <DashboardEntry title="Ritiro libri da vendere" icon={<GiReceiveMoney />} url="/pickUp" backgroundColor={"rgb(0,100,0)"} />
           <DashboardEntry title="Vendi libri" icon={<FaDollarSign />} url="/sell" backgroundColor={"rgb(0,100,0)"} />
           <DashboardEntry title="Liquidazione" icon={<FaMoneyCheckAlt />} url="/liquidate" backgroundColor={"rgb(0,100,0)"} />
+          <DashboardEntry title="Lista libri" icon={<SiBookstack />} url="/booklist-audience" backgroundColor={"rgb(0,100,0)"} />
           <b>Area pericolosa</b>
           <DashboardEntry title="Inserisci listone di libri" icon={<FaUserShield />} url="/admin" backgroundColor={"rgb(35, 118, 148)"} />
           <DashboardEntry title="Backup database" icon={<FaDatabase />} url="/backupDatabase" backgroundColor={"rgb(35, 118, 148)"} />

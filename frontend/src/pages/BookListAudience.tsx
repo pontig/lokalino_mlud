@@ -82,6 +82,7 @@ const BookListAudience: React.FC = () => {
     <div className="bookstore-container">
       <Header title={"Seleziona libri"}
         hasSearchBox={true}
+        hasBackButton={false}
         value={searchTerm}
         onPassedChange={setSearchTerm}
         onLinkClick={async () => await navigate("/backOffice")}

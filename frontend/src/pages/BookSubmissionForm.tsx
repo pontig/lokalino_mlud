@@ -140,6 +140,7 @@ const BookSubmissionForm: React.FC = () => {
   const [periods, setPeriods] = useState<Period[]>([]);
   const [selectedPeriod, setSelectedPeriod] = useState<string>("");
   const [customPercentageChecked, setCustomPercentageChecked] = useState<boolean>(false);
+  const [selectedPercentage, setSelectedPercentage] = useState<boolean>(false);
 
   // Effects
   useEffect(() => {
@@ -160,6 +161,7 @@ const BookSubmissionForm: React.FC = () => {
     e.preventDefault();
     const allFieldsFilled =
       personalInfo.Istituto !== "-1" &&
+      selectedPercentage &&
       personalInfo.Periodo !== -1 &&
       Object.values(personalInfo).every((value) => value !== "") &&
       books.every((book) =>
@@ -231,7 +233,7 @@ const BookSubmissionForm: React.FC = () => {
             {Object.entries(personalInfo).map(
               ([key, value]) =>
                 key !== "Mail_list" &&
-                key !== "Periodo" && 
+                key !== "Periodo" &&
                 key !== "Donor" && (
                   <div key={key} className="form-field">
                     <label className="block text-sm font-medium mb-1">
@@ -362,9 +364,10 @@ const BookSubmissionForm: React.FC = () => {
                 type="checkbox"
                 name="Donor"
                 value={0}
-                checked={personalInfo.Donor === 0/100}
+                checked={selectedPercentage && personalInfo.Donor === 0 / 100}
                 onChange={(e) => {
                   setCustomPercentageChecked(false)
+                  setSelectedPercentage(true)
                   setPersonalInfo({
                     ...personalInfo,
                     Donor: Number(e.target.value) / 100,
@@ -378,9 +381,27 @@ const BookSubmissionForm: React.FC = () => {
                 type="checkbox"
                 name="Donor"
                 value={5}
-                checked={personalInfo.Donor === 5/100}
+                checked={selectedPercentage && personalInfo.Donor === 5 / 100}
                 onChange={(e) => {
                   setCustomPercentageChecked(false)
+                  setSelectedPercentage(true)
+                  setPersonalInfo({
+                    ...personalInfo,
+                    Donor: Number(e.target.value) / 100,
+                  });
+                }}
+              />
+              <span className="checkbox-style"></span>5%
+            </label>
+            <label className="custom-checkbox">
+              <input
+                type="checkbox"
+                name="Donor"
+                value={10}
+                checked={selectedPercentage && personalInfo.Donor === 10 / 100}
+                onChange={(e) => {
+                  setCustomPercentageChecked(false)
+                  setSelectedPercentage(true)
                   setPersonalInfo({
                     ...personalInfo,
                     Donor: Number(e.target.value) / 100,
@@ -393,26 +414,11 @@ const BookSubmissionForm: React.FC = () => {
               <input
                 type="checkbox"
                 name="Donor"
-                value={10}
-                checked={personalInfo.Donor === 10/100}
-                onChange={(e) => {
-                  setCustomPercentageChecked(false)
-                  setPersonalInfo({
-                    ...personalInfo,
-                    Donor: Number(e.target.value) / 100,
-                  });
-                }}
-              />
-              <span className="checkbox-style"></span>15%
-            </label>
-            <label className="custom-checkbox">
-              <input
-                type="checkbox"
-                name="Donor"
                 value={20}
-                checked={personalInfo.Donor === 20/100}
+                checked={selectedPercentage && personalInfo.Donor === 20 / 100}
                 onChange={(e) => {
                   setCustomPercentageChecked(false)
+                  setSelectedPercentage(true)
                   setPersonalInfo({
                     ...personalInfo,
                     Donor: Number(e.target.value) / 100,
@@ -429,6 +435,7 @@ const BookSubmissionForm: React.FC = () => {
                 checked={customPercentageChecked}
                 onChange={(e) => {
                   setCustomPercentageChecked(true)
+                  setSelectedPercentage(false)
                   setPersonalInfo({
                     ...personalInfo,
                     Donor: Number(e.target.value) / 100,
@@ -783,75 +790,32 @@ const BookSubmissionForm: React.FC = () => {
               <h2>Regolamento MLU 2025</h2>
               <ol style={{ textAlign: "left", lineHeight: "1.6", fontSize: "0.9rem" }}>
                 <li>
-                  <strong>Cosa si può vendere?</strong> Tutti i libri di testo adottati nelle scuole superiori di
-                  Morbegno, Sondrio, Colico e Chiavenna e nelle scuole medie della bassa Valtellina
-                  (istituti di Ardenno, Talamona, Morbegno, Cosio Valtellino, Traona, Delebio -
-                  Dubino), che siano ancora in uso nell'anno scolastico 2025-2026.
+                  <strong>Cosa si può vendere?</strong> Tutti i libri di testo adottati nelle scuole superiori di Morbegno, Sondrio, Colico e Chiavenna e nelle scuole medie della bassa Valtellina (istituti di Ardenno, Talamona, Morbegno, Cosio Valtellino, Traona, Delebio - Dubino), che siano ancora in uso nell'anno scolastico 2026-2027.
                 </li>
                 <li>
-                  <strong>Cosa non si può vendere?</strong> Non saranno ammessi alla vendita: testi di natura non
-                  didattica e libri che non saranno più in uso nell'anno scolastico 2025/2026. Per
-                  essere venduti, i libri devono avere un codice ISBN corrispondente a quello dei testi
-                  adottati per il prossimo anno scolastico. Il sistema informatizzato del Mercatino
-                  dei Libri Usati 2025 verifica automaticamente se un libro è ancora in adozione
-                  per l'anno scolastico 2025/2026 e quindi idoneo alla vendita. L'elenco aggiornato
-                  è consultabile nelle schede pubblicate sui siti delle singole scuole.
+                  <strong>Cosa non si può vendere?</strong>  Non saranno ammessi alla vendita: testi di natura non didattica e libri che non saranno più in uso nell'anno scolastico 2026/2027. Per essere venduti, i libri devono avere un codice ISBN corrispondente a quello dei testi adottati per il prossimo anno scolastico. Il sistema informatizzato del Mercatino dei Libri Usati 2026 verifica automaticamente se un libro è ancora in adozione per l'anno scolastico 2026/2027 e quindi idoneo alla vendita. L'elenco aggiornato è consultabile nelle schede pubblicate sui siti delle singole scuole.
                 </li>
                 <li>
-                  <strong>Condizioni di partecipazione.</strong> Lo studente, o un familiare incaricato, è tenuto a
-                  compilare l'apposita scheda di vendita online, effettuando la ricerca dei libri che
-                  intende vendere tramite il titolo o il codice ISBN. Una volta selezionato il volume
-                  desiderato, i campi relativi all'autore e all'editore verranno compilati
-                  automaticamente dal sistema. Successivamente, sarà necessario inserire il prezzo
-                  di copertina, così come indicato sul retro del libro, e specificare le condizioni in cui
-                  si trova il volume. In caso di vendita andata a buon fine, al venditore spetterà un
-                  importo pari al 50% del prezzo di vendita. Nel caso in cui il codice ISBN inserito
-                  non corrisponda a nessun volume presente nel sistema, si invita a verificare le
-                  adozioni scolastiche pubblicate sui siti ufficiali degli istituti. Qualora il libro
-                  risultasse effettivamente presente nelle liste scolastiche, ma non rilevabile dal
-                  sistema informatizzato, è possibile recarsi presso il Lokalino per sottoporre il
-                  volume a una verifica diretta da parte degli operatori. In assenza di tale riscontro, i
-                  libri saranno considerati NON idonei alla vendita.
+                  <strong>Condizioni di partecipazione.</strong> Lo studente, o un familiare incaricato, è tenuto a compilare l'apposita scheda di vendita online, effettuando la ricerca dei libri che intende vendere tramite il titolo o il codice ISBN. Una volta selezionato il volume desiderato, i campi relativi all'autore e all'editore verranno compilati automaticamente dal sistema. Successivamente, sarà necessario inserire il prezzo di copertina, così come indicato sul retro del libro, e specificare le condizioni in cui si trova il volume. In caso di vendita andata a buon fine, al venditore spetterà un importo pari al 50% del prezzo di vendita. Nel caso in cui il codice ISBN inserito non corrisponda a nessun volume presente nel sistema, si invita a verificare le adozioni scolastiche pubblicate sui siti ufficiali degli istituti. Qualora il libro risultasse effettivamente presente nelle liste scolastiche, ma non rilevabile dal sistema informatizzato, è possibile recarsi presso il Lokalino per sottoporre il volume a una verifica diretta da parte degli operatori. In assenza di tale riscontro, i libri saranno considerati NON idonei alla vendita.
                 </li>
                 <li>
-                  <strong>Dati del venditore.</strong> Con l'invio della scheda di vendita online, il venditore si
-                  considera a tutti gli effetti consapevole e accettante del regolamento del
-                  Mercatino dei Libri Usati 2025. Inoltre, si impegna a ritirare eventuali libri
-                  scolastici rimasti invenduti entro e non oltre venerdì 12 settembre 2025. Il
-                  mancato ritiro entro tale data comporterà la rinuncia all'intero incasso derivante
-                  dalle eventuali vendite effettuate.
+                  <strong>Dati del venditore.</strong> Con l'invio della scheda di vendita online, il venditore si considera a tutti gli effetti consapevole e accettante del regolamento del Mercatino dei Libri Usati 2026. Inoltre, si impegna a ritirare eventuali libri scolastici rimasti invenduti entro e non oltre venerdì 11 settembre 2026. Il mancato ritiro entro tale data comporterà la rinuncia all'intero incasso derivante dalle eventuali vendite effettuate.
                 </li>
                 <li>
-                  <strong>Il servizio del mercatino.</strong> Il mercatino offre, per conto di ciascun venditore, i libri
-                  depositati per la vendita al 50% del prezzo di copertina; grazie al contributo del
-                  Comune di Morbegno, della Comunità Montana Valtellina di Morbegno e della
-                  Fondazione Mattei, i clienti del servizio riceveranno l'intera somma del prezzo di
-                  vendita (50% del prezzo di copertina).
+                  <strong>Il servizio del mercatino.</strong> Il mercatino offre, per conto di ciascun venditore, i libri depositati per la vendita al 50% del prezzo di copertina; grazie al contributo del Comune di Morbegno, della Comunità Montana Valtellina di Morbegno e della Fondazione Mattei, i clienti del servizio riceveranno l'intera somma del prezzo di vendita (50% del prezzo di copertina).
                 </li>
                 <li>
-                  L'incasso potrà essere ritirato nel periodo definito al successivo punto 9 del
-                  presente regolamento.
+                  L'incasso potrà essere ritirato nel periodo definito al successivo punto 9 del presente regolamento.
                 </li>
                 <li>
-                  Il modulo d'iscrizione può essere compilato sul sito grandangolo.coop o Lokalino
-                  a partire da 23 giugno 2025.
+                  In fase di compilazione del modulo di iscrizione online, il venditore avrà la possibilità di destinare volontariamente una percentuale del proprio ricavato a supporto delle attività del centro giovanile Lokalino. La scelta è facoltativa e verrà indicata direttamente nel form al momento dellaregistrazione
                 </li>
                 <li>
-                  I Libri, devono essere consegnati agli operatori del Mercatino, a partire dal 1
-                  Luglio, entro e non oltre venerdì 18 Luglio negli orari di apertura del mercatino,
-                  presso La sede del Lokalino, in Via Strada Comunale di Campagna (nei pressi
-                  dello stadio comunale Merizzi). Oltre la data del 19 luglio 2024 non sarà più
-                  possibile consegnare libri da mettere in vendita. Al momento della consegna sarà
-                  assegnato un codice personale da apporre tramite delle piccole etichette su tutti i
-                  testi. Firmando il modulo di iscrizione al Mercatino il venditore dichiara di accettare
-                  il presente regolamento in ogni sua parte.
+                  I libri, devono essere consegnati agli operatori del Mercatino, a partire dal 22 giugno, entro e non oltre venerdì 10 luglio negli orari di apertura del mercatino, presso la sede del Lokalino, in Via Strada Comunale di Campagna. Oltre la data del 10 luglio 2026 non sarà più possibile consegnare libri da mettere in vendita. Al momento della consegna sarà assegnato un codice personale da apporre tramite delle piccole etichette su tutti i testi. Firmando il modulo di iscrizione al Mercatino il venditore dichiara di accettare il presente regolamento in ogni sua parte.
                 </li>
+                <li>Gli orari di apertura sono: lunedì, mercoledì, giovedì 14:30-17:30; martedì e venerdì 9:30-12:00. Apertura straordinaria: 13-14 luglio, 9:30-17:30.</li>
                 <li>
-                  Gli utenti del servizio dovranno ritirare l'eventuale l'incasso e i libri rimasti
-                  invenduti TASSATIVAMENTE nei giorni che vanno da Lunedì 8 a venerdì 12
-                  settembre 2025. <strong>OLTRE QUESTA DATA L'INTERO INCASSO SARA'
-                    TRATTENUTO E UTILIZZATO PER GLI SCOPI SOCIALI VALUTATI ED
-                    INDIVIDUATI COI SOGGETTI SOVVENTORI</strong>
+                  Gli utenti del servizio dovranno ritirare l'eventuale incasso e i libri rimasti invenduti TASSATIVAMENTE nei giorni che vanno da lunedì 7 a venerdì 11 settembre 2026.  <strong>OLTRE QUESTA DATA L'INTERO INCASSO SARA' TRATTENUTO E UTILIZZATO A SUPPORTO DELLE ATTIVITÀ GIOVANILI DEL CENTRO GIOVANILE LOKALINO</strong>
                 </li>
               </ol>
               <button
