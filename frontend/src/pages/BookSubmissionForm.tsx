@@ -435,7 +435,7 @@ const BookSubmissionForm: React.FC = () => {
                 checked={customPercentageChecked}
                 onChange={(e) => {
                   setCustomPercentageChecked(true)
-                  setSelectedPercentage(false)
+                  setSelectedPercentage(true)
                   setPersonalInfo({
                     ...personalInfo,
                     Donor: Number(e.target.value) / 100,
