@@ -28,13 +28,31 @@ function getTotalMoneyMovement()
 {
     $conn = getConnection() or die("Connection failed: " . $conn->connect_error);
 
+    // Compute the total money movement by summing the Price_new of all sold books
     $sql = "SELECT SUM(Price_new) FROM `Provider_Book` WHERE Sold_date IS NOT null;";
-
     $result = $conn->query($sql) or die($conn->error);
     $totalMoneyMovement = $result->fetch_row()[0] ?? 0;
 
+    // Compute the expected donation by summing the Price_new multiplied by the Donor for all books
+    // (Assuming that all books will be sold)
+    $sql = "SELECT SUM(Price_new * Donor) AS Expected_donation FROM `Provider_Book` NATURAL JOIN Provider";
+    $result = $conn->query($sql) or die($conn->error);
+    $expectedDonation = $result->fetch_row()[0] ?? 0;
+
+    // Compute the actual donation by summing the Price_new multiplied by the Donor for all sold books
+    $sql = "SELECT SUM(Price_new * Donor) AS Actual_donation FROM `Provider_Book` NATURAL JOIN Provider WHERE Sold_date IS NOT null";
+    $result = $conn->query($sql) or die($conn->error);
+    $actualDonation = $result->fetch_row()[0] ?? 0;
+
     $conn->close();
-    return $totalMoneyMovement;
+
+    $res = array(
+        'total_money_movement' => $totalMoneyMovement,
+        'expected_donation' => $expectedDonation,
+        'actual_donation' => $actualDonation
+    );
+
+    return json_encode($res);
 }
 
 function getNumNewMailSubscribers()

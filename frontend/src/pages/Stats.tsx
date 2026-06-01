@@ -84,7 +84,9 @@ const Stats: React.FC = () => {
       const response = await fetch(`${this.baseUrl}/getTotalMoneyMovement.php`);
       if (!response.ok) throw new Error("Failed to fetch total money movement");
       const data = await response.json();
-      setTotalMoneyMovement(data);
+      setTotalMoneyMovement(data.total_money_movement);
+      setExpectedDonation(data.expected_donation);
+      setActualDonation(data.actual_donation);
     },
 
     async fetchNumNewMailSubscribers(): Promise<void> {
@@ -127,6 +129,8 @@ const Stats: React.FC = () => {
   const [numHischools, setNumHighSchools] = useState<number>(-1);
   const [numMediumSchools, setNumMediumSchools] = useState<number>(-1);
   const [totalMoneyMovement, setTotalMoneyMovement] = useState<number>(-1);
+  const [expectedDonation, setExpectedDonation] = useState<number>(-1);
+  const [actualDonation, setActualDonation] = useState<number>(-1);
   const [numNewMailSubscribers, setNumNewMailSubscribers] =
     useState<number>(-1);
   const [booksPerSchool, setBooksPerSchool] = useState<BooksPerSchool[]>([]);
@@ -168,8 +172,18 @@ const Stats: React.FC = () => {
     0
   );
   const animatedNumberOfBooksPerDay = useCountAnimation(
-    totalNumberOfBooks > 0 ? Math.floor(totalNumberOfBooks / 14) : 0, // 14: number of days for pickUp Books
+    totalNumberOfBooks > 0 ? Math.floor(totalNumberOfBooks / 15) : 0, // 15: number of days for pickUp Books
     2000,
+    0
+  );
+  const animatedExpectedDonation = useCountAnimation(
+    expectedDonation > 0 ? expectedDonation : 0,
+    2500,
+    0
+  );
+  const animatedActualDonation = useCountAnimation(
+    actualDonation > 0 ? actualDonation : 0,
+    2500,
     0
   );
 
@@ -234,6 +248,10 @@ const Stats: React.FC = () => {
         <h2>$ Money money money $</h2>
         <p>Totale soldi che sono passati tramite il mlu (prezzo da nuovo):</p>
         <p className="big-number">{animatedTotalMoney}€</p>
+        <p>Se tutti i libri fossero venduti, la donazione prevista sarebbe di:</p>
+        <p className="big-number">{animatedExpectedDonation}€</p>
+        <p>Finora, la donazione effettiva (considerando solo i libri venduti) è di:</p>
+        <p className="big-number">{animatedActualDonation}€</p>
         {/* <p>
           Ogni persona si stima che sia riuscita a risparmiare sull'acquisto di
           libri una cifra di
