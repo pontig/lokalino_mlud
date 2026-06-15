@@ -72,24 +72,24 @@ function processBookData($inputString)
                     echo ("Line $lineNo: Book '$title' already exists, skipping insert.\n");
                 }
 
-                // ADOPTATION
-                $schoolId = $schoolName;
-                $stmt = $conn->prepare("SELECT A_Id FROM Adoptation WHERE ISBN = ? AND School_Id = ?");
-                $stmt->bind_param("ss", $isbn, $schoolId);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                $adoptation = $result->fetch_assoc();
-                $stmt->close();
+                // // ADOPTATION
+                // $schoolId = $schoolName;
+                // $stmt = $conn->prepare("SELECT A_Id FROM Adoptation WHERE ISBN = ? AND School_Id = ?");
+                // $stmt->bind_param("ss", $isbn, $schoolId);
+                // $stmt->execute();
+                // $result = $stmt->get_result();
+                // $adoptation = $result->fetch_assoc();
+                // $stmt->close();
 
-                if (!$adoptation) {
-                    $stmt = $conn->prepare("INSERT INTO Adoptation (ISBN, School_Id) VALUES (?, ?)");
-                    $stmt->bind_param("ss", $isbn, $schoolId);
-                    $stmt->execute();
-                    echo ("Line $lineNo: Linked book '$isbn' to school '$schoolName'\n");
-                    $stmt->close();
-                } else {
-                    echo ("Line $lineNo: Book '$isbn' already linked to school '$schoolName', skipping link.\n");
-                }
+                // if (!$adoptation) {
+                //     $stmt = $conn->prepare("INSERT INTO Adoptation (ISBN, School_Id) VALUES (?, ?)");
+                //     $stmt->bind_param("ss", $isbn, $schoolId);
+                //     $stmt->execute();
+                //     echo ("Line $lineNo: Linked book '$isbn' to school '$schoolName'\n");
+                //     $stmt->close();
+                // } else {
+                //     echo ("Line $lineNo: Book '$isbn' already linked to school '$schoolName', skipping link.\n");
+                // }
 
                 $conn->commit();
             } catch (Exception $e) {
