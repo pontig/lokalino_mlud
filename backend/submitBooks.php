@@ -78,6 +78,11 @@ $personalInfoFields = [
     'Donor' => 'double'
 ];
 
+// Cast Donor to double if it's an integer
+if (isset($body['personalInfo']['Donor']) && is_int($body['personalInfo']['Donor'])) {
+    $body['personalInfo']['Donor'] = (double)$body['personalInfo']['Donor'];
+}
+
 foreach ($personalInfoFields as $field => $type) {
     if (!isset($body['personalInfo'][$field])) {
         http_response_code(403);
