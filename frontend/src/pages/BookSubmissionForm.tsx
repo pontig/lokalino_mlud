@@ -452,7 +452,7 @@ const BookSubmissionForm: React.FC = () => {
                 min="0"
                 max="100"
                 step="1"
-                placeholder="Inserisci percentuale personalizzata"
+                placeholder="Inserisci percentuale personalizzata (da 1 a 100)"
                 onChange={(e) => {
                   setPersonalInfo({
                     ...personalInfo,
