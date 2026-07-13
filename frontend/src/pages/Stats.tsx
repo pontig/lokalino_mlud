@@ -21,6 +21,7 @@ interface SalesPerDay {
   date: string;
   books_sold_that_day: number;
   day_money: number;
+  day_donations: number;
 }
 
 // Custom hook for number animation
@@ -119,6 +120,7 @@ const Stats: React.FC = () => {
         date: item.date_sale,
         books_sold_that_day: Number(item.num_buyers),
         day_money: Number(item.day_money),
+        day_donations: Number(item.day_donations),
       })) as SalesPerDay[];
       setSalesPerDay(data);
       setNumBuyers(data.reduce((sum, item) => sum + item.books_sold_that_day, 0));
@@ -271,6 +273,7 @@ const Stats: React.FC = () => {
               <th>Data</th>
               <th>Numero di libri venduti</th>
               <th>Totale incassato (prezzo da nuovo)</th>
+              <th>Di cui donati</th>
             </tr>
           </thead>
           <tbody>
@@ -280,6 +283,9 @@ const Stats: React.FC = () => {
                 <td>{sale.books_sold_that_day}</td>
                 <td style={{ textAlign: "right" }}>
                   {sale.day_money.toFixed(2)}€
+                </td>
+                <td style={{ textAlign: "right" }}>
+                  {sale.day_donations.toFixed(2)}€
                 </td>
               </tr>
             ))}
