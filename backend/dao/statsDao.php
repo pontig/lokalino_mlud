@@ -93,14 +93,14 @@ function getNumberOfSalesByDay()
     $sql = "SELECT
     pb.Sold_date AS date_sale,
         SUM(pb.Price_new) AS day_money,
-        SUM(pb.Price_new * p.Donor) AS day_donations,
+        SUM(pb.Price_new * p.Donor)/2 AS day_donations,
         COUNT(*) AS num_buyers
     FROM Provider_Book pb
     JOIN Provider p
         ON p.Provider_Id = pb.Provider_Id
     WHERE pb.Sold_date IS NOT NULL
     GROUP BY DATE(pb.Sold_date);";
-    
+
     $result = $conn->query($sql) or die($conn->error);
     $salesByDay = $result->fetch_all(MYSQLI_ASSOC);
 
