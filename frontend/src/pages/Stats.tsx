@@ -249,11 +249,11 @@ const Stats: React.FC = () => {
         <p className="big-number">{animatedNumberOfBooksPerDay}</p>
         <h2>$ Money money money $</h2>
         <p>Totale soldi che sono passati tramite il mlu (prezzo da nuovo):</p>
-        <p className="big-number">{animatedTotalMoney}€</p>
+        <p className="big-number">{animatedTotalMoney.toFixed(2)}€</p>
         <p>Se tutti i libri fossero venduti, la donazione prevista sarebbe di:</p>
-        <p className="big-number">{animatedExpectedDonation}€</p>
+        <p className="big-number">{animatedExpectedDonation.toFixed(2)}€</p>
         <p>Finora, la donazione effettiva (considerando solo i libri venduti) è di:</p>
-        <p className="big-number">{animatedActualDonation}€</p>
+        <p className="big-number">{animatedActualDonation.toFixed(2)}€</p>
         {/* <p>
           Ogni persona si stima che sia riuscita a risparmiare sull'acquisto di
           libri una cifra di
