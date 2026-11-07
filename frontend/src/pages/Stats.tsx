@@ -169,7 +169,7 @@ const Stats: React.FC = () => {
     0
   );
   const animatedMailSubscribers = useCountAnimation(
-    numNewMailSubscribers > 0 ? numNewMailSubscribers : 0,
+    numNewMailSubscribers > 0 ? Math.round(numNewMailSubscribers*100)/100 : 0,
     1500,
     0
   );
@@ -179,12 +179,12 @@ const Stats: React.FC = () => {
     0
   );
   const animatedExpectedDonation = useCountAnimation(
-    expectedDonation > 0 ? expectedDonation : 0,
+    expectedDonation > 0 ? Math.round(expectedDonation*100)/100 : 0,
     2500,
     0
   );
   const animatedActualDonation = useCountAnimation(
-    actualDonation > 0 ? actualDonation : 0,
+    actualDonation > 0 ? Math.round(actualDonation*100)/100 : 0,
     2500,
     0
   );
@@ -249,16 +249,16 @@ const Stats: React.FC = () => {
         <p className="big-number">{animatedNumberOfBooksPerDay}</p>
         <h2>$ Money money money $</h2>
         <p>Totale soldi che sono passati tramite il mlu (prezzo da nuovo):</p>
-        <p className="big-number">{animatedTotalMoney.toFixed(2)}€</p>
+        <p className="big-number">{animatedTotalMoney}€</p>
         <p>Se tutti i libri fossero venduti, la donazione prevista sarebbe di:</p>
-        <p className="big-number">{animatedExpectedDonation.toFixed(2)}€</p>
+        <p className="big-number">{animatedExpectedDonation}€</p>
         <p>Finora, la donazione effettiva (considerando solo i libri venduti) è di:</p>
-        <p className="big-number">{animatedActualDonation.toFixed(2)}€</p>
+        <p className="big-number">{animatedActualDonation}€</p>
         {/* <p>
           Ogni persona si stima che sia riuscita a risparmiare sull'acquisto di
           libri una cifra di
         </p>
-        <p className="big-number">{animatedSavingsPerPerson.toFixed(2)}€</p> */}
+        <p className="big-number">{animatedSavingsPerPerson}€</p> */}
         {/* <p className="side-note">
           Questa cifra è stata ricavata assumendo che le persone che hanno
           venduto libri siano state tutte persone che hanno poi comprato libri.
