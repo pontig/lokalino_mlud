@@ -35,21 +35,27 @@ function getTotalMoneyMovement()
 
     // Compute the expected donation by summing the Price_new multiplied by the Donor for all books
     // (Assuming that all books will be sold)
-    $sql = "SELECT SUM(Price_new * Donor)/2 AS Expected_donation FROM `Provider_Book` NATURAL JOIN Provider";
+    $sql = "SELECT SUM(Price_new/2 * Donor) AS Expected_donation FROM `Provider_Book` NATURAL JOIN Provider";
     $result = $conn->query($sql) or die($conn->error);
     $expectedDonation = $result->fetch_row()[0] ?? 0;
 
     // Compute the actual donation by summing the Price_new multiplied by the Donor for all sold books
-    $sql = "SELECT SUM(Price_new * Donor)/2 AS Actual_donation FROM `Provider_Book` NATURAL JOIN Provider WHERE Sold_date IS NOT null";
+    $sql = "SELECT SUM(Price_new/2 * Donor) AS Actual_donation FROM `Provider_Book` NATURAL JOIN Provider WHERE Sold_date IS NOT null";
     $result = $conn->query($sql) or die($conn->error);
     $actualDonation = $result->fetch_row()[0] ?? 0;
+
+    // Compute how much money has not been withdrawn yet
+    $sql = "SELECT SUM(Price_new/2) AS Not_retired_money FROM `Provider_Book` NATURAL JOIN Provider WHERE Sold_date IS NOT NULL AND Liquidation_date IS NULL;";
+    $result = $conn->query($sql) or die($conn->error);
+    $notRetiredMoney = $result->fetch_row()[0] ?? 0;
 
     $conn->close();
 
     $res = array(
         'total_money_movement' => $totalMoneyMovement,
         'expected_donation' => $expectedDonation,
-        'actual_donation' => $actualDonation
+        'actual_donation' => $actualDonation,
+        'not_retired_money' => $notRetiredMoney
     );
 
     return json_encode($res);

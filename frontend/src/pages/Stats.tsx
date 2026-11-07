@@ -88,6 +88,7 @@ const Stats: React.FC = () => {
       setTotalMoneyMovement(data.total_money_movement);
       setExpectedDonation(data.expected_donation);
       setActualDonation(data.actual_donation);
+      setNotRetiredMoney(data.not_retired_money);
     },
 
     async fetchNumNewMailSubscribers(): Promise<void> {
@@ -133,6 +134,7 @@ const Stats: React.FC = () => {
   const [totalMoneyMovement, setTotalMoneyMovement] = useState<number>(-1);
   const [expectedDonation, setExpectedDonation] = useState<number>(-1);
   const [actualDonation, setActualDonation] = useState<number>(-1);
+  const [notRetiredMoney, setNotRetiredMoney] = useState<number>(-1);
   const [numNewMailSubscribers, setNumNewMailSubscribers] =
     useState<number>(-1);
   const [booksPerSchool, setBooksPerSchool] = useState<BooksPerSchool[]>([]);
@@ -157,7 +159,7 @@ const Stats: React.FC = () => {
     0
   );
   const animatedTotalMoney = useCountAnimation(
-    totalMoneyMovement > 0 ? totalMoneyMovement : 0,
+    totalMoneyMovement > 0 ? Math.round(totalMoneyMovement*100)/100 : 0,
     2500,
     0
   );
@@ -185,6 +187,11 @@ const Stats: React.FC = () => {
   );
   const animatedActualDonation = useCountAnimation(
     actualDonation > 0 ? Math.round(actualDonation*100)/100 : 0,
+    2500,
+    0
+  );
+  const animatedNotRetiredMoney = useCountAnimation(
+    notRetiredMoney > 0 ? Math.round(notRetiredMoney*100)/100 : 0,
     2500,
     0
   );
@@ -254,6 +261,8 @@ const Stats: React.FC = () => {
         <p className="big-number">{animatedExpectedDonation}€</p>
         <p>Finora, la donazione effettiva (considerando solo i libri venduti) è di:</p>
         <p className="big-number">{animatedActualDonation}€</p>
+        <p>Soldi che nessuno è ancora tornato a incassare (quindi diventeranno del Lokalino a partire dal venerdì 11 settembre 2026)</p>
+        <p className="big-number">{animatedNotRetiredMoney}€</p>
         {/* <p>
           Ogni persona si stima che sia riuscita a risparmiare sull'acquisto di
           libri una cifra di
